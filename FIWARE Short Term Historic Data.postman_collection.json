@@ -1,0 +1,751 @@
+{
+	"info": {
+		"_postman_id": "b5650122-d605-4517-ae17-fa21733d725d",
+		"name": "FIWARE Short Term Historic Data",
+		"description": "This tutorial is an introduction to [FIWARE Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) - a generic enabler which is used to persist context data into third-party databases creating a historical view of the context. The tutorial activates the IoT sensors connected in the [previous tutorial](https://github.com/Fiware/tutorials.IoT-Agent) and persists measurements\nfrom those sensors into a database for further analysis.\n\nThe `docker-compose` files for this tutorial can be found on GitHub: \n\n![GitHub](https://fiware.github.io/tutorials.Historic-Context/icon/GitHub-Mark-32px.png) [FIWARE 301: Persisting Context Data](https://github.com/Fiware/tutorials.Historic-Context)\n\n# Data Persistence\n\n> \"History will be kind to me for I intend to write it.\"\n>\n> — Winston Churchill\n\n\nPrevious tutorials have introduced a set of IoT Sensors (providing measurements of the\nstate of the real world), and two FIWARE Components - the **Orion Context Broker** and an **IoT Agent**. \nThis tutorial will introduct a new data persistance component - FIWARE **Cygnus**.\n\nThe system so far has been built up to handle the current context, in other words it holds the data entities\ndefining the state of the real-world objects at a given moment in time.\n\nFrom this definition you can see - context is only interested in the **current** state of the system\nIt is not the responsibility of any of the existing components to report on the historical state of the system,\nthe context is based on the last measurement each sensor has sent data to the context broker.\n\nIn order to do this, we will need to extend the existing architecture to persist changes of state into a database whenever \nthe context is updated.\n\nPersisting historical context data is useful for big data analysis - it can be used to discover trends, or data \ncan be sampled and aggregated to remove the influence of outlying data measurements. However within each Smart Solution,\nthe significance of each entity type will differ and entities and attributes may need to be sampled at different rates.\n\nSince the business requirements for using context data differ from application to appliation, there is no one standard use \ncase  for historical data persistence - each situation is unique - it is not the case that one size fits all.\nTherefore rather than overloading the context broker with the job of historical context data persistence, this role has been\nseparated out into a separate, highly configurable component - **Cygnus**.\n\nAs you would expect, **Cygnus**, as part of an Open Source platform, is technology agnostic regarding the database \nto be used for data persistance. The database you choose to use will depend upon your own business needs. \n\nHowever there is a cost to offering this flexibility - each part of the system must be separately configured and\nnotifications must be set up to only pass the minimal data required as necessary.\n\n\n\n\n#### Device Monitor\n\nFor the purpose of this tutorial, a series of dummy IoT devices have been created, which will be attached to the context broker.\nThe state of each device can be seen on the UltraLight device monitor web-page found at: `http://localhost:3000/device/monitor`\n\n![FIWARE Monitor](https://fiware.github.io/tutorials.Historic-Context/img/device-monitor.png)\n\n\n\n\n# Architecture\n\nThis application builds on the components and dummy IoT devices created in \n[previous tutorials](https://github.com/Fiware/tutorials.IoT-Agent/). It will make use of three FIWARE components - \nthe [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the\n[IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) and introduce the\n[Cygnus Generic Enabler](http://fiware-cygnus.readthedocs.io/en/latest/) for persisting context data to a database.\nAdditional databases are now involved - both the Orion Context Broker and the IoT Agent rely on [MongoDB](https://www.mongodb.com/) technology to keep persistence of the information they hold, and we will be persisting our historical context data another database - either **MySQL** , **PostgreSQL**  or **Mongo-DB** database.\n\n\nTherefore the overall architecture will consist of the following elements:\n\n* Three **FIWARE Generic Enablers**:\n  * The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)\n  * The FIWARE [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive southbound requests\n    using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert them to \n    [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) commands for \n    the devices\n  * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) which will subscribe to context changes and persist them into a database (**MySQL** , **PostgreSQL**  or **Mongo-DB**)\n* One, two or three of the following **Databases**:\n  * The underlying [MongoDB](https://www.mongodb.com/) database :\n    + Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and registrations\n    + Used by the **IoT Agent** to hold device information such as device URLs and Keys\n    + Potentially used as a data sink to hold historical context data.\n  * An additional [PostgreSQL](https://www.postgresql.org/) database :\n    + Potentially used as a data sink to hold historical context data.\n  * An additional [MySQL](https://www.mysql.com/) database :\n     + Potentially used as a data sink to hold historical context data.\n* Three **Context Providers**:\n  * The **Stock Management Frontend** is not used in this tutorial. It does the following:\n    + Display store information and allow users to interact with the dummy IoT devices\n    + Show which products can be bought at each store\n    + Allow users to \"buy\" products and reduce the stock count.\n  * A webserver acting as set of [dummy IoT devices](https://github.com/Fiware/tutorials.IoT-Sensors) using the [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) protocol running over HTTP.\n  * The **Context Provider NGSI** proxy is not used in this tutorial. It does the following:\n    + receive requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)\n    + makes requests to publicly available data sources using their own APIs in a proprietory format \n    + returns context data back to the Orion Context Broker in [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) format.\n\nSince all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run from exposed ports. \n\nThe specific architecture of each section of the tutorial is discussed below.\n\n\n# Start Up\n\nBefore you start you should ensure that you have obtained or built the necessary Docker images locally. Please run\n\n```console\n./services create\n``` \n\n>**Note** The `context-provider` image has not yet been pushed to Docker hub.\n> Failing to build the Docker sources before proceeding will result in the following error:\n>\n>```\n>Pulling context-provider (fiware/cp-web-app:latest)...\n>ERROR: The image for the service you're trying to recreate has been removed.\n>```\n\n\nThereafter, all services can be initialised from the command line by running the [services](https://github.com/Fiware/tutorials.Historic-Context/blob/master/services) Bash script provided within the repository:\n\n```console\n./services <command>\n``` \n\nWhere `<command>` will vary depending upon the databases we wish to activate.\nThis command will also import seed data from the previous tutorials and provision the dummy IoT sensors on startup.\n\n>:information_source: **Note:** If you want to clean up and start over again you can do so with the following command:\n>\n>```console\n>./services stop\n>``` \n>\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "STH-Comet - Persisting Context",
+			"description": "Persisting historic context data using MongoDB technology is relatively simple to configure since\nwe are already using a MongoDB instance to hold data related to the Orion Context Broker and the\nIoT Agent. The MongoDB instance is listening on the standard `27017` port and the overall architecture\ncan be seen below:\n\n![](https://fiware.github.io/tutorials.Historic-Context/img/cygnus-mongo.png)\n\n## Mongo DB - Database Server Configuration\n\n```yaml\nmongo-db:\n    image: mongo:3.6\n    hostname: mongo-db\n    container_name: db-mongo\n    ports:\n        - \"27017:27017\"\n    networks:\n        - default\n    command: --bind_ip_all --smallfiles\n```\n\n## Mongo DB - Cygnus Configuration\n\n```yaml\ncygnus:\n    image: fiware/cygnus-ngsi:latest\n    hostname: cygnus\n    container_name: fiware-cygnus\n    depends_on:\n        - mongo-db\n    networks:\n        - default\n    expose:\n        - \"5080\"\n    ports:\n        - \"5050:5050\"\n        - \"5080:5080\"\n    environment:\n        - \"CYGNUS_MONGO_HOSTS=mongo-db:27017\"\n        - \"CYGNUS_LOG_LEVEL=DEBUG\"\n        - \"CYGNUS_SERVICE_PORT=5050\"\n        - \"CYGNUS_API_PORT=5080\"\n```\n\n\nThe `cygnus` container is listening on two ports: \n\n* The service will be listening on port `5050` for notifications from the Orion context broker\n* Port `5080` is exposed purely for tutorial access - so that cUrl or Postman can make provisioning commands\n  without being part of the same network.\n\n\nThe `cygnus` container is driven by environment variables as shown:\n\n| Key                           |Value         |Description|\n|-------------------------------|--------------|-----------|\n|CYGNUS_MONGO_HOSTS         |`mongo-db:27017` |  Comma separated list of Mongo-DB servers which Cygnus will contact to persist historical context data |\n|CYGNUS_LOG_LEVEL               |`DEBUG`       | The logging level for Cygnus |\n|CYGNUS_SERVICE_PORT            |`5050`        | Notification Port that Cygnus listens when subcribing to context data changes|\n|CYGNUS_API_PORT                |`5080`        | Port that Cygnus listens on for operational reasons |\n\n## Mongo DB - Start up\n\nTo start the system with a **Mongo DB** database only, run the following command:\n\n```console\n./services mongodb\n``` \n\n### Generating Context Data\n\nFor the purpose of this tutorial, we must be monitoring a system where the context is periodically being updated.\nThe dummy IoT Sensors can be used to do this. Open the device monitor page at `http://localhost:3000/device/monitor`\nand unlock a **Smart Door** and switch on a **Smart Lamp**. This can be done by selecting an appropriate the command \nfrom the drop down list and pressing the `send` button. The stream of measurements coming from the devices can then\nbe seen on the same page:\n\n![](https://fiware.github.io/tutorials.Historic-Context/img/door-open.gif)",
+			"item": [
+				{
+					"name": "STH-Comet - Obtain version information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/version",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"version"
+							]
+						},
+						"description": "Once STH-Comet is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. \nIf the response is blank, this is usually because STH-Comet is not running or is listening on another port.\n\n>**Troubleshooting:** What if the response is blank ?\n>\n> * To check that a docker container is running try\n>\n>```bash\n>docker ps\n>```\n>\n>You should see several containers running. If `sth-comet` is not running, you can restart the containers as necessary."
+					},
+					"response": []
+				},
+				{
+					"name": "Orion - notify  STH-Comet - Aggregate Motion Sensor Count Events",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Notify STH-Comet of all Motion Sensor context changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  }\n}"
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+					},
+					"response": []
+				},
+				{
+					"name": "Orion - notify STH-Comet - Sample Lamp Luminosity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Notify STH-Comet to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\nThe luminocity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a63e990e-c30a-419c-a54c-5d24baa792f2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2710f35-1e52-4ac5-87ad-d7a93c640386",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "STH-Comet - Analyzing Data",
+			"description": "To read mongo-db data from the command line, we will need access to the `mongo` tool run an interactive instance\nof the `mongo` image as shown to obtain a command line prompt:\n\n```console\ndocker run -it --network fiware_default  --entrypoint /bin/bash mongo\n```\n\nYou can then log into to the running `mongo-db` database by using the command line as shown:\n\n```bash\nmongo --host mongo-db\n```\n\n### Show Available Databases on the MongoDB server\n\nTo show the list of available databases, run the statement as shown:\n\n#### Query:\n\n```\nshow dbs\n```\n\n#### Result:\n\n```\nadmin          0.000GB\niotagentul     0.000GB\nlocal          0.000GB\norion          0.000GB\norion-openiot  0.000GB\nsth_openiot    0.000GB\n```\n\nThe result include two databases `admin` and `local` which are set up by default by **MongoDB**, along with four databases\ncreated by the FIWARE platform. The Orion Context Broker has created two separate database instance for each `fiware-service`\n- the Store enitities were created without defining a `fiware-service` and therefore are held within the `orion` database,\nwhereas the IoT device entities were created using the `openiot` `fiware-service` header and are held separately. The IoT Agent was intialized to hold the IoT sensor data in a separate  **MongoDB** database called `iotagentul`. \n\nAs a result of the subscription of Cygnus to Orion Context Broker, a new database has been created called `sth_openiot`. The default value for a **Mongo DB** database holding historic context consists of the `sth_` prefix followed by the `fiware-service` header - therefore `sth_openiot` holds the historic context of the IoT devices.\n\n### Read Historical Context from the MongoDB server\n\n#### Query:\n\n```\nuse sth_openiot\nshow collections\n```\n\n#### Result:\n\n```\nswitched to db sth_openiot\n\nsth_/_Door:001_Door\nsth_/_Door:001_Door.aggr\nsth_/_Lamp:001_Lamp\nsth_/_Lamp:001_Lamp.aggr\nsth_/_Motion:001_Motion\nsth_/_Motion:001_Motion.aggr\n```\n\nLooking within the `sth_openiot` you will see that a series of tables have been created. The names of each table consist\nof the `sth_` prefix followed by the `fiware-servicepath` header followed by the entity id. Two table are created for\neach entity - the `.aggr` table holds some aggregated data which will be accessed in a later tutorial. The raw data\ncan be seen in the tables without the `.aggr` suffix. \n\nThe historical data can be seen by looking at the data within each table, by default each row will contain the sampled value of a single attribute. \n\n#### Query:\n\n```\ndb[\"sth_/_Door:001_Door\"].find().limit(10)\n```\n\n#### Result:\n\n```\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f7635d\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.897Z\"), \"attrName\" : \"TimeInstant\", \"attrType\" : \"ISO8601\", \"attrValue\" : \"2018-06-12T10:46:30.836Z\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f7635e\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.897Z\"), \"attrName\" : \"close_status\", \"attrType\" : \"commandStatus\", \"attrValue\" : \"UNKNOWN\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f7635f\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.897Z\"), \"attrName\" : \"lock_status\", \"attrType\" : \"commandStatus\", \"attrValue\" : \"UNKNOWN\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f76360\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.897Z\"), \"attrName\" : \"open_status\", \"attrType\" : \"commandStatus\", \"attrValue\" : \"UNKNOWN\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f76361\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.836Z\"), \"attrName\" : \"refStore\", \"attrType\" : \"Relationship\", \"attrValue\" : \"Store:001\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f76362\"), \"recvTime\" : ISODate(\"2018-06-12T10:46:30.836Z\"), \"attrName\" : \"state\", \"attrType\" : \"Text\", \"attrValue\" : \"CLOSED\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f76363\"), \"recvTime\" : ISODate(\"2018-06-12T10:45:26.368Z\"), \"attrName\" : \"unlock_info\", \"attrType\" : \"commandResult\", \"attrValue\" : \" unlock OK\" }\n{ \"_id\" : ObjectId(\"5b1fa48630c49e0012f76364\"), \"recvTime\" : ISODate(\"2018-06-12T10:45:26.368Z\"), \"attrName\" : \"unlock_status\", \"attrType\" : \"commandStatus\", \"attrValue\" : \"OK\" }\n{ \"_id\" : ObjectId(\"5b1fa4c030c49e0012f76385\"), \"recvTime\" : ISODate(\"2018-06-12T10:47:28.081Z\"), \"attrName\" : \"TimeInstant\", \"attrType\" : \"ISO8601\", \"attrValue\" : \"2018-06-12T10:47:28.038Z\" }\n{ \"_id\" : ObjectId(\"5b1fa4c030c49e0012f76386\"), \"recvTime\" : ISODate(\"2018-06-12T10:47:28.081Z\"), \"attrName\" : \"close_status\", \"attrType\" : \"commandStatus\", \"attrValue\" : \"UNKNOWN\" }\n```\n\nThe usual **Mongo-DB** query syntax can be used to filter appropriate fields and values. For example to read the rate at which the **Motion Sensor** with the `id=Motion:001_Motion` is accumulating, you would make a query as follows:\n\n#### Query:\n\n```\ndb[\"sth_/_Motion:001_Motion\"].find({attrName: \"count\"},{_id: 0, attrType: 0, attrName: 0 } ).limit(10)\n```\n\n#### Result:\n\n```\n{ \"recvTime\" : ISODate(\"2018-06-12T10:46:18.756Z\"), \"attrValue\" : \"8\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:46:36.881Z\"), \"attrValue\" : \"10\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:46:42.947Z\"), \"attrValue\" : \"11\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:46:54.893Z\"), \"attrValue\" : \"13\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:47:00.929Z\"), \"attrValue\" : \"15\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:47:06.954Z\"), \"attrValue\" : \"17\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:47:15.983Z\"), \"attrValue\" : \"19\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:47:49.090Z\"), \"attrValue\" : \"23\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:47:58.112Z\"), \"attrValue\" : \"25\" }\n{ \"recvTime\" : ISODate(\"2018-06-12T10:48:28.218Z\"), \"attrValue\" : \"29\" }\n```\n\n\nTo leave the MongoDB client and leave interactive mode, run the following:\n\n```console\nexit\n```\n\n```console\nexit\n```\n",
+			"item": [
+				{
+					"name": "First",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?hLimit=3&hOffset=0",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Lamp",
+								"id",
+								"Lamp:001",
+								"attributes",
+								"luminosity"
+							],
+							"query": [
+								{
+									"key": "hLimit",
+									"value": "3",
+									"description": "The number of entries per page."
+								},
+								{
+									"key": "hOffset",
+									"value": "0",
+									"description": "The pagination offset"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Offset",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?hLimit=3&hOffset=3",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Motion",
+								"id",
+								"Motion:001",
+								"attributes",
+								"count"
+							],
+							"query": [
+								{
+									"key": "hLimit",
+									"value": "3",
+									"description": "The number of entries per page."
+								},
+								{
+									"key": "hOffset",
+									"value": "3",
+									"description": "The pagination offset"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Last",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?lastN=3",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Motion",
+								"id",
+								"Motion:001",
+								"attributes",
+								"count"
+							],
+							"query": [
+								{
+									"key": "lastN",
+									"value": "3",
+									"description": "The number of entries to return"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sum",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?aggrMethod=sum&aggrPeriod=minute",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Motion",
+								"id",
+								"Motion:001",
+								"attributes",
+								"count"
+							],
+							"query": [
+								{
+									"key": "aggrMethod",
+									"value": "sum"
+								},
+								{
+									"key": "aggrPeriod",
+									"value": "minute"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2018-01-01T00:00:00.000Z",
+									"description": "The starting date and time",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2019-12-31T00:00:00.000Z",
+									"description": "The final date and time",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Min",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=min&aggrPeriod=minute",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Lamp",
+								"id",
+								"Lamp:001",
+								"attributes",
+								"luminosity"
+							],
+							"query": [
+								{
+									"key": "aggrMethod",
+									"value": "min"
+								},
+								{
+									"key": "aggrPeriod",
+									"value": "minute"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2018-01-01T00:00:00.000Z",
+									"description": "The starting date and time",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2019-12-31T00:00:00.000Z",
+									"description": "The final date and time",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Max",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=max&aggrPeriod=minute",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Lamp",
+								"id",
+								"Lamp:001",
+								"attributes",
+								"luminosity"
+							],
+							"query": [
+								{
+									"key": "aggrMethod",
+									"value": "max"
+								},
+								{
+									"key": "aggrPeriod",
+									"value": "minute"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2018-01-01T00:00:00.000Z",
+									"description": "The starting date and time",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2019-12-31T00:00:00.000Z",
+									"description": "The final date and time",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sum",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=sum&aggrPeriod=minute",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"STH",
+								"v1",
+								"contextEntities",
+								"type",
+								"Lamp",
+								"id",
+								"Lamp:001",
+								"attributes",
+								"luminosity"
+							],
+							"query": [
+								{
+									"key": "aggrMethod",
+									"value": "sum"
+								},
+								{
+									"key": "aggrPeriod",
+									"value": "minute"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2018-01-01T00:00:00.000Z",
+									"description": "The starting date and time",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2019-12-31T00:00:00.000Z",
+									"description": "The final date and time",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9e70a754-3893-4617-adc7-c0471f7372f7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c43d1162-ac29-4852-9094-b1b86604352b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Cygnus - Persisting Context",
+			"description": "To persist historic context data into an alternative database such as **PostgreSQL**, we will\nneed an additional container which hosts the PostgreSQL server - the default Docker image for this\ndata can be used. The PostgreSQL instance is listening on the standard `5432` port and the overall architecture\ncan be seen below:\n\n![](https://fiware.github.io/tutorials.Historic-Context/img/cygnus-postgres.png)\n\nWe now have a system with two databases, since the MongoDB container is still required \nto hold data related to the Orion Context Broker and the IoT Agent. \n\n\n\n## PostgreSQL - Start up\n\nTo start the system with a **PostgreSQL** database run the following command:\n\n```console\n./services postgres\n``` \n\n## PostgreSQL- Database Server Configuration\n\n```yaml\npostgres-db:\n      image: postgres:latest\n      hostname: postgres-db\n      container_name: db-postgres\n      expose:\n        - \"5432\"\n      ports:\n        - \"5432:5432\"\n      networks:\n        - default\n      environment:\n        - \"POSTGRES_PASSWORD=password\"\n        - \"POSTGRES_USER=postgres\"\n        - \"POSTGRES_DB=postgres\"\n\n```\n\nThe `postgres-db` container is listening on a single port: \n\n* Port `5432` is the default port for a PostgreSQL server. It has been exposed so you can also run the `pgAdmin4` tool to display database data if you wish\n\nThe `postgres-db` container is driven by environment variables as shown:\n\n| Key             |Value.    |Description                    |\n|-----------------|----------|-------------------------------|\n|POSTGRES_PASSWORD|`password`| Password for the PostgreSQL database user|\n|POSTGRES_USER    |`postgres`| Username for the PostgreSQL database user|\n|POSTGRES_DB      |`postgres`| The name of the PostgreSQL database      | \n\n\n\n## PostgreSQL - Cygnus Configuration\n\n```yaml\ncygnus:\n    image: fiware/cygnus-ngsi:latest\n    hostname: cygnus\n    container_name: fiware-cygnus\n    networks:\n        - default\n    depends_on:\n        - postgres-db\n    expose:\n        - \"5080\"\n    ports:\n        - \"5050:5050\"\n        - \"5080:5080\"\n    environment:\n        - \"CYGNUS_POSTGRESQL_HOST=postgres-db\"\n        - \"CYGNUS_POSTGRESQL_PORT=5432\"\n        - \"CYGNUS_POSTGRESQL_USER=postgres\" \n        - \"CYGNUS_POSTGRESQL_PASS=password\" \n        - \"CYGNUS_LOG_LEVEL=DEBUG\"\n        - \"CYGNUS_SERVICE_PORT=5050\"\n        - \"CYGNUS_API_PORT=5080\"\n        - \"CYGNUS_POSTGRESQL_ENABLE_CACHE=true\"\n```\n\nThe `cygnus` container is listening on two ports: \n\n* The service will be listening on port `5050` for notifications from the Orion context broker\n* Port `5080` is exposed purely for tutorial access - so that cUrl or Postman can make provisioning commands\n  without being part of the same network.\n\n\nThe `cygnus` container is driven by environment variables as shown:\n\n| Key                           |Value         |Description|\n|-------------------------------|--------------|-----------|\n|CYGNUS_POSTGRESQL_HOST         |`postgres-db` | Hostname of the PostgreSQL server used to persist historical context data |\n|CYGNUS_POSTGRESQL_PORT         |`5432`        | Port that the PostgreSQL server uses to listen to commands |\n|CYGNUS_POSTGRESQL_USER         |`postgres`    | Username for the PostgreSQL database user | \n|CYGNUS_POSTGRESQL_PASS         |`password`    | Password for the PostgreSQL database user |\n|CYGNUS_LOG_LEVEL               |`DEBUG`       | The logging level for Cygnus |\n|CYGNUS_SERVICE_PORT            |`5050`        | Notification Port that Cygnus listens when subcribing to context data changes|\n|CYGNUS_API_PORT                |`5080`        | Port that Cygnus listens on for operational reasons |\n|CYGNUS_POSTGRESQL_ENABLE_CACHE |`true`        | Switch to enable caching within the PostgreSQL configuration |\n\n\n### Generating Context Data\n\nFor the purpose of this tutorial, we must be monitoring a system where the context is periodically being updated.\nThe dummy IoT Sensors can be used to do this. Open the device monitor page at `http://localhost:3000/device/monitor`\nand unlock a **Smart Door** and switch on a **Smart Lamp**. This can be done by selecting an appropriate the command \nfrom the drop down list and pressing the `send` button. The stream of measurements coming from the devices can then\nbe seen on the same page:\n\n![](https://fiware.github.io/tutorials.Historic-Context/img/door-open.gif)",
+			"item": [
+				{
+					"name": "Cygnus - Obtain version information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{cygnus}}/v1/version",
+							"protocol": "http",
+							"host": [
+								"{{cygnus}}"
+							],
+							"path": [
+								"v1",
+								"version"
+							]
+						},
+						"description": "Once Cygnus is running, You can check the status by making an HTTP request to the exposed `CYGNUS_API_PORT` port. \nIf the response is blank, this is usually because Cygnus is not running or is listening on another port.\n\n>**Troubleshooting:** What if the response is blank ?\n>\n> * To check that a docker container is running try\n>\n>```bash\n>docker ps\n>```\n>\n>You should see several containers running. If `cygnus` is not running, you can restart the containers as necessary."
+					},
+					"response": []
+				},
+				{
+					"name": "STH-Comet - Obtain version information Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{sth-comet}}/version",
+							"protocol": "http",
+							"host": [
+								"{{sth-comet}}"
+							],
+							"path": [
+								"version"
+							]
+						},
+						"description": "Once STH-Comet is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. \nIf the response is blank, this is usually because STH-Comet is not running or is listening on another port.\n\n>**Troubleshooting:** What if the response is blank ?\n>\n> * To check that a docker container is running try\n>\n>```bash\n>docker ps\n>```\n>\n>You should see several containers running. If `sth-comet` is not running, you can restart the containers as necessary."
+					},
+					"response": []
+				},
+				{
+					"name": "Orion - notify Cygnus - Aggregate Motion Sensor Count Events",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Notify Cygnus of all Motion Sensor context changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  }\n}"
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\n\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+					},
+					"response": []
+				},
+				{
+					"name": "Orion - notify Cygnus - Sample Lamp Luminosity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Notify STH-Comet to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminocity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f8ca5d71-4eb4-42b9-95e0-c3ef11567514",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "43d701ab-eb41-472e-875e-4ac51e27579a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d1cff9ac-8932-417c-b6e2-582ba712ff79",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cc3f098c-a786-4112-a15e-b1c8c83cc657",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "6515190a-684f-49e8-acf4-722ec0b33f6c",
+			"key": "orion",
+			"value": "localhost:1026",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "e8a781ce-f48a-4cfc-8c5d-de8a650bb031",
+			"key": "cygnus",
+			"value": "localhost:5080",
+			"type": "string",
+			"description": ""
+		},
+		{
+			"id": "2a2ce508-acb9-4ac5-a72f-407d8cea131c",
+			"key": "sth-comet",
+			"value": "localhost:8666",
+			"type": "string",
+			"description": ""
+		}
+	]
+}
