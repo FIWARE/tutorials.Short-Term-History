@@ -74,15 +74,20 @@ This application builds on the components and dummy IoT devices created in
 the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the
 [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/),
 [STH-Comet](http://fiware-cygnus.readthedocs.io/en/latest/) and
-[Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/). **Cygnus** will only be used if **STH-Comet** is configured in *formal* mode.
+[Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/). 
 
 Therefore the overall architecture will consist of the following elements:
 
 * Four **FIWARE Generic Enablers**:
   * The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
   * The FIWARE [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive northbound measurements from the dummy IoT devices in [Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) format and convert them to [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) requests for the context broker to alter the state of the context entities
-  * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) will subscribe to context changes and persist them into a **Mongo-DB** database (*formal* mode only) 
-  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) will interpret time-based data queries, in *minimal* mode only, it will also subscribe to context changes and persist them into a **Mongo-DB** database
+  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) will:
+    + interpret time-based data queries
+    + subscribe to context changes and persist them into a **Mongo-DB** database  (*minimal* mode only)
+   * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) where it will subscribe to context changes and persist them into a **Mongo-DB** database (*formal* mode only) 
+
+> :information_source: **Note:** **Cygnus** will only be used if **STH-Comet** is configured in *formal* mode.
+
 * A [MongoDB](https://www.mongodb.com/) database:
   * Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and registrations
   * Used by the **IoT Agent** to hold device information such as device URLs and Keys
@@ -99,6 +104,9 @@ Therefore the overall architecture will consist of the following elements:
     + receive requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
     + makes requests to publicly available data sources using their own APIs in a proprietary format 
     + returns context data back to the Orion Context Broker in [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) format.
+
+
+
 
 Since all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run from exposed ports. 
 
