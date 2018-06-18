@@ -40,7 +40,7 @@ Of the two modes of operation, the *formal* mode is more flexible, but *minimal*
 | Which component is responsible for a data persistance?  | **STH-Comet**                 | **Cygnus**                 |
 | What is the role of **STH-Comet**?                      | Reading and writing data      | Data Read only             |
 | What is the role of **Cygnus**?                         | Not Used                      | Data Write only            |
-| Where is the data aggregated?                           | Mongo-DB database connected to **STH-Comet** | Mongo-DB database connected to **STH-Cygnus** |
+| Where is the data aggregated?                           | Mongo-DB database connected to **STH-Comet** only| Mongo-DB database connected to both **Cygnus** and **STH-Comet** |
 | Can the system be configured to use other databases?    | No                            | Yes                        |
 | Does the solution scale easily?                         | Does not scale easily - use for simple systems | Scales easily - use for complex systems |
 | Can the system cope with high rates of throughput?      | No - use where throughput is low | Yes - use where throughput is high |
@@ -81,8 +81,8 @@ Therefore the overall architecture will consist of the following elements:
 * Four **FIWARE Generic Enablers**:
   * The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
   * The FIWARE [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive northbound measurements from the dummy IoT devices in [Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) format and convert them to [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) requests for the context broker to alter the state of the context entities
-  * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) (*formal* mode only) will subscribe to context changes and persist them into a database (**Mongo-DB**)
-  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) will interpret time-based data queries, in *minimal* mode only, it will also subscribe to context changes and persist them into a database (**Mongo-DB**)
+  * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) will subscribe to context changes and persist them into a **Mongo-DB** database (*formal* mode only) 
+  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) will interpret time-based data queries, in *minimal* mode only, it will also subscribe to context changes and persist them into a **Mongo-DB** database
 * A [MongoDB](https://www.mongodb.com/) database:
   * Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and registrations
   * Used by the **IoT Agent** to hold device information such as device URLs and Keys
