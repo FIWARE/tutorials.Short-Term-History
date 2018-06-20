@@ -9,10 +9,39 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 
 # Contents
 
-TBC ...
+- [Querying Time Series Data](#querying-time-series-data)
+  * [Analyzing time series data](#analyzing-time-series-data)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+  * [Docker and Docker Compose](#docker-and-docker-compose)
+  * [Cygwin for Windows](#cygwin-for-windows)
+- [Start Up](#start-up)
+- [*minimal* mode (STH-Comet only)](#minimal-mode-sth-comet-only)
+  * [Database Server Configuration](#database-server-configuration)
+  * [STH-Comet Configuration](#sth-comet-configuration)
+  * [*minimal* mode - Start up](#minimal-mode---start-up)
+    + [Checking the STH-Comet Service Health](#checking-the-sth-comet-service-health)
+    + [Generating Context Data](#generating-context-data)
+  * [*minimal* mode - Subscribing STH-Comet to Context Changes](#minimal-mode---subscribing-sth-comet-to-context-changes)
+    + [STH-Comet - Aggregate Motion Sensor Count Events](#sth-comet---aggregate-motion-sensor-count-events)
+    + [STH-Comet - Sample Lamp Luminosity](#sth-comet---sample-lamp-luminosity)
+- [Time Series Data Queries](#time-series-data-queries)
+- [*formal* mode (Cygnus + STH-Comet)](#formal-mode-cygnus--sth-comet)
+  * [Database Server Configuration](#database-server-configuration-1)
+  * [STH-Comet Configuration](#sth-comet-configuration-1)
+  * [Cygnus Configuration](#cygnus-configuration)
+  * [*formal* mode - Start up](#formal-mode---start-up)
+    + [Checking the STH-Comet Service Health](#checking-the-sth-comet-service-health-1)
+    + [Checking the Cygnus Service Health](#checking-the-cygnus-service-health)
+    + [Generating Context Data](#generating-context-data-1)
+  * [*formal* mode - Subscribing Cygnus to Context Changes](#formal-mode---subscribing-cygnus-to-context-changes)
+    + [Cygnus - Aggregate Motion Sensor Count Events](#cygnus---aggregate-motion-sensor-count-events)
+    + [Cygnus - Sample Lamp Luminosity](#cygnus---sample-lamp-luminosity)
+  * [*formal* mode - Time Series Data Queries](#formal-mode---time-series-data-queries)
+- [Next Steps](#next-steps)
 
 
-# Persisting Time Series Data
+# Querying Time Series Data
 
 > "The *"moment"* has no yesterday or tomorrow. It is not the result of thought and therefore has no time."
 >
@@ -168,7 +197,7 @@ This command will also import seed data from the previous tutorials and provisio
 >
 
 
-# *minimal* configuration (STH-Comet only)
+# *minimal* mode (STH-Comet only)
 
 In the *minimal* configuration, **STH-Comet** is used to persisting historic context data and also used to make time-based queries.
 All operations take place on the same port `8666`. The MongoDB instance listening on the standard
@@ -228,7 +257,7 @@ The `sth-comet` container is driven by environment variables as shown:
 |LOGOPS_LEVEL|`DEBUG`          | The logging level for STH-Comet |
 
 
-## *minimal* configuration - Start up
+## *minimal* mode - Start up
 
 To start the system using the *minimal* configuration using **STH-Comet**  only, run the following command:
 
@@ -237,7 +266,153 @@ To start the system using the *minimal* configuration using **STH-Comet**  only,
 ``` 
 
 
-# *formal* configuration (Cygnus + STH-Comet)
+### Checking the STH-Comet Service Health
+ 
+Once STH-Comet is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
+If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
+
+
+#### :one: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/version'
+```
+
+#### Response:
+
+The response will look similar to the following:
+
+```json
+{
+    "version": "2.3.0-next"
+}
+```
+
+>**Troubleshooting:** What if the response is blank ?
+>
+> * To check that a docker container is running try
+>
+>```bash
+>docker ps
+>```
+>
+>You should see several containers running. If `sth-comet`  or `cygnus` is not running, you can restart the containers as necessary.
+
+### Generating Context Data
+
+For the purpose of this tutorial, we must be monitoring a system where the context is periodically being updated.
+The dummy IoT Sensors can be used to do this. Open the device monitor page at `http://localhost:3000/device/monitor`
+and unlock a **Smart Door** and switch on a **Smart Lamp**. This can be done by selecting an appropriate the command 
+from the drop down list and pressing the `send` button. The stream of measurements coming from the devices can then
+be seen on the same page:
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/door-open.gif)
+
+
+## *minimal* mode - Subscribing STH-Comet to Context Changes
+
+Once a dynamic context system is up and running, under minimal mode,  **STH-Comet**  needs to be informed of changes in context.
+Therefore we need to set up a subscription in the **Orion Context Broker** to notify **STH-Comet** of these changes. The details
+of tht subscription will differ dependent upon the device being monitored and the sampling rate.
+
+### STH-Comet - Aggregate Motion Sensor Count Events
+
+The rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive
+every event to be able to aggregate the results.
+
+This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.
+
+* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors
+* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Motion Sensor** data changes.
+* The notification `url` must match the configured `STH_PORT`
+* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.
+
+#### :two: Request:
+
+```console
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "description": "Notify STH-Comet of all Motion Sensor context changes",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "Motion.*"
+      }
+    ]
+  },
+  "notification": {
+    "http": {
+      "url": "http://sth-comet:8666/notify"
+    },
+    "attrsFormat": "legacy"
+  }
+}'
+```
+
+### STH-Comet - Sample Lamp Luminosity
+
+The luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be
+able to work out relevant statistics such as minimum and maximum values and rates of change.
+
+This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**
+and including the `throttling` attribute in the request body.
+
+* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors
+* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes only
+* The notification `url` must match the configured `STH_PORT`
+* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.
+* The `throttling` value defines the rate that changes are sampled.
+
+#### :three: Request:
+
+```console
+curl -X POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "description": "Notify Cygnus to sample Lamp changes every five seconds",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "Lamp.*"
+      }
+    ]
+  },
+  "notification": {
+    "http": {
+      "url": "http://cygnus:5050/notify"
+    },
+    "attrsFormat": "legacy"
+  },
+  "throttling": 5
+}'
+```
+
+# Time Series Data Queries
+
+**STH-Comet**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# *formal* mode (Cygnus + STH-Comet)
 
 The *formal* configuration is uses **Cygnus** to persist historic context data into a MongoDB database in the same manner as had been presented in the
 [previous tutorial](https://github.com/Fiware/tutorials.Historic-Context). The existing MongoDB instance (listening on the standard
@@ -336,7 +511,7 @@ The `cygnus` container is driven by environment variables as shown:
 
 
 
-## *formal* configuration - Start up
+## *formal* mode - Start up
 
 To start the system using the *formal* configuration using **Cygnus**  and **STH-Comet**, run the following command:
 
@@ -345,6 +520,162 @@ To start the system using the *formal* configuration using **Cygnus**  and **STH
 ``` 
 
 
+### Checking the STH-Comet Service Health
+ 
+Once **STH-Comet** is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
+If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
+
+
+#### Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/version'
+```
+
+#### Response:
+
+The response will look similar to the following:
+
+```json
+{
+    "version": "2.3.0-next"
+}
+```
+
+### Checking the Cygnus Service Health
+ 
+Once **Cygnus** is running, you can check the status by making an HTTP request to the exposed `CYGNUS_API_PORT` port. 
+If the response is blank, this is usually because **Cygnus** is not running or is listening on another port.
+
+#### Request:
+
+```console
+curl -X GET \
+  'http://localhost:5080/v1/version'
+```
+
+#### Response:
+
+The response will look similar to the following:
+
+```json
+{
+    "success": "true",
+    "version": "1.8.0_SNAPSHOT.ed50706880829e97fd4cf926df434f1ef4fac147"
+}
+```
+
+>**Troubleshooting:** What if either response is blank ?
+>
+> * To check that a docker container is running try
+>
+>```bash
+>docker ps
+>```
+>
+>You should see several containers running. If `sth-comet`  or `cygnus` is not running, you can restart the containers as necessary.
+
+### Generating Context Data
+
+For the purpose of this tutorial, we must be monitoring a system where the context is periodically being updated.
+The dummy IoT Sensors can be used to do this. Open the device monitor page at `http://localhost:3000/device/monitor`
+and unlock a **Smart Door** and switch on a **Smart Lamp**. This can be done by selecting an appropriate the command 
+from the drop down list and pressing the `send` button. The stream of measurements coming from the devices can then
+be seen on the same page:
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/door-open.gif)
+
+## *formal* mode - Subscribing Cygnus to Context Changes
+
+In *formal* mode, **Cygnus** is responsible for the persistance of historic context data.
+Once a dynamic context system is up and running, we need to set up a subscription in the **Orion Context Broker**
+to notify **Cygnus**  of changes in context - **STH-Comet** will only be used to read the persisted data.
+
+
+### Cygnus - Aggregate Motion Sensor Count Events
+
+The rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive
+every event to be able to aggregate the results.
+
+This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.
+
+* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors
+* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.
+* The notification `url` must match the configured `CYGNUS_API_PORT`
+* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.
+
+#### Request:
+
+```console
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "description": "Notify Cygnus of all Motion Sensor context changes",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "Motion.*"
+      }
+    ]
+  },
+  "notification": {
+    "http": {
+      "url": "http://cygnus:5050/notify"
+    },
+    "attrsFormat": "legacy"
+  }
+}'
+```
+
+### Cygnus - Sample Lamp Luminosity
+
+The luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be
+able to work out relevant statistics such as minimum and maximum values and rates of change.
+
+This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**
+and including the `throttling` attribute in the request body.
+
+* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors
+* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only
+* The notification `url` must match the configured `CYGNUS_API_PORT`
+* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.
+* The `throttling` value defines the rate that changes are sampled.
+
+#### Request:
+
+```console
+curl -X POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "description": "Notify Cygnus to sample Lamp changes every five seconds",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "Lamp.*"
+      }
+    ]
+  },
+  "notification": {
+    "http": {
+      "url": "http://cygnus:5050/notify"
+    },
+    "attrsFormat": "legacy"
+  },
+  "throttling": 5
+}'
+```
+
+## *formal* mode - Time Series Data Queries
+
+When reading data from the database, there is no difference between *minimal* and *formal* mode, please refer to the previous
+section of this tutorial to request time-series data from **STH-Comet**
 
 # Next Steps
 
@@ -362,4 +693,4 @@ You can find out by reading the other tutorials in this series:
 &nbsp; 202. [Provisioning an IoT Agent](https://github.com/Fiware/tutorials.IoT-Agent)<br/>
 
 &nbsp; 301. [Persisting Context Data](https://github.com/Fiware/tutorials.Historic-Context)<br/>
-&nbsp; 302. [Persisting Time Series Data](https://github.com/Fiware/tutorials.Short-Term-History)<br/>
+&nbsp; 302. [Querying Time Series Data](https://github.com/Fiware/tutorials.Short-Term-History)<br/>
