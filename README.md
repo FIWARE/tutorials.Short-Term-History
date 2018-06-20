@@ -1,8 +1,8 @@
-![FIWARE Banner](https://fiware.github.io/tutorials.Historic-Context/img/fiware.png)
+![FIWARE Banner](https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png)
 
 This tutorial is an introduction to [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) - a generic enabler which is used to retrieve trend data from a Mongo-DB database. The tutorial activates the IoT sensors connected in the [previous tutorial](https://github.com/Fiware/tutorials.IoT-Agent) and persists measurements from those sensors into a database and retrieves time-based aggregations of that data.
 
-The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also available as [Postman documentation](http://fiware.github.io/tutorials.Historic-Context/)
+The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also available as [Postman documentation](http://fiware.github.io/tutorials.Short-Term-History/)
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
@@ -166,6 +166,183 @@ This command will also import seed data from the previous tutorials and provisio
 >./services stop
 >``` 
 >
+
+
+# *minimal* configuration (STH-Comet only)
+
+In the *minimal* configuration, **STH-Comet** is used to persisting historic context data and also used to make time-based queries.
+All operations take place on the same port `8666`. The MongoDB instance listening on the standard
+`27017` port is used to hold data the historic context data as well as holding data related to the **Orion Context Broker** and the **IoT Agent**.
+The overall architecture can be seen below:
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/sth-comet.png)
+
+## Database Server Configuration
+
+```yaml
+  mongo-db:
+    image: mongo:3.6
+    hostname: mongo-db
+    container_name: db-mongo
+    ports:
+        - "27017:27017"
+    networks:
+        - default
+    command: --bind_ip_all --smallfiles
+```
+
+## STH-Comet Configuration 
+
+```yaml
+  sth-comet:
+    image: fiware/sth-comet
+    hostname: sth-comet
+    container_name: fiware-sth-comet
+    depends_on:
+        - mongo-db
+    networks:
+        - default
+    ports:
+        - "8666:8666"
+    environment:
+        - STH_HOST=0.0.0.0
+        - STH_PORT=8666
+        - DB_PREFIX=sth_
+        - DB_URI=mongo-db:27017
+        - LOGOPS_LEVEL=DEBUG
+```
+
+The `sth-comet` container is listening on one port: 
+
+* The Operations for port for STH-Comet - `8666` is where the service will be listening for notifications from the Orion context broker as well
+  as time based query requests from cUrl or Postman
+
+The `sth-comet` container is driven by environment variables as shown:
+
+| Key        |Value            |Description|
+|------------|-----------------|-----------|
+|STH_HOST    |`0.0.0.0`        | The address where STH-Comet is hosted - within this container it means all IPv4 addresses on the local machine  |
+|STH_PORT    |`8666`           | Operations Port that STH-Comet listens to, it is also used when subscribing to context data changes |
+|DB_PREFIX   |`sth_`           | The prefix added to each database entity if none is provided |
+|DB_URI      |`mongo-db:27017` | The  Mongo-DB server which STH-Comet will contact to persist historical context data |
+|LOGOPS_LEVEL|`DEBUG`          | The logging level for STH-Comet |
+
+
+## *minimal* configuration - Start up
+
+To start the system using the *minimal* configuration using **STH-Comet**  only, run the following command:
+
+```console
+./services sth-comet
+``` 
+
+
+# *formal* configuration (Cygnus + STH-Comet)
+
+The *formal* configuration is uses **Cygnus** to persist historic context data into a MongoDB database in the same manner as had been presented in the
+[previous tutorial](https://github.com/Fiware/tutorials.Historic-Context). The existing MongoDB instance (listening on the standard
+`27017` port) is used to hold data related to the **Orion Context Broker**, the **IoT Agent** and the historic
+context data persisted by **Cygnus**. **STH-Comet** is also attached to the same database to read data from it. The overall architecture can be seen below:
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/cygnus-sth-comet.png)
+
+## Database Server Configuration
+
+```yaml
+  mongo-db:
+    image: mongo:3.6
+    hostname: mongo-db
+    container_name: db-mongo
+    ports:
+        - "27017:27017"
+    networks:
+        - default
+    command: --bind_ip_all --smallfiles
+```
+
+## STH-Comet Configuration 
+
+```yaml
+  sth-comet:
+    image: fiware/sth-comet
+    hostname: sth-comet
+    container_name: fiware-sth-comet
+    depends_on:
+        - mongo-db
+    networks:
+        - default
+    ports:
+        - "8666:8666"
+    environment:
+        - STH_HOST=0.0.0.0
+        - STH_PORT=8666
+        - DB_PREFIX=sth_
+        - DB_URI=mongo-db:27017
+        - LOGOPS_LEVEL=DEBUG
+```
+
+## Cygnus Configuration 
+
+```yaml
+  cygnus:
+    image: fiware/cygnus-ngsi:latest
+    hostname: cygnus
+    container_name: fiware-cygnus
+    depends_on:
+        - mongo-db
+    networks:
+        - default
+    expose:
+        - "5080"
+    ports:
+        - "5050:5050"
+        - "5080:5080"
+    environment:
+        - "CYGNUS_MONGO_HOSTS=mongo-db:27017"
+        - "CYGNUS_LOG_LEVEL=DEBUG"
+        - "CYGNUS_SERVICE_PORT=5050"
+        - "CYGNUS_API_PORT=5080"
+```
+
+The `sth-comet` container is listening on one port: 
+
+* The Operations for port for STH-Comet - `8666` is where the service will be listening for time based query requests from cUrl or Postman
+
+The `sth-comet` container is driven by environment variables as shown:
+
+| Key        |Value            |Description|
+|------------|-----------------|-----------|
+|STH_HOST    |`0.0.0.0`        | The address where STH-Comet is hosted - within this container it means all IPv4 addresses on the local machine  |
+|STH_PORT    |`8666`           | Operations Port that STH-Comet listens to |
+|DB_PREFIX   |`sth_`           | The prefix added to each database entity if none is provided |
+|DB_URI      |`mongo-db:27017` | The  Mongo-DB server which STH-Comet will contact to persist historical context data |
+|LOGOPS_LEVEL|`DEBUG`          | The logging level for STH-Comet |
+
+The `cygnus` container is listening on two ports: 
+
+* The Subscription Port for Cygnus - `5050` is where the service will be listening for notifications from the Orion context broker
+* The Management Port for Cygnus - `5080` is exposed purely for tutorial access - so that cUrl or Postman can make provisioning commands
+  without being part of the same network.
+
+
+The `cygnus` container is driven by environment variables as shown:
+
+| Key                           |Value         |Description|
+|-------------------------------|--------------|-----------|
+|CYGNUS_MONGO_HOSTS         |`mongo-db:27017`  |  Comma separated list of Mongo-DB servers which Cygnus will contact to persist historical context data |
+|CYGNUS_LOG_LEVEL               |`DEBUG`       | The logging level for Cygnus |
+|CYGNUS_SERVICE_PORT            |`5050`        | Notification Port that Cygnus listens when subscribing to context data changes|
+|CYGNUS_API_PORT                |`5080`        | Port that Cygnus listens on for operational reasons |
+
+
+
+## *formal* configuration - Start up
+
+To start the system using the *formal* configuration using **Cygnus**  and **STH-Comet**, run the following command:
+
+```console
+./services cygnus
+``` 
 
 
 
