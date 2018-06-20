@@ -222,7 +222,7 @@ The `sth-comet` container is driven by environment variables as shown:
 | Key        |Value            |Description|
 |------------|-----------------|-----------|
 |STH_HOST    |`0.0.0.0`        | The address where STH-Comet is hosted - within this container it means all IPv4 addresses on the local machine  |
-|STH_PORT    |`8666`           | Operations Port that STH-Comet listens to, it is also used when subscribing to context data changes |
+|STH_PORT    |`8666`           | Operations Port that STH-Comet listens on, it is also used when subscribing to context data changes |
 |DB_PREFIX   |`sth_`           | The prefix added to each database entity if none is provided |
 |DB_URI      |`mongo-db:27017` | The  Mongo-DB server which STH-Comet will contact to persist historical context data |
 |LOGOPS_LEVEL|`DEBUG`          | The logging level for STH-Comet |
@@ -313,7 +313,7 @@ The `sth-comet` container is driven by environment variables as shown:
 | Key        |Value            |Description|
 |------------|-----------------|-----------|
 |STH_HOST    |`0.0.0.0`        | The address where STH-Comet is hosted - within this container it means all IPv4 addresses on the local machine  |
-|STH_PORT    |`8666`           | Operations Port that STH-Comet listens to |
+|STH_PORT    |`8666`           | Operations Port that STH-Comet listens on |
 |DB_PREFIX   |`sth_`           | The prefix added to each database entity if none is provided |
 |DB_URI      |`mongo-db:27017` | The  Mongo-DB server which STH-Comet will contact to persist historical context data |
 |LOGOPS_LEVEL|`DEBUG`          | The logging level for STH-Comet |
@@ -329,7 +329,7 @@ The `cygnus` container is driven by environment variables as shown:
 
 | Key                           |Value         |Description|
 |-------------------------------|--------------|-----------|
-|CYGNUS_MONGO_HOSTS         |`mongo-db:27017`  |  Comma separated list of Mongo-DB servers which Cygnus will contact to persist historical context data |
+|CYGNUS_MONGO_HOSTS         |`mongo-db:27017`  | Comma separated list of Mongo-DB servers which Cygnus will contact to persist historical context data |
 |CYGNUS_LOG_LEVEL               |`DEBUG`       | The logging level for Cygnus |
 |CYGNUS_SERVICE_PORT            |`5050`        | Notification Port that Cygnus listens when subscribing to context data changes|
 |CYGNUS_API_PORT                |`5080`        | Port that Cygnus listens on for operational reasons |
