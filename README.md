@@ -1,4 +1,4 @@
-![FIWARE Banner](https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png)
+[![FIWARE Banner](https://fiware.github.io/tutorials.Short-Term-History/img/Fiware.png)](https://www.fiware.org/developers)
 
 This tutorial is an introduction to [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) - a generic enabler which is used to retrieve trend data from a Mongo-DB database. The tutorial activates the IoT sensors connected in the [previous tutorial](https://github.com/Fiware/tutorials.IoT-Agent) and persists measurements from those sensors into a database and retrieves time-based aggregations of that data.
 
