@@ -20,19 +20,29 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
   * [Database Server Configuration](#database-server-configuration)
   * [STH-Comet Configuration](#sth-comet-configuration)
   * [*minimal* mode - Start up](#minimal-mode---start-up)
-    + [Checking the STH-Comet Service Health](#checking-the-sth-comet-service-health)
+    + [STH-Comet - Checking Service Health](#sth-comet---checking-service-health)
     + [Generating Context Data](#generating-context-data)
   * [*minimal* mode - Subscribing STH-Comet to Context Changes](#minimal-mode---subscribing-sth-comet-to-context-changes)
     + [STH-Comet - Aggregate Motion Sensor Count Events](#sth-comet---aggregate-motion-sensor-count-events)
     + [STH-Comet - Sample Lamp Luminosity](#sth-comet---sample-lamp-luminosity)
 - [Time Series Data Queries](#time-series-data-queries)
+  * [Prerequisites](#prerequisites-1)
+    + [Check that Subscriptions Exist](#check-that-subscriptions-exist)
+  * [Offsets, Limits and Pagination](#offsets-limits-and-pagination)
+    + [List the first N sampled values](#list-the-first-n-sampled-values)
+    + [List N sampled values at an Offset](#list-n-sampled-values-at-an-offset)
+    + [List the latest N sampled values](#list-the-latest-n-sampled-values)
+  * [Time Period Queries](#time-period-queries)
+    + [List the sum of values over a time period](#list-the-sum-of-values-over-a-time-period)
+    + [List the minimum of a value over a time period](#list-the-minimum-of-a-value-over-a-time-period)
+    + [List the maximum of a value over a time period](#list-the-maximum-of-a-value-over-a-time-period)
 - [*formal* mode (Cygnus + STH-Comet)](#formal-mode-cygnus--sth-comet)
   * [Database Server Configuration](#database-server-configuration-1)
   * [STH-Comet Configuration](#sth-comet-configuration-1)
   * [Cygnus Configuration](#cygnus-configuration)
   * [*formal* mode - Start up](#formal-mode---start-up)
-    + [Checking the STH-Comet Service Health](#checking-the-sth-comet-service-health-1)
-    + [Checking the Cygnus Service Health](#checking-the-cygnus-service-health)
+    + [STH-Comet - Checking Service Health](#sth-comet---checking-service-health-1)
+    + [Cygnus - Checking Service Health](#cygnus---checking-service-health)
     + [Generating Context Data](#generating-context-data-1)
   * [*formal* mode - Subscribing Cygnus to Context Changes](#formal-mode---subscribing-cygnus-to-context-changes)
     + [Cygnus - Aggregate Motion Sensor Count Events](#cygnus---aggregate-motion-sensor-count-events)
@@ -165,9 +175,12 @@ We will start up our services using a simple Bash script. Windows users should d
 
 # Start Up
 
-Before you start you should ensure that you have obtained or built the necessary Docker images locally. Please run
+Before you start you should ensure that you have obtained or built the necessary Docker images locally. Please clone the repository and create the necessary images by running the commands as shown:
 
 ```console
+git clone git@github.com:Fiware/tutorials.Short-Term-History.git
+cd tutorials.Short-Term-History
+
 ./services create
 ``` 
 
@@ -266,7 +279,7 @@ To start the system using the *minimal* configuration using **STH-Comet**  only,
 ``` 
 
 
-### Checking the STH-Comet Service Health
+### STH-Comet - Checking Service Health
  
 Once STH-Comet is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
 If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
@@ -337,18 +350,22 @@ curl -iX POST \
   -H 'fiware-service: openiot' \
   -H 'fiware-servicepath: /' \
   -d '{
-  "description": "Notify STH-Comet of all Motion Sensor context changes",
+  "description": "Notify STH-Comet of all Motion Sensor count changes",
   "subject": {
     "entities": [
       {
         "idPattern": "Motion.*"
       }
-    ]
+    ],
+    "condition": {"attrs": ["count"] }
   },
   "notification": {
     "http": {
       "url": "http://sth-comet:8666/notify"
     },
+    "attrs": [
+      "count"
+    ],
     "attrsFormat": "legacy"
   }
 }'
@@ -371,24 +388,32 @@ and including the `throttling` attribute in the request body.
 #### :three: Request:
 
 ```console
-curl -X POST \
+curl -iX POST \
   'http://localhost:1026/v2/subscriptions/' \
   -H 'Content-Type: application/json' \
   -H 'fiware-service: openiot' \
   -H 'fiware-servicepath: /' \
   -d '{
-  "description": "Notify Cygnus to sample Lamp changes every five seconds",
+  "description": "Notify Cygnus to sample Lamp luminosity every five seconds",
   "subject": {
     "entities": [
       {
         "idPattern": "Lamp.*"
       }
-    ]
+    ],
+    "condition": {
+      "attrs": [
+        "luminosity"
+      ]
+    }
   },
   "notification": {
     "http": {
-      "url": "http://cygnus:5050/notify"
+      "url": "http://sth-comet:8666/notify"
     },
+    "attrs": [
+      "luminosity"
+    ],
     "attrsFormat": "legacy"
   },
   "throttling": 5
@@ -397,13 +422,516 @@ curl -X POST \
 
 # Time Series Data Queries
 
-**STH-Comet**
+The queries in this section assume you have already connected **STH-Comet** using either *minimal* mode or *formal* mode and have collected some data.
+
+
+## Prerequisites
+
+**STH-Comet** will only be able to retieve time series data if sufficient data points have already been aggregated 
+within the system. Please ensure that the **Smart Door** has been unlocked and the **Smart Lamp** has been switched on 
+and the subscriptions have been registered. Data should be collected for at least a minute before the tutorial.
 
 
 
+### Check that Subscriptions Exist
+
+You can note that the `fiware-service` and `fiware-servicepath` headers must be set in the query and match the values used when setting up the subscription
+
+#### :four: Request:
+
+```console
+curl -X GET \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' 
+}'
+```
+
+The result should not be empty.
+
+## Offsets, Limits and Pagination
+
+### List the first N sampled values 
+
+This example shows the first 3 sampled `luminosity` values from `Lamp:001`. 
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+the `hLimit` parameter restricts the result to N values. `hOffset=0` will start with the first value.
+
+#### :five: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?hLimit=3&hOffset=0' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "luminosity",
+                        "values": [
+                            {
+                                "recvTime": "2018-06-21T12:20:19.841Z",
+                                "attrType": "Integer",
+                                "attrValue": "1972"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:20:20.819Z",
+                                "attrType": "Integer",
+                                "attrValue": "1982"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:20:29.923Z",
+                                "attrType": "Integer",
+                                "attrValue": "1937"
+                            }
+                        ]
+                    }
+                ],
+                "id": "Lamp:001",
+                "isPattern": false,
+                "type": "Lamp"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
+
+### List N sampled values at an Offset
+
+This example shows the fourth, fifth and sixth sampled `count` values from `Motion:001`. 
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+the `hLimit` parameter restricts the result to N values. 
+Setting `hOffset` to a non-zero value will start from the Nth measurement
+
+#### :six: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?hLimit=3&hOffset=3' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "count",
+                        "values": [
+                            {
+                                "recvTime": "2018-06-21T12:37:00.358Z",
+                                "attrType": "Integer",
+                                "attrValue": "1"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:37:01.368Z",
+                                "attrType": "Integer",
+                                "attrValue": "0"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:37:07.461Z",
+                                "attrType": "Integer",
+                                "attrValue": "1"
+                            }
+                        ]
+                    }
+                ],
+                "id": "Motion:001",
+                "isPattern": false,
+                "type": "Motion"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
+
+### List the latest N sampled values 
+
+This example shows latest three sampled `count` values from `Motion:001`. 
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+if the `lastN` parameter is set, the result will return the N latest measurements only. 
+
+#### :seven: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?lastN=3' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "count",
+                        "values": [
+                            {
+                                "recvTime": "2018-06-21T12:47:28.377Z",
+                                "attrType": "Integer",
+                                "attrValue": "0"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:48:08.930Z",
+                                "attrType": "Integer",
+                                "attrValue": "1"
+                            },
+                            {
+                                "recvTime": "2018-06-21T12:48:13.989Z",
+                                "attrType": "Integer",
+                                "attrValue": "0"
+                            }
+                        ]
+                    }
+                ],
+                "id": "Motion:001",
+                "isPattern": false,
+                "type": "Motion"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
+
+
+##  Time Period Queries
+
+
+### List the sum of values over a time period
+
+This example shows total `count` values from `Motion:001` over each minute
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+The `aggrMethod` parameter determines the type of aggregation to perform over the time series, 
+the `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. 
+
+Always select the most appropiate time period based on the frequency of your data collection.
+`minute` has been selected because the `Motion:001` is firing a few times within each minute.
+
+#### :eight: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?aggrMethod=sum&aggrPeriod=minute' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "count",
+                        "values": [
+                            {
+                                "_id": {
+                                    "attrName": "count",
+                                    "origin": "2018-06-21T12:00:00.000Z",
+                                    "resolution": "minute"
+                                },
+                                "points": [
+                                    {
+                                        "offset": 37,
+                                        "samples": 3,
+                                        "sum": 1
+                                    },
+                                    {
+                                        "offset": 38,
+                                        "samples": 12,
+                                        "sum": 6
+                                    },
+                                    {
+                                        "offset": 39,
+                                        "samples": 7,
+                                        "sum": 4
+                                    }, ...etc
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "id": "Motion:001",
+                "isPattern": false,
+                "type": "Motion"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
+
+Querying for the mean value within a time period is not directly supported.
+
+This example shows sum of `luminosity` values from `Lamp:001` over each minute.
+When combined with the number of samples the within the time period an average can be calculated from the data.
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+The `aggrMethod` parameter determines the type of aggregation to perform over the time series, 
+the `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. 
+
+
+#### :nine: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=sum&aggrPeriod=minute' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "luminosity",
+                        "values": [
+                            {
+                                "_id": {
+                                    "attrName": "luminosity",
+                                    "origin": "2018-06-21T12:00:00.000Z",
+                                    "resolution": "minute"
+                                },
+                                "points": [
+                                    {
+                                        "offset": 20,
+                                        "samples": 9,
+                                        "sum": 17382
+                                    },
+                                    {
+                                        "offset": 21,
+                                        "samples": 8,
+                                        "sum": 15655
+                                    },
+                                    {
+                                        "offset": 22,
+                                        "samples": 5,
+                                        "sum": 9630
+                                    },  ...etc
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "id": "Lamp:001",
+                "isPattern": false,
+                "type": "Lamp"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
 
 
 
+### List the minimum of a value over a time period
+
+This example shows minimum `luminosity` values from `Lamp:001` over each minute
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+The `aggrMethod` parameter determines the type of aggregation to perform over the time series, 
+the `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. 
+
+The luminocity of the **Smart Lamp** is continually changing and therefore tracking the minimum value makes sense.
+The **Motion Sensor** is not suitable for this as it only offers binary values.
+
+#### :one::zero: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=min&aggrPeriod=minute' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "luminosity",
+                        "values": [
+                            {
+                                "_id": {
+                                    "attrName": "luminosity",
+                                    "origin": "2018-06-21T12:00:00.000Z",
+                                    "resolution": "minute"
+                                },
+                                "points": [
+                                    {
+                                        "offset": 20,
+                                        "samples": 9,
+                                        "min": 1793
+                                    },
+                                    {
+                                        "offset": 21,
+                                        "samples": 8,
+                                        "min": 1819
+                                    },
+                                    {
+                                        "offset": 22,
+                                        "samples": 5,
+                                        "min": 1855
+                                    }, ..etc
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "id": "Lamp:001",
+                "isPattern": false,
+                "type": "Lamp"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
+
+### List the maximum of a value over a time period
+
+This example shows maximum `luminosity` values from `Lamp:001` over each minute
+
+To obtain the short term history of a context entity attribute, send a GET request to
+`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+
+The `aggrMethod` parameter determines the type of aggregation to perform over the time series, 
+the `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. 
+
+
+#### :one::one: Request:
+
+```console
+curl -X GET \
+  'http://localhost:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=max&aggrPeriod=minute' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+```
+
+
+#### Response:
+
+```json
+{
+    "contextResponses": [
+        {
+            "contextElement": {
+                "attributes": [
+                    {
+                        "name": "luminosity",
+                        "values": [
+                            {
+                                "_id": {
+                                    "attrName": "luminosity",
+                                    "origin": "2018-06-21T12:00:00.000Z",
+                                    "resolution": "minute"
+                                },
+                                "points": [
+                                    {
+                                        "offset": 20,
+                                        "samples": 9,
+                                        "max": 2005
+                                    },
+                                    {
+                                        "offset": 21,
+                                        "samples": 8,
+                                        "max": 2006
+                                    },
+                                    {
+                                        "offset": 22,
+                                        "samples": 5,
+                                        "max": 1988
+                                    }, ...etc
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "id": "Lamp:001",
+                "isPattern": false,
+                "type": "Lamp"
+            },
+            "statusCode": {
+                "code": "200",
+                "reasonPhrase": "OK"
+            }
+        }
+    ]
+}
+```
 
 
 
@@ -520,13 +1048,13 @@ To start the system using the *formal* configuration using **Cygnus**  and **STH
 ``` 
 
 
-### Checking the STH-Comet Service Health
+### STH-Comet - Checking Service Health
  
 Once **STH-Comet** is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
 If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
 
 
-#### Request:
+#### :one::two: Request:
 
 ```console
 curl -X GET \
@@ -543,12 +1071,12 @@ The response will look similar to the following:
 }
 ```
 
-### Checking the Cygnus Service Health
+### Cygnus - Checking Service Health
  
 Once **Cygnus** is running, you can check the status by making an HTTP request to the exposed `CYGNUS_API_PORT` port. 
 If the response is blank, this is usually because **Cygnus** is not running or is listening on another port.
 
-#### Request:
+#### :one::three: Request:
 
 ```console
 curl -X GET \
@@ -605,7 +1133,7 @@ This is done by making a POST request to the `/v2/subscription` endpoint of the 
 * The notification `url` must match the configured `CYGNUS_API_PORT`
 * The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.
 
-#### Request:
+#### :one::four: Request:
 
 ```console
 curl -iX POST \
@@ -614,18 +1142,26 @@ curl -iX POST \
   -H 'fiware-service: openiot' \
   -H 'fiware-servicepath: /' \
   -d '{
-  "description": "Notify Cygnus of all Motion Sensor context changes",
+  "description": "Notify Cygnus of all Motion Sensor count changes",
   "subject": {
     "entities": [
       {
         "idPattern": "Motion.*"
       }
-    ]
+    ],
+    "condition": {
+      "attrs": [
+        "count"
+      ]
+    }
   },
   "notification": {
     "http": {
       "url": "http://cygnus:5050/notify"
     },
+    "attrs": [
+      "count"
+    ],
     "attrsFormat": "legacy"
   }
 }'
@@ -645,27 +1181,35 @@ and including the `throttling` attribute in the request body.
 * The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.
 * The `throttling` value defines the rate that changes are sampled.
 
-#### Request:
+#### :one::five: Request:
 
 ```console
-curl -X POST \
+curl -iX POST \
   'http://localhost:1026/v2/subscriptions/' \
   -H 'Content-Type: application/json' \
   -H 'fiware-service: openiot' \
   -H 'fiware-servicepath: /' \
   -d '{
-  "description": "Notify Cygnus to sample Lamp changes every five seconds",
+  "description": "Notify Cygnus to sample Lamp luminosity every five seconds",
   "subject": {
     "entities": [
       {
         "idPattern": "Lamp.*"
       }
-    ]
+    ],
+    "condition": {
+      "attrs": [
+        "luminosity"
+      ]
+    }
   },
   "notification": {
     "http": {
       "url": "http://cygnus:5050/notify"
     },
+    "attrs": [
+      "luminosity"
+    ],
     "attrsFormat": "legacy"
   },
   "throttling": 5

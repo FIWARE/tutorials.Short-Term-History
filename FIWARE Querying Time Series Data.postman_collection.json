@@ -31,7 +31,7 @@
 					"response": []
 				},
 				{
-					"name": "Orion - notify  STH-Comet - Aggregate Motion Sensor Count Events",
+					"name": "Orion - STH-Comet - Aggregate Motion Sensor Count Events",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify STH-Comet of all Motion Sensor context changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  }\n}"
+							"raw": "{\n  \"description\": \"Notify STH-Comet of all Motion Sensor count changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"count\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrs\": [\n      \"count\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  }\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -64,12 +64,12 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format."
 					},
 					"response": []
 				},
 				{
-					"name": "Orion - notify STH-Comet - Sample Lamp Luminosity",
+					"name": "Orion - STH-Comet - Sample Lamp Luminosity",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -88,7 +88,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify STH-Comet to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
+							"raw": "{\n  \"description\": \"Notify STH-Comet to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"luminosity\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrs\": [\n      \"luminosity\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -102,7 +102,7 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\nThe luminocity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled."
 					},
 					"response": []
 				}
@@ -176,7 +176,7 @@
 					"response": []
 				},
 				{
-					"name": "Orion - notify Cygnus - Aggregate Motion Sensor Count Events",
+					"name": "Orion - Cygnus - Aggregate Motion Sensor Count Events",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -195,7 +195,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify Cygnus of all Motion Sensor context changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  }\n}"
+							"raw": "{\n  \"description\": \"Notify Cygnus of all Motion Sensor count changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"count\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrs\": [\n      \"count\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  }\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -209,12 +209,12 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\n\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\n\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format."
 					},
 					"response": []
 				},
 				{
-					"name": "Orion - notify Cygnus - Sample Lamp Luminosity",
+					"name": "Orion - Cygnus - Sample Lamp Luminosity",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -233,7 +233,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify STH-Comet to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ]\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://sth-comet:8666/notify\"\n    },\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
+							"raw": "{\n  \"description\": \"Notify Cygnus to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"luminosity\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrs\": [\n      \"luminosity\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -247,7 +247,7 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminocity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled.\n\nAs you can see, the database used to persist context data has no impact on the details of the subscription. It is the same for each database."
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled."
 					},
 					"response": []
 				}
@@ -280,13 +280,14 @@
 			"description": "The queries in this section assume you have already connected **STH-Comet** using either *minimal* mode or *formal* mode and have collected some data.",
 			"item": [
 				{
-					"name": "First",
+					"name": "List  the first N Sampled Values",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -327,18 +328,20 @@
 									"description": "The pagination offset"
 								}
 							]
-						}
+						},
+						"description": "This example shows the first 3 sampled `luminosity` values from `Lamp:001`. \n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nthe `hLimit` parameter restricts the result to N values. `hOffset=0` will start with the first value."
 					},
 					"response": []
 				},
 				{
-					"name": "Offset",
+					"name": "List N Sampled Values at an Offset",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -379,18 +382,20 @@
 									"description": "The pagination offset"
 								}
 							]
-						}
+						},
+						"description": "This example shows the fourth, fifth and sixth sampled `count` values from `Motion:001`. \n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nthe `hLimit` parameter restricts the result to N values. \nSetting `hOffset` to a non-zero value will start from the Nth measurement"
 					},
 					"response": []
 				},
 				{
-					"name": "Last",
+					"name": "List the latest N sampled Values",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -426,18 +431,20 @@
 									"description": "The number of entries to return"
 								}
 							]
-						}
+						},
+						"description": "This example shows latest three sampled `count` values from `Motion:001`. \n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nif the `lastN` parameter is set, the result will return the N latest measurements only."
 					},
 					"response": []
 				},
 				{
-					"name": "Sum",
+					"name": "List the Sum of Values over a time period",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -488,18 +495,20 @@
 									"disabled": true
 								}
 							]
-						}
+						},
+						"description": "This example shows total `count` values from `Motion:001` over each minute\n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nThe `aggrMethod` parameter determines the type of aggregation to perform over the time series, \nthe `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. \n\nAlways select the most appropiate time period based on the frequency of your data collection.\n`minute` has been selected because the `Motion:001` is firing a few times within each minute."
 					},
 					"response": []
 				},
 				{
-					"name": "Min",
+					"name": "List the Minimum Values over a time period",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -550,18 +559,20 @@
 									"disabled": true
 								}
 							]
-						}
+						},
+						"description": "This example shows minimum `luminosity` values from `Lamp:001` over each minute\n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nThe `aggrMethod` parameter determines the type of aggregation to perform over the time series, \nthe `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. \n\nThe luminocity of the **Smart Lamp** is continually changing and therefore tracking the minimum value makes sense.\nThe **Motion Sensor** is not suitable for this as it only offers binary values."
 					},
 					"response": []
 				},
 				{
-					"name": "Max",
+					"name": "List the Maximum Values over a time period",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -612,18 +623,20 @@
 									"disabled": true
 								}
 							]
-						}
+						},
+						"description": "This example shows maximum `luminosity` values from `Lamp:001` over each minute\n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nThe `aggrMethod` parameter determines the type of aggregation to perform over the time series, \nthe `aggrPeriod` is one of `second`, `minute`, `hour` or `day`."
 					},
 					"response": []
 				},
 				{
-					"name": "sum",
+					"name": "List Average Values over a time period",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"disabled": true
 							},
 							{
 								"key": "fiware-service",
@@ -674,7 +687,8 @@
 									"disabled": true
 								}
 							]
-						}
+						},
+						"description": "Querying for the mean value within a time period is not directly supported.\nThis example shows sum of `luminosity` values from `Lamp:001` over each minute.\nWhen combined with the number of samples the within the time period an average can be calculated from the data.\n\nTo obtain the short term history of a context entity attribute, send a GET request to\n`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`\n\nThe `aggrMethod` parameter determines the type of aggregation to perform over the time series, \nthe `aggrPeriod` is one of `second`, `minute`, `hour` or `day`."
 					},
 					"response": []
 				}
@@ -727,21 +741,21 @@
 	],
 	"variable": [
 		{
-			"id": "91217627-e64f-4a4a-84f1-2150deceacfc",
+			"id": "98748003-1186-4d8f-9104-a4157004bd9a",
 			"key": "orion",
 			"value": "localhost:1026",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "b7302181-348a-42a4-9b50-077e10348702",
+			"id": "0e4e9b51-67fc-471f-bc13-225e24c3b758",
 			"key": "cygnus",
 			"value": "localhost:5080",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "5370618b-4f60-47eb-9fd6-7746949d884b",
+			"id": "46add6eb-29f2-4abf-807d-6573b9980f39",
 			"key": "sth-comet",
 			"value": "localhost:8666",
 			"type": "string",
