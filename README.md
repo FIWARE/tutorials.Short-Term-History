@@ -6,6 +6,7 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
+* このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
 
 # Contents
 
@@ -76,7 +77,7 @@ Of the two modes of operation, the *formal* mode is more flexible, but *minimal*
 |                                                         | *minimal* mode                | *formal* mode              |
 |---------------------------------------------------------|-------------------------------|----------------------------|
 | Is the system easy to set-up  properly?                 | Only one configuration supported - Easy to set up                | Highly configurable - Complex to set up          |
-| Which component is responsible for a data persistance?  | **STH-Comet**                 | **Cygnus**                 |
+| Which component is responsible for a data persistence?  | **STH-Comet**                 | **Cygnus**                 |
 | What is the role of **STH-Comet**?                      | Reading and writing data      | Data Read only             |
 | What is the role of **Cygnus**?                         | Not Used                      | Data Write only            |
 | Where is the data aggregated?                           | Mongo-DB database connected to **STH-Comet** only| Mongo-DB database connected to both **Cygnus** and **STH-Comet** |
@@ -93,7 +94,7 @@ The appropriate use of time series data analysis will depend on your use case an
 * What was the average measurement of a device within a given time period?
 * What was the sum of the measurements sent by a device within a given time period?
 
-It can also be used to reduce the signficance of each individual data point to exclude outliers by smoothing.
+It can also be used to reduce the significance of each individual data point to exclude outliers by smoothing.
 
 
 
@@ -132,7 +133,7 @@ Therefore the overall architecture will consist of the following elements:
   * Used by the **IoT Agent** to hold device information such as device URLs and Keys
   * Used as a data sink to hold time-based historical context data
      + In *minimal* mode - this is read and populated by **STH-Comet** 
-     + In *formal* mode - this is populated by **Cygnus**  and read by **STH-Comet** 
+     + In *formal* mode - this is populated by **Cygnus** and read by **STH-Comet** 
 * Three **Context Providers**:
   * The **Stock Management Frontend** is not used in this tutorial. It does the following:
     + Display store information and allow users to interact with the dummy IoT devices
@@ -272,7 +273,7 @@ The `sth-comet` container is driven by environment variables as shown:
 
 ## *minimal* mode - Start up
 
-To start the system using the *minimal* configuration using **STH-Comet**  only, run the following command:
+To start the system using the *minimal* configuration using **STH-Comet** only, run the following command:
 
 ```console
 ./services sth-comet
@@ -281,7 +282,7 @@ To start the system using the *minimal* configuration using **STH-Comet**  only,
 
 ### STH-Comet - Checking Service Health
  
-Once STH-Comet is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
+Once STH-Comet is running, you can check the status by making an HTTP request to the exposed `STH_PORT` port. 
 If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
 
 
@@ -325,9 +326,9 @@ be seen on the same page:
 
 ## *minimal* mode - Subscribing STH-Comet to Context Changes
 
-Once a dynamic context system is up and running, under minimal mode,  **STH-Comet**  needs to be informed of changes in context.
+Once a dynamic context system is up and running, under minimal mode, **STH-Comet** needs to be informed of changes in context.
 Therefore we need to set up a subscription in the **Orion Context Broker** to notify **STH-Comet** of these changes. The details
-of tht subscription will differ dependent upon the device being monitored and the sampling rate.
+of the subscription will differ dependent upon the device being monitored and the sampling rate.
 
 ### STH-Comet - Aggregate Motion Sensor Count Events
 
@@ -427,7 +428,7 @@ The queries in this section assume you have already connected **STH-Comet** usin
 
 ## Prerequisites
 
-**STH-Comet** will only be able to retieve time series data if sufficient data points have already been aggregated 
+**STH-Comet** will only be able to retrieve time series data if sufficient data points have already been aggregated 
 within the system. Please ensure that the **Smart Door** has been unlocked and the **Smart Lamp** has been switched on 
 and the subscriptions have been registered. Data should be collected for at least a minute before the tutorial.
 
@@ -581,7 +582,7 @@ This example shows latest three sampled `count` values from `Motion:001`.
 To obtain the short term history of a context entity attribute, send a GET request to
 `../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
 
-if the `lastN` parameter is set, the result will return the N latest measurements only. 
+If the `lastN` parameter is set, the result will return the N latest measurements only. 
 
 #### :seven: Request:
 
@@ -649,7 +650,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 The `aggrMethod` parameter determines the type of aggregation to perform over the time series, 
 the `aggrPeriod` is one of `second`, `minute`, `hour` or `day`. 
 
-Always select the most appropiate time period based on the frequency of your data collection.
+Always select the most appropriate time period based on the frequency of your data collection.
 `minute` has been selected because the `Motion:001` is firing a few times within each minute.
 
 #### :eight: Request:
@@ -1041,7 +1042,7 @@ The `cygnus` container is driven by environment variables as shown:
 
 ## *formal* mode - Start up
 
-To start the system using the *formal* configuration using **Cygnus**  and **STH-Comet**, run the following command:
+To start the system using the *formal* configuration using **Cygnus** and **STH-Comet**, run the following command:
 
 ```console
 ./services cygnus
@@ -1050,7 +1051,7 @@ To start the system using the *formal* configuration using **Cygnus**  and **STH
 
 ### STH-Comet - Checking Service Health
  
-Once **STH-Comet** is running, You can check the status by making an HTTP request to the exposed `STH_PORT` port. 
+Once **STH-Comet** is running, you can check the status by making an HTTP request to the exposed `STH_PORT` port. 
 If the response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
 
 
@@ -1116,9 +1117,9 @@ be seen on the same page:
 
 ## *formal* mode - Subscribing Cygnus to Context Changes
 
-In *formal* mode, **Cygnus** is responsible for the persistance of historic context data.
+In *formal* mode, **Cygnus** is responsible for the persistence of historic context data.
 Once a dynamic context system is up and running, we need to set up a subscription in the **Orion Context Broker**
-to notify **Cygnus**  of changes in context - **STH-Comet** will only be used to read the persisted data.
+to notify **Cygnus** of changes in context - **STH-Comet** will only be used to read the persisted data.
 
 
 ### Cygnus - Aggregate Motion Sensor Count Events
@@ -1129,7 +1130,7 @@ every event to be able to aggregate the results.
 This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.
 
 * The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors
-* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.
+* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Motion Sensor** data changes.
 * The notification `url` must match the configured `CYGNUS_API_PORT`
 * The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.
 
