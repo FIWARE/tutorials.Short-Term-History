@@ -49,6 +49,7 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
     + [Cygnus - Aggregate Motion Sensor Count Events](#cygnus---aggregate-motion-sensor-count-events)
     + [Cygnus - Sample Lamp Luminosity](#cygnus---sample-lamp-luminosity)
   * [*formal* mode - Time Series Data Queries](#formal-mode---time-series-data-queries)
+- [Accessing Time Series Data Programmatically](#accessing-time-series-data-programmatically)
 - [Next Steps](#next-steps)
 
 
@@ -104,6 +105,12 @@ For the purpose of this tutorial, a series of dummy IoT devices have been create
 The state of each device can be seen on the UltraLight device monitor web-page found at: `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
+
+#### Device History
+
+Once **STH-Comet** has started aggregating data, the historical state of each device can be seen on the device history web-page found at: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/history-graphs.png)
 
 
 
@@ -1222,6 +1229,62 @@ curl -iX POST \
 When reading data from the database, there is no difference between *minimal* and *formal* mode, please refer to the previous
 section of this tutorial to request time-series data from **STH-Comet**
 
+# Accessing Time Series Data Programmatically
+
+Once the JSON response for a specified time series has been retrieved, displaying the raw data is of little 
+use to an end user.  It must be manipulated to be displayed in a bar chart, line graph or table listing. 
+This is not within the domain of **STH-Comet** as it not a graphical tool, but can be delegated to a
+mashup or dashboard component such as [Wirecloud](https://catalogue.fiware.org/enablers/application-mashup-wirecloud) or [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage)
+
+It can also be retrieved and displayed using a third-party graphing tool appropriate to your coding environment -
+for example [chartjs](http://www.chartjs.org/). An example of this can be found within the `history` controller in the [Git Repository](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/proxy/controllers/history.js)
+
+The basic processing consists of two steps - retrieval and attribute mapping, sample code can be seen below:
+
+```javascript
+function readLampLuminosity(id, aggMethod) {
+    return new Promise(function(resolve, reject) {
+      const url ="http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity"
+      const options = { method: 'GET',
+        url: url,
+        qs: { aggrMethod: aggMethod, aggrPeriod: 'minute' },
+        headers: 
+         { 
+           'fiware-servicepath': '/',
+           'fiware-service': 'openiot' } };
+
+    request(options, (error, response, body) => {
+        return error ? reject(error) : resolve(JSON.parse(body));
+    });
+  });
+}
+```
+
+```javascript
+function cometToTimeSeries(cometResponse, aggMethod){
+
+    const data = [];
+    const labels = [];
+
+    const values =  cometResponse.contextResponses[0].contextElement.attributes[0].values[0];
+      let date = moment(values._id.origin);
+    
+      _.forEach(values.points, element => {
+          data.push({ t: date.valueOf(), y: element[aggMethod] });
+          labels.push(date.format( 'HH:mm'));
+          date = date.clone().add(1, 'm');
+      });
+
+  return {
+    labels,
+    data
+  };
+}
+```
+
+The modified data is then passed to the front-end to be processed by the third-party graphing tool.
+The result is shown here: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
+
 # Next Steps
 
 Want to learn how to add more complexity to your application by adding advanced features?
@@ -1236,6 +1299,7 @@ You can find out by reading the other tutorials in this series:
 
 &nbsp; 201. [Introduction to IoT Sensors](https://github.com/Fiware/tutorials.IoT-Sensors)<br/>
 &nbsp; 202. [Provisioning an IoT Agent](https://github.com/Fiware/tutorials.IoT-Agent)<br/>
+&nbsp; 203. [IoT over MQTT](https://github.com/Fiware/tutorials.IoT-over-MQTT)<br/>
 &nbsp; 250. [Introduction to Fast-RTPS and Micro-RTPS ](https://github.com/Fiware/tutorials.Fast-RTPS-Micro-RTPS)<br/>
 
 &nbsp; 301. [Persisting Context Data](https://github.com/Fiware/tutorials.Historic-Context)<br/>

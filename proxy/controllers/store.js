@@ -151,14 +151,14 @@ function sendCommand(req) {
 		json: true 
 	};
 
-	console.log(options.url);
-
 	request(options,  error  => {
 		if (error) { 
 			debug(error);
 		}
 	});	
 }
+
+
 
 // This is a promise to make an HTTP PATCH request to the /v2/entities/<entity-id>/attr end point
 function updateExistingEntityAttributes(entityId, body, opts, headers = {}) {
