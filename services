@@ -18,10 +18,7 @@ loadData () {
 
 stoppingContainers () {
 	echo "Stopping containers"
-	docker-compose -f docker-compose/cygnus-sth-comet.yml -p fiware down
-	echo "Removing volumes"
-	docker volume prune --force
-	echo ""
+	docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware down -v --remove-orphans
 }
 
 if (( $# != 1 )); then
@@ -43,7 +40,7 @@ case "${command}" in
 		echo -e "\033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "\033[1;30mContext-Provider\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo ""
-		docker-compose -f docker-compose/sth-comet.yml -p fiware up -d --remove-orphans
+		docker-compose --log-level ERROR -f docker-compose/sth-comet.yml -p fiware up -d --remove-orphans
 		loadData
 		;;
      "cygnus")
@@ -55,7 +52,7 @@ case "${command}" in
 		echo -e "\033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "\033[1;30mContext-Provider\033[0m acts as a series of dummy IoT Sensors"
 		echo ""
-		docker-compose -f docker-compose/cygnus-sth-comet.yml -p fiware up -d --remove-orphans
+		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware up -d --remove-orphans
 		loadData
 		;;
 	"stop")
