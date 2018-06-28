@@ -9,7 +9,7 @@
 
 # 内容
 
-- [時系列データのクエリ](#querying-time-series-data)
+- [時系列データのクエリ (Mongo-DB)](#querying-time-series-data-mongo-db)
   * [時系列データの解析](#analyzing-time-series-data)
 - [アーキテクチャ](#architecture)
 - [前提条件](#prerequisites)
@@ -48,20 +48,21 @@
     + [Cygnus - モーション・センサのカウント・イベントの集計](#cygnus---aggregate-motion-sensor-count-events)
     + [Cygnus - ランプの明度のサンプリング](#cygnus---sample-lamp-luminosity)
   * [*正規*モード - 時系列データのクエリ](#formal-mode---time-series-data-queries)
+- [プログラミングによる時系列データへのアクセス](#accessing-time-series-data-programmatically)
 - [次のステップ](#next-steps)
 
 
-<a name="querying-time-series-data"></a>
-# 時系列データのクエリ
+<a name="querying-time-series-data-mongo-db"></a>
+# 時系列データのクエリ (Mongo-DB)
 
 > "The *"moment"* has no yesterday or tomorrow. It is not the result of thought and therefore has no time."
 >
 > — Bruce Lee
 
 
-FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus** Generic Enabler の組み合わせを使用して、履歴コンテキスト・データをデータベースに保存できます。これにより、選択したデータベースに一連のデータ・ポイントが書き込まれます。各タイムスタンプ付きデータ・ポイントは、所与の瞬間におけるコンテキスト・エンティティの状態を表します。個々のデータ点はそれ自体では無意味であり、最大値、最小値および傾向などの意味のある統計値が観測されることができるのは、一連のデータ点を組み合わせたときだけです。
+FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus** Generic Enabler の組み合わせを使用して、履歴コンテキスト・データを Mongo-DB のようなデータベースに保存できます。これにより、選択したデータベースに一連のデータ・ポイントが書き込まれます。各タイムスタンプ付きデータ・ポイントは、所与の瞬間におけるコンテキスト・エンティティの状態を表します。個々のデータ点はそれ自体では無意味であり、最大値、最小値および傾向などの意味のある統計値が観測されることができるのは、一連のデータ点を組み合わせたときだけです。
 
-傾向データの作成と分析は、コンテキスト駆動型システムの一般的な要件です。したがって、FIWARE プラットフォームは、時系列データの永続化と解釈の問題に特化した Generic Enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) を提供します。**STH-Comet** 自体は2つのモードで使用できます : 
+傾向データの作成と分析は、コンテキスト駆動型システムの一般的な要件です。したがって、FIWARE プラットフォームは、Mong-DB に永続化された時系列データの永続化と解釈の問題に特化した Generic Enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) を提供します。**STH-Comet** 自体は2つのモードで使用できます : 
 
 * *最小*モードでは、**STH-Comet**は、リクエストされたときに、データの収集とデータの解釈の両方に責任があります
 * *正規*モードでは、データの収集が **Cygnus** に委任され、**STH-Comet** は、単に既存のデータベースから読み込みます
@@ -98,6 +99,12 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 このチュートリアルの目的のために、一連のダミー IoT デバイスが作成され、Context Broker に接続されます。使用しているアーキテクチャとプロトコルの詳細は、[IoT Sensors チュートリアル](https://github.com/Fiware/tutorials.IoT-Sensors)にあります。各デバイスの状態は、次の UltraLight デバイス・モニタの Web ページで確認できます : `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
+
+#### デバイス履歴
+
+**STH-Comet** がデータの集計を開始すると、各デバイスの履歴の状態は、デバイス履歴の Web ページに表示されます : `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
+
+![](https://fiware.github.io/tutorials.Short-Term-History/img/history-graphs.png)
 
 
 <a name="architecture"></a>
@@ -361,6 +368,9 @@ curl -iX POST \
 * 通知 `url` は設定された `STH_PORT` と一致する必要があります
 * **STH-Comet** は、現在、古い NGSI v1 形式の通知のみを受け付けるため、`attrsFormat=legacy` が必要です
 * `throttling` 値は、変更がサンプリングされる割合を定義します
+
+> :information_source: **注 :** サブスクリプションの throttling が順次更新として期待どおりに行われないため、注意が必要です。
+> たとえば、Ultra Lightデバイスが測定値 `t|20|l|1200` を送信すると、それは単一アトミックのコミットになり、両方の属性は **STH-Comet** への通知に含まれます。しかしながら、デバイスが `t|20#l|1200` を送信している場合、これは2つのアトミック・コミットとして扱われます。`t` の最初の変更に対して通知が送られますが、エンティティがサンプリング期間内に最近更新されたので、`l`の第2の変更は無視されます。
 
 #### :three: リクエスト :
 
@@ -1183,6 +1193,58 @@ curl -iX POST \
 ## *正規*モード - 時系列データのクエリ
 
 データベースからデータを読み込む場合、*最小*と*正規*のモードに違いはありません。このチュートリアルの前のセクションを参照して、**STH-Comet** から時系列データをリクエストしてください
+
+<a name="accessing-time-series-data-programmatically"></a>
+# プログラミングによる時系列データへのアクセス
+
+指定された時系列の JSON レスポンスが取得されると、生のデータを表示することはエンドユーザにとってほとんど役に立ちません。これは、棒グラフ、折れ線グラフ、またはテーブルリストに表示するために操作をする必要があります。これはグラフィカル・ツールではないため、**STH-Comet** の範疇ではありませんが、[Wirecloud](https://catalogue.fiware.org/enablers/application-mashup-wirecloud) や [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage) などのマッシュアップやダッシュボード・コンポーネントに委任できます。
+
+また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索して表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。これの例は [Git Repository](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/proxy/controllers/history.js) の `history` コントローラ内にあります。
+
+基本的な処理は、検索と属性マッピングの2つのステップで構成されています。サンプルコードは以下のとおりです :
+
+```javascript
+function readLampLuminosity(id, aggMethod) {
+    return new Promise(function(resolve, reject) {
+      const url ="http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity"
+      const options = { method: 'GET',
+        url: url,
+        qs: { aggrMethod: aggMethod, aggrPeriod: 'minute' },
+        headers: 
+         { 
+           'fiware-servicepath': '/',
+           'fiware-service': 'openiot' } };
+
+    request(options, (error, response, body) => {
+        return error ? reject(error) : resolve(JSON.parse(body));
+    });
+  });
+}
+```
+
+```javascript
+function cometToTimeSeries(cometResponse, aggMethod){
+
+    const data = [];
+    const labels = [];
+
+    const values =  cometResponse.contextResponses[0].contextElement.attributes[0].values[0];
+      let date = moment(values._id.origin);
+    
+      _.forEach(values.points, element => {
+          data.push({ t: date.valueOf(), y: element[aggMethod] });
+          labels.push(date.format( 'HH:mm'));
+          date = date.clone().add(1, 'm');
+      });
+
+  return {
+    labels,
+    data
+  };
+}
+```
+
+変更されたデータは、フロントエンドに渡され、サードパーティのグラフ作成ツールによって処理されます。結果は次のとおりです : `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
 
 <a name="next-steps"></a>
 # 次のステップ
