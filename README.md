@@ -10,7 +10,7 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 
 # Contents
 
-- [Querying Time Series Data](#querying-time-series-data)
+- [Querying Time Series Data (Mongo-DB)](#querying-time-series-data-mongo-db)
   * [Analyzing time series data](#analyzing-time-series-data)
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
@@ -53,21 +53,21 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 - [Next Steps](#next-steps)
 
 
-# Querying Time Series Data
+# Querying Time Series Data (Mongo-DB)
 
 > "The *"moment"* has no yesterday or tomorrow. It is not the result of thought and therefore has no time."
 >
 > — Bruce Lee
 
 
-Within the FIWARE platform, historical context data can be persisted to a database using a combination of the **Orion 
-Context Broker** and the **Cygnus** generic enabler. This results in a series of data points being written to the
-database of your choice. Each time-stamped data point represents the state of context entities at a given moment in time.
-The individual data points are relatively meaningless on their own, it is only through combining a series data points
-that meaningful statistics such as maxima, minima and trends can be observed.
+Within the FIWARE platform, historical context data can be persisted to a database (such as Mongo-DB) using a 
+combination of the **Orion Context Broker** and the **Cygnus** generic enabler. This results in a series of data 
+points being written to the database of your choice. Each time-stamped data point represents the state of context
+entities at a given moment in time. The individual data points are relatively meaningless on their own, it is only
+through combining a series data points that meaningful statistics such as maxima, minima and trends can be observed.
 
 The creation and analysis of trend data is a common requirement of context-driven systems - therefore the FIWARE platform 
-offers a generic enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) specifically to deal with the issue of persisting and interpreting time series data. **STH-Comet** itself can be used in two modes:
+offers a generic enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) specifically to deal with the issue of persisting and interpreting time series data persisted into Mongo-DB. **STH-Comet** itself can be used in two modes:
 
 * In *minimal* mode, **STH-Comet** is responsible for both data collection and interpreting the data when requested
 * In *formal* mode, the collection of data is delegated to **Cygnus**, **STH-Comet** merely reads from an existing database.
@@ -392,6 +392,14 @@ and including the `throttling` attribute in the request body.
 * The notification `url` must match the configured `STH_PORT`
 * The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.
 * The `throttling` value defines the rate that changes are sampled.
+
+> :information_source: **Note:** Be careful when throttling subscriptions as sequential updates will not be persisted
+> as expected.
+>
+> For example if an UltraLight device sends the measurement `t|20|l|1200` it will be a single atomic commit and
+> both attributes will be included the notification to **STH-Comet** however is a device sends `t|20#l|1200`
+> this will be treated as two atomic commits - a notification will be sent for the first change in `t`, but the 
+> second change in `l` will be ignored as the entity has been recently updated within the sampling period.
 
 #### :three: Request:
 
@@ -1302,5 +1310,6 @@ You can find out by reading the other tutorials in this series:
 &nbsp; 203. [IoT over MQTT](https://github.com/Fiware/tutorials.IoT-over-MQTT)<br/>
 &nbsp; 250. [Introduction to Fast-RTPS and Micro-RTPS ](https://github.com/Fiware/tutorials.Fast-RTPS-Micro-RTPS)<br/>
 
-&nbsp; 301. [Persisting Context Data](https://github.com/Fiware/tutorials.Historic-Context)<br/>
-&nbsp; 302. [Querying Time Series Data](https://github.com/Fiware/tutorials.Short-Term-History)<br/>
+&nbsp; 301. [Persisting Context Data (Mongo-DB, MySQL, PostgreSQL)](https://github.com/Fiware/tutorials.Historic-Context)<br/>
+&nbsp; 302. [Querying Time Series Data (Mongo-DB)](https://github.com/Fiware/tutorials.Short-Term-History)<br/>
+&nbsp; 303. [Querying Time Series Data (Crate-DB)](https://github.com/Fiware/tutorials.Time-Series-Data)<br/>
