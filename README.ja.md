@@ -185,7 +185,7 @@ cd tutorials.Short-Term-History
 >```
 
 
-その後、リポジトリ内で提供される [services](https://github.com/Fiware/tutorials.Historic-Context/blob/master/services) Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期化することができます :
+その後、リポジトリ内で提供される [services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期化することができます :
 
 ```console
 ./services <command>
