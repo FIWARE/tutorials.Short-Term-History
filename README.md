@@ -463,7 +463,58 @@ curl -X GET \
 }'
 ```
 
-The result should not be empty.
+#### Response:
+
+```json
+[
+    {
+        "id": "5b39e3c11615e2e55a8df103",
+        "description": "Notify STH-Comet of all Motion Sensor count changes",
+        "status": "active",
+        "subject": { ... ETC },
+        "notification": {
+            "timesSent": 6,
+            "lastNotification": "2018-07-02T08:36:04.00Z",
+            "attrs": ["count"],
+            "attrsFormat": "legacy",
+            "http": {"url": "http://sth-comet:8666/notify"},
+            "lastSuccess": "2018-07-02T08:36:04.00Z"
+        }
+    },
+    {
+        "id": "5b39e3c31615e2e55a8df104",
+        "description": "Notify STH-Comet to sample Lamp changes every five seconds",
+        "status": "active",
+        "subject": { ... ETC },
+        "notification": {
+            "timesSent": 4,
+            "lastNotification": "2018-07-02T08:36:00.00Z",
+            "attrs": ["luminosity"],
+            "attrsFormat": "legacy",
+            "http": {"url": "http://sth-comet:8666/notify"},
+            "lastSuccess": "2018-07-02T08:36:01.00Z"
+        },
+        "throttling": 5
+    }
+]
+```
+
+The result should not be empty. Within the `notification` section of the response, you can see several 
+additional `attributes` which describe the health of each subscription.
+
+If the criteria of the subscription have been met, `timesSent` should be greater than `0`.
+A zero value would indicate that the `subject` of the subscription is incorrect or the subscription 
+has created with the wrong `fiware-service-path` or `fiware-service` header
+
+The `lastNotification` should be a recent timestamp - if this is not the case, then the devices
+are not regularly sending data. Remember to unlock the **Smart Door** and switch on the **Smart Lamp**
+
+The `lastSuccess` should match the `lastNotification` date - if this is not the case 
+then **Cygnus**  or **STH Comet** are not receiving the subscription properly. Check that the host name
+and port are correct. 
+
+Finally, check that the `status` of the subscription is `active` - an expired subscription
+will not fire.
 
 ## Offsets, Limits and Pagination
 

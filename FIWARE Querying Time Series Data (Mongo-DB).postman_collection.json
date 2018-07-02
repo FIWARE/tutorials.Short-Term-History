@@ -105,6 +105,40 @@
 						"description": "Once a dynamic context system is up and running, we need to inform **STH-Comet** directly of changes in context.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the Orion Context Broker\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `STH_PORT`\n* The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled."
 					},
 					"response": []
+				},
+				{
+					"name": "Orion - STH-Comet Check Subscriptions are working",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "If the subscription have been created, you can check to see if they are firing by making a GET \nrequest to the `/v2/subscriptions` endpoint.\n\nWithin the `notification` section of the response, you can see several additional `attributes` which describe the health of the subscription\n\nIf the criteria of the subscription have been met, `timesSent` should be greater than `0`.\nA zero value would indicate that the `subject` of the subscription is incorrect or the subscription \nhas created with the wrong `fiware-service-path` or `fiware-service` header\n\nThe `lastNotification` should be a recent timestamp - if this is not the case, then the devices\nare not regularly sending data. Remember to unlock the **Smart Door** and switch on the **Smart Lamp**\n\nThe `lastSuccess` should match the `lastNotification` date - if this is not the case \nthen **STH-Comet** is not receiving the subscription properly. Check that the host name\nand port are correct. \n\nFinally, check that the `status` of the subscription is `active` - an expired subscription\nwill not fire."
+					},
+					"response": []
 				}
 			],
 			"event": [
@@ -156,7 +190,7 @@
 					"response": []
 				},
 				{
-					"name": "STH-Comet - Obtain version information Copy",
+					"name": "STH-Comet - Obtain version information",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -248,6 +282,40 @@
 							]
 						},
 						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled."
+					},
+					"response": []
+				},
+				{
+					"name": "Orion - Cygnus - Check Subscriptions are working",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "fiware-service",
+								"value": "openiot"
+							},
+							{
+								"key": "fiware-servicepath",
+								"value": "/"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{orion}}/v2/subscriptions/",
+							"protocol": "http",
+							"host": [
+								"{{orion}}"
+							],
+							"path": [
+								"v2",
+								"subscriptions",
+								""
+							]
+						},
+						"description": "If the subscriptions have been created, you can check to see if they is firing by making a GET \nrequest to the `/v2/subscriptions` endpoint.\n\nWithin the `notification` section of the response, you can see several additional `attributes` which describe the health of the subscription\n\nIf the criteria of the subscription have been met, `timesSent` should be greater than `0`.\nA zero value would indicate that the `subject` of the subscription is incorrect or the subscription \nhas created with the wrong `fiware-service-path` or `fiware-service` header\n\nThe `lastNotification` should be a recent timestamp - if this is not the case, then the devices\nare not regularly sending data. Remember to unlock the **Smart Door** and switch on the **Smart Lamp**\n\nThe `lastSuccess` should match the `lastNotification` date - if this is not the case \nthen **Cygnus** is not receiving the subscription properly. Check that the host name\nand port are correct. \n\nFinally, check that the `status` of the subscription is `active` - an expired subscription\nwill not fire."
 					},
 					"response": []
 				}
@@ -741,21 +809,21 @@
 	],
 	"variable": [
 		{
-			"id": "c0e91d79-89db-4d5f-8b05-42a4c6be7c14",
+			"id": "8af1d264-3504-4816-beb5-0e7c5c35bc07",
 			"key": "orion",
 			"value": "localhost:1026",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "2b7c032b-c631-42ec-9dfb-9f5e9bda50fb",
+			"id": "3f69d571-1634-473e-b13b-c9169c3bbe24",
 			"key": "cygnus",
 			"value": "localhost:5080",
 			"type": "string",
 			"description": ""
 		},
 		{
-			"id": "0e28a48e-cf39-482f-9412-599e00c07379",
+			"id": "e9cf294c-f277-4ca9-a715-fed64d6ee82c",
 			"key": "sth-comet",
 			"value": "localhost:8666",
 			"type": "string",
