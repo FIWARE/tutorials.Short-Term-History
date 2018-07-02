@@ -23,14 +23,14 @@ stoppingContainers () {
 
 if (( $# != 1 )); then
     echo "Illegal number of parameters"
-    echo "usage: services [cygnus|sth-comet|stop]"
+    echo "usage: services [create|cygnus|sth-comet|stop]"
     exit 1
 fi
 
 command="$1"
 case "${command}" in
 	"help")
-        echo "usage: services [cygnus|sth-comet|stop]"
+        echo "usage: services [create|cygnus|sth-comet|stop]"
         ;;
 	 "sth-comet")
 		stoppingContainers
@@ -71,6 +71,10 @@ case "${command}" in
 		docker pull fiware/sth-comet
 		echo "Recreate Context-Providers proxy"
 		docker build -t fiware/cp-web-app ./proxy
-		
+		;;
+	*)
+		echo "Command not Found."
+		echo "usage: services [create|cygnus|sth-comet|stop]"
+		exit 127;
 		;;
 esac
