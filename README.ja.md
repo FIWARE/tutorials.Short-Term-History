@@ -432,7 +432,52 @@ curl -X GET \
 }'
 ```
 
-結果は空であってはいけません。
+#### レスポンス :
+
+```json
+[
+    {
+        "id": "5b39e3c11615e2e55a8df103",
+        "description": "Notify STH-Comet of all Motion Sensor count changes",
+        "status": "active",
+        "subject": { ... ETC },
+        "notification": {
+            "timesSent": 6,
+            "lastNotification": "2018-07-02T08:36:04.00Z",
+            "attrs": ["count"],
+            "attrsFormat": "legacy",
+            "http": {"url": "http://sth-comet:8666/notify"},
+            "lastSuccess": "2018-07-02T08:36:04.00Z"
+        }
+    },
+    {
+        "id": "5b39e3c31615e2e55a8df104",
+        "description": "Notify STH-Comet to sample Lamp changes every five seconds",
+        "status": "active",
+        "subject": { ... ETC },
+        "notification": {
+            "timesSent": 4,
+            "lastNotification": "2018-07-02T08:36:00.00Z",
+            "attrs": ["luminosity"],
+            "attrsFormat": "legacy",
+            "http": {"url": "http://sth-comet:8666/notify"},
+            "lastSuccess": "2018-07-02T08:36:01.00Z"
+        },
+        "throttling": 5
+    }
+]
+```
+
+結果は空であってはいけません。 レスポンスの `notification` セクション内には、各サブスクリプションの健全性を表すいくつかの追加の `attributes` があります。
+
+サブスクリプションの基準が満たされている場合、`timesSent` は `0` より大きくなければなりません。
+ゼロの値は、サブスクリプションの `サブジェクト`が間違っているか、サブスクリプションが間違った `fiware-service-path` または `fiware-service` ヘッダで作成されたことを示します。
+
+`lastNotification` は最近のタイム・スタンプでなければなりません。そうでなければ、デバイスは定期的にデータを送信していません。 **スマート・ドア**のロックを解除し、**スマート・ランプ**をオンにすることを忘れないでください
+
+`lastSuccess` は `lastNotification` の日付と一致する必要があります。そうでない場合は、**Cygnus** または **STH Comet** はサブスクリプションを正しく受信していません。 ホスト名とポートが正しいことを確認してください。
+
+最後に、サブスクリプションの `status` が `active` であることを確認します。期限切れのサブスクリプションは起動しません。
 
 <a name="offsets-limits-and-pagination"></a>
 ## オフセット，制限，ページネーション
