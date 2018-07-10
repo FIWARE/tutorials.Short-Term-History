@@ -69,8 +69,8 @@ case "${command}" in
 		docker pull fiware/cygnus-ngsi
 		echo "Obtaining Latest STH-Comet"
 		docker pull fiware/sth-comet
-		echo "Recreate Context-Providers proxy"
-		docker build -t fiware/cp-web-app ./proxy
+		echo "Obtaining Tutorial Context-Provider"
+		docker pull fiware/tutorials.context-provider
 		;;
 	*)
 		echo "Command not Found."
