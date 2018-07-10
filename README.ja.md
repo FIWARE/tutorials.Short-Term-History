@@ -182,14 +182,6 @@ cd tutorials.Short-Term-History
 ./services create
 ``` 
 
->**注** `context-provider` イメージはまだ Docker hub にプッシュされていません。続行する前に Docker ソースをビルドできないと、次のエラーが発生します :
->
->```
->Pulling context-provider (fiware/cp-web-app:latest)...
->ERROR: The image for the service you're trying to recreate has been removed.
->```
-
-
 その後、リポジトリ内で提供される [services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期化することができます :
 
 ```console
