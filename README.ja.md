@@ -1241,12 +1241,12 @@ curl -iX POST \
 
 指定された時系列の JSON レスポンスが取得されると、生のデータを表示することはエンドユーザにとってほとんど役に立ちません。これは、棒グラフ、折れ線グラフ、またはテーブルリストに表示するために操作をする必要があります。これはグラフィカル・ツールではないため、**STH-Comet** の範疇ではありませんが、[Wirecloud](https://catalogue.fiware.org/enablers/application-mashup-wirecloud) や [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage) などのマッシュアップやダッシュボード・コンポーネントに委任できます。
 
-また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索して表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。これの例は [Git Repository](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/proxy/controllers/history.js) の `history` コントローラ内にあります。
+また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索して表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。これの例は [Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/controllers/history.js) の `history` コントローラ内にあります。
 
 基本的な処理は、検索と属性マッピングの2つのステップで構成されています。サンプルコードは以下のとおりです :
 
 ```javascript
-function readLampLuminosity(id, aggMethod) {
+function readCometLampLuminosity(id, aggMethod) {
     return new Promise(function(resolve, reject) {
       const url ="http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity"
       const options = { method: 'GET',
