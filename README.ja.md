@@ -67,7 +67,7 @@
 
 FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus** Generic Enabler の組み合わせを使用して、履歴コンテキスト・データを Mongo-DB のようなデータベースに保存できます。これにより、選択したデータベースに一連のデータ・ポイントが書き込まれます。各タイムスタンプ付きデータ・ポイントは、所与の瞬間におけるコンテキスト・エンティティの状態を表します。個々のデータ点はそれ自体では無意味であり、最大値、最小値および傾向などの意味のある統計値が観測されることができるのは、一連のデータ点を組み合わせたときだけです。
 
-傾向データの作成と分析は、コンテキスト駆動型システムの一般的な要件です。したがって、FIWARE プラットフォームは、Mong-DB に永続化された時系列データの永続化と解釈の問題に特化した Generic Enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) を提供します。**STH-Comet** 自体は2つのモードで使用できます : 
+傾向データの作成と分析は、コンテキスト駆動型システムの一般的な要件です。したがって、FIWARE プラットフォームは、Mong-DB に永続化された時系列データの永続化と解釈の問題に特化した Generic Enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) を提供します。**STH-Comet** 自体は2つのモードで使用できます :
 
 * *最小*モードでは、**STH-Comet**は、リクエストされたときに、データの収集とデータの解釈の両方に責任があります
 * *正規*モードでは、データの収集が **Cygnus** に委任され、**STH-Comet** は、単に既存のデータベースから読み込みます
@@ -122,14 +122,14 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 * 4つの **FIWARE Generic Enablers** :
   * FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してリクエストを受信します
   * FIWARE [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値を受信し、Context Broker の[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエストに変換してコンテキスト・エンティティの状態を変更します
-  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) は以下を行います : 
+  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) は以下を行います :
     + 時間ベースのデータ・クエリを解釈します
     + コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*最小*モードのみ)
   * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) は、コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*正規*モードのみ)
 
 > :information_source: **注:** : **Cygnus** は、**STH-Comet** が*正規*モードで設定されている場合にのみ使用されます。
 
-* [MongoDB](https://www.mongodb.com/) データベース : 
+* [MongoDB](https://www.mongodb.com/) データベース :
   * **Orion Context Broker**が、データ・エンティティ、サブスクリプション、レジストレーションなどのコンテキスト・データ情報を保持するために使用します
   * デバイスの URLs や Keys などのデバイス情報を保持するために **IoT Agent** によって使用されます
   * 時間ベースの履歴コンテキスト・データを保持するデータ・シンクとして使用されます
@@ -154,7 +154,7 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 # 前提条件
 
 <a name="docker-and-docker-compose"></a>
-## Docker と Docker Compose 
+## Docker と Docker Compose
 
 物事を単純にするために、両方のコンポーネントが [Docker](https://www.docker.com) を使用して実行されます。**Docker** は、さまざまコンポーネントをそれぞれの環境に分離することを可能にするコンテナ・テクノロジです。
 
@@ -162,7 +162,16 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 * Docker Mac にインストールするには、[こちら](https://docs.docker.com/docker-for-mac/)の手順に従ってください
 * Docker Linux にインストールするには、[こちら](https://docs.docker.com/install/)の手順に従ってください
 
-**Docker Compose** は、マルチコンテナ Docker アプリケーションを定義して実行するためのツールです。[YAML file](https://raw.githubusercontent.com/Fiware/tutorials.Getting-Started/master/docker-compose.yml) ファイルは、アプリケーションのために必要なサービスを構成するために使用します。つまり、すべてのコンテナ・サービスは1つのコマンドで呼び出すことができます。Docker Compose は、デフォルトで Docker for Windows とDocker for Mac の一部としてインストールされますが、Linux ユーザは[ここ](https://docs.docker.com/compose/install/)に記載されている手順に従う必要があります。
+**Docker Compose** は、マルチコンテナ Docker アプリケーションを定義して実行するためのツールです。[YAML file](https://github.com/Fiware/tutorials.Short-Term-History/tree/master/docker-compose) ファイルは、アプリケーションのために必要なサービスを構成するために使用します。つまり、すべてのコンテナ・サービスは1つのコマンドで呼び出すことができます。Docker Compose は、デフォルトで Docker for Windows とDocker for Mac の一部としてインストールされますが、Linux ユーザは[ここ](https://docs.docker.com/compose/install/)に記載されている手順に従う必要があります。
+
+次のコマンドを使用して、現在の **Docker** バージョンと **Docker Compose** バージョンを確認できます :
+
+```console
+docker-compose -v
+docker version
+```
+
+Docker バージョン 18.03 以降と Docker Compose 1.21 以上を使用していることを確認し、必要に応じてアップグレードしてください。
 
 <a name="cygwin-for-windows"></a>
 ## Cygwin for Windows
@@ -180,13 +189,13 @@ git clone git@github.com:Fiware/tutorials.Short-Term-History.git
 cd tutorials.Short-Term-History
 
 ./services create
-``` 
+```
 
 その後、リポジトリ内で提供される [services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期化することができます :
 
 ```console
 ./services <command>
-``` 
+```
 
 ここで、`<command>` は、起動するモードによって異なります。このコマンドは、前のチュートリアルのシード・データをインポートし、起動時にダミー IoT センサをプロビジョニングします。
 
@@ -194,7 +203,7 @@ cd tutorials.Short-Term-History
 >
 >```console
 >./services stop
->``` 
+>```
 >
 
 <a name="minimal-mode-sth-comet-only"></a>
@@ -241,7 +250,7 @@ cd tutorials.Short-Term-History
         - LOGOPS_LEVEL=DEBUG
 ```
 
-`sth-comet` コンテナは、1つのポートで待機しています : 
+`sth-comet` コンテナは、1つのポートで待機しています :
 
 * STH-Comet のポートの操作 - `8666` は、サービスが Orion Context Broker からの通知と、cUrl または Postman からの時間ベースのクエリのリクエストをリッスンするポートです
 
@@ -263,11 +272,11 @@ cd tutorials.Short-Term-History
 
 ```console
 ./services sth-comet
-``` 
+```
 
 <a name="sth-comet---checking-service-health"></a>
 ### STH-Comet - サービスの健全性のチェック
- 
+
 STH-Comet が実行されると、公開されている `STH_PORT` ポートへの HTTP リクエストを行うことで状態を確認できます。レスポンスがブランクの場合は、通常、**STH-Comet** が実行されていないか、別のポートでリッスンしているためです。
 
 
@@ -425,7 +434,7 @@ curl -iX POST \
 curl -X GET \
   'http://localhost:1026/v2/subscriptions/' \
   -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /' 
+  -H 'fiware-servicepath: /'
 }'
 ```
 
@@ -608,7 +617,7 @@ curl -X GET \
 
 この例は、`Motion:001` からの最新の3つのサンプリングされた `count` 値を示しています。
 
-コンテキスト・エンティティ属性の短期履歴を取得するには、GET リクエストを送信します : 
+コンテキスト・エンティティ属性の短期履歴を取得するには、GET リクエストを送信します :
 `../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
 
 `lastN` パラメータが設定された場合は、その結果は、N 個の最新の測定結果のみを返します。
@@ -745,7 +754,7 @@ curl -X GET \
 
 この例では、1分ごとの `Lamp:001` からの `luminosity` 値の合計を示します。期間内のサンプル数と組み合わせると、データから平均を計算することができます。
 
-コンテキスト・エンティティ属性の短期履歴を取得するには、GET リクエストを送信します : 
+コンテキスト・エンティティ属性の短期履歴を取得するには、GET リクエストを送信します :
 `../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
 
 `aggrMethod` パラメータは、時系列上に実行する集計のタイプを決定します。`aggrPeriod` は、`second`, `minute`, `hour` または `day` のいずれかです。
@@ -1031,7 +1040,7 @@ curl -X GET \
         - "CYGNUS_API_PORT=5080"
 ```
 
-`sth-comet` コンテナは、1つのポートで待機しています : 
+`sth-comet` コンテナは、1つのポートで待機しています :
 
 * STH-Comet のポートの操作 - `8666` は、サービスが cUrl または Postman からの時間ベースのクエリ・リクエストをリッスンするポートです
 
@@ -1045,7 +1054,7 @@ curl -X GET \
 |DB_URI      |`mongo-db:27017` | STH-Comet が履歴コンテキスト・データを永続化するために接続する Mongo-DB サーバ |
 |LOGOPS_LEVEL|`DEBUG`          | STH-Comet のログレベル |
 
-`cygnus` コンテナは、2つのポートでリッスンしています : 
+`cygnus` コンテナは、2つのポートでリッスンしています :
 
 * `Cygnus` のサブスクリプション・ポート - `5050` は、サービスが **Orion Context Broker** からの通知をリッスンするポートです
 * `Cygnus` の管理ポート - `5080` はチュートリアルのアクセスのためだけに公開されているため、cUrl または Postman は同じネットワークの一部ではなくプロビジョニング・コマンドを実行できます
@@ -1067,11 +1076,11 @@ curl -X GET \
 
 ```console
 ./services cygnus
-``` 
+```
 
 <a name="sth-comet---checking-service-health-1"></a>
 ### STH-Comet - サービスの健全性のチェック
- 
+
 **STH-Comet** が実行されると、公開された `STH_PORT` ポートへの HTTP  リクエストを行うことで、状態を確認できます。レスポンスがブランクの場合は、通常、**STH-Comet** が実行されていないか、別のポートでリッスンしているためです。
 
 
@@ -1094,7 +1103,7 @@ curl -X GET \
 
 <a name="cygnus---checking-service-health"></a>
 ### Cygnus - サービスの健全性のチェック
- 
+
 **Cygnus** が実行されると、公開された `CYGNUS_API_PORT` ポートへの HTTP リクエストを行うことで、状況を確認できます。レスポンスがブランクの場合、これは通常、**Cygnus** が実行されていないか、別のポートでリッスンしているためです。
 
 #### :one::three: リクエスト :
@@ -1252,8 +1261,8 @@ function readCometLampLuminosity(id, aggMethod) {
       const options = { method: 'GET',
         url: url,
         qs: { aggrMethod: aggMethod, aggrPeriod: 'minute' },
-        headers: 
-         { 
+        headers:
+         {
            'fiware-servicepath': '/',
            'fiware-service': 'openiot' } };
 
@@ -1272,7 +1281,7 @@ function cometToTimeSeries(cometResponse, aggMethod){
 
     const values =  cometResponse.contextResponses[0].contextElement.attributes[0].values[0];
       let date = moment(values._id.origin);
-    
+
       _.forEach(values.points, element => {
           data.push({ t: date.valueOf(), y: element[aggMethod] });
           labels.push(date.format( 'HH:mm'));
