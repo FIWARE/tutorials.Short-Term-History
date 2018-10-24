@@ -2,8 +2,10 @@
 
 [![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 [![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](https://forge.fi-ware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
+[![Support badge](https://nexus.lab.fiware.org/repository/raw/public/badges/stackoverflow/fiware.svg)](https://stackoverflow.com/questions/tagged/fiware)
+<br/>
+[![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
 このチュートリアルでは、Mongo-DB データベースから傾向データを取得するために使用される Generic Enabler である [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します。チュートリアルでは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent)で接続した IoT センサをアクティブにし、それらのセンサからの測定値をデータベースに保存し、そのデータの時間ベースの集計を取得します。
 
