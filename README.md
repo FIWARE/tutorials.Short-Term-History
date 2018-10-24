@@ -109,13 +109,13 @@ It can also be used to reduce the significance of each individual data point to 
 #### Device Monitor
 
 For the purpose of this tutorial, a series of dummy IoT devices have been created, which will be attached to the context broker. Details of the architecture and protocol used can be found in the [IoT Sensors tutorial](https://github.com/Fiware/tutorials.IoT-Sensors).
-The state of each device can be seen on the UltraLight device monitor web-page found at: `http://localhost:3000/device/monitor`
+The state of each device can be seen on the UltraLight device monitor web page found at: `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
 
 #### Device History
 
-Once **STH-Comet** has started aggregating data, the historical state of each device can be seen on the device history web-page found at: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
+Once **STH-Comet** has started aggregating data, the historical state of each device can be seen on the device history web page found at: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
 
 ![](https://fiware.github.io/tutorials.Short-Term-History/img/history-graphs.png)
 
@@ -192,7 +192,7 @@ Please ensure that you are using Docker version 18.03 or higher and Docker Compo
 
 ## Cygwin for Windows
 
-We will start up our services using a simple Bash script. Windows users should download [cygwin](http://www.cygwin.com/) to provide a command line functionality similar to a Linux distribution on Windows.
+We will start up our services using a simple Bash script. Windows users should download [cygwin](http://www.cygwin.com/) to provide a command-line functionality similar to a Linux distribution on Windows.
 
 
 
@@ -211,7 +211,7 @@ cd tutorials.Short-Term-History
 
 
 
-Thereafter, all services can be initialized from the command line by running the [services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash script provided within the repository:
+Thereafter, all services can be initialized from the command-line by running the [services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash script provided within the repository:
 
 ```console
 ./services <command>
@@ -1303,12 +1303,12 @@ section of this tutorial to request time-series data from **STH-Comet**
 Once the JSON response for a specified time series has been retrieved, displaying the raw data is of little
 use to an end user.  It must be manipulated to be displayed in a bar chart, line graph or table listing.
 This is not within the domain of **STH-Comet** as it not a graphical tool, but can be delegated to a
-mashup or dashboard component such as [Wirecloud](https://catalogue.fiware.org/enablers/application-mashup-wirecloud) or [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage)
+mashup or dashboard component such as [Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud) or [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage)
 
 It can also be retrieved and displayed using a third-party graphing tool appropriate to your coding environment -
 for example [chartjs](http://www.chartjs.org/). An example of this can be found within the `history` controller in the [Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/controllers/history.js)
 
-The basic processing consists of two steps - retrieval and attribute mapping, sample code can be seen below:
+The basic processing consists of two-step - retrieval and attribute mapping, sample code can be seen below:
 
 ```javascript
 function readCometLampLuminosity(id, aggMethod) {
@@ -1351,7 +1351,7 @@ function cometToTimeSeries(cometResponse, aggMethod){
 }
 ```
 
-The modified data is then passed to the front-end to be processed by the third-party graphing tool.
+The modified data is then passed to the frontend to be processed by the third-party graphing tool.
 The result is shown here: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
 
 # Next Steps

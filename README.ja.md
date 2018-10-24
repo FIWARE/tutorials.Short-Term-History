@@ -1248,7 +1248,7 @@ curl -iX POST \
 <a name="accessing-time-series-data-programmatically"></a>
 # プログラミングによる時系列データへのアクセス
 
-指定された時系列の JSON レスポンスが取得されると、生のデータを表示することはエンドユーザにとってほとんど役に立ちません。これは、棒グラフ、折れ線グラフ、またはテーブルリストに表示するために操作をする必要があります。これはグラフィカル・ツールではないため、**STH-Comet** の範疇ではありませんが、[Wirecloud](https://catalogue.fiware.org/enablers/application-mashup-wirecloud) や [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage) などのマッシュアップやダッシュボード・コンポーネントに委任できます。
+指定された時系列の JSON レスポンスが取得されると、生のデータを表示することはエンドユーザにとってほとんど役に立ちません。これは、棒グラフ、折れ線グラフ、またはテーブルリストに表示するために操作をする必要があります。これはグラフィカル・ツールではないため、**STH-Comet** の範疇ではありませんが、[Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud) や [Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage) などのマッシュアップやダッシュボード・コンポーネントに委任できます。
 
 また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索して表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。これの例は [Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/controllers/history.js) の `history` コントローラ内にあります。
 
