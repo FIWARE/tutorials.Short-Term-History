@@ -9,7 +9,7 @@
 
 このチュートリアルでは、Mongo-DB データベースから傾向データを取得するために使用される Generic Enabler である [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します。チュートリアルでは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent)で接続した IoT センサをアクティブにし、それらのセンサからの測定値をデータベースに保存し、そのデータの時間ベースの集計を取得します。
 
-このチュートリアルでは、全体で [cUrl](https://ec.haxx.se/) コマンドを使用していますが、[Postman documentation](http://fiware.github.io/tutorials.Short-Term-History/) も利用できます。
+このチュートリアルでは、全体で [cUrl](https://ec.haxx.se/) コマンドを使用していますが、[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/) も利用できます。
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
@@ -117,17 +117,17 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 <a name="architecture"></a>
 # アーキテクチャ
 
-このアプリケーションは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成したコンポーネント と ダミー IoT デバイスをベースにしています。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)，[IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/)，[STH-Comet](http://fiware-cygnus.readthedocs.io/en/latest/)，および [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) の 3つまたは4つの FIWARE コンポーネントをシステムの構成に応じて使用します。
+このアプリケーションは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成したコンポーネント と ダミー IoT デバイスをベースにしています。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)，[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)，[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/)，および [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) の 3つまたは4つの FIWARE コンポーネントをシステムの構成に応じて使用します。
 
 したがって、全体的なアーキテクチャは次の要素で構成されます :
 
 * 4つの **FIWARE Generic Enablers** :
   * FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してリクエストを受信します
-  * FIWARE [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値を受信し、Context Broker の[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエストに変換してコンテキスト・エンティティの状態を変更します
-  * FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) は以下を行います :
+  * FIWARE [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値を受信し、Context Broker の[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエストに変換してコンテキスト・エンティティの状態を変更します
+  * FIWARE [STH-Comet](https://fiware-sth-comet.readthedocs.io/) は以下を行います :
     + 時間ベースのデータ・クエリを解釈します
     + コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*最小*モードのみ)
-  * FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) は、コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*正規*モードのみ)
+  * FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) は、コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*正規*モードのみ)
 
 > :information_source: **注:** : **Cygnus** は、**STH-Comet** が*正規*モードで設定されている場合にのみ使用されます。
 
@@ -142,7 +142,7 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
      + 店舗情報を表示し、ユーザーがダミー IoT デバイスと対話できるようにします
      + 各店舗で購入できる商品を表示します
      + ユーザが製品を購入して在庫数を減らすことを許可します
-  * HTTP 上で動作する [Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) プロトコルを使用して、[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)のセットとして機能する Web サーバ
+  * HTTP 上で動作する [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) プロトコルを使用して、[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)のセットとして機能する Web サーバ
   * このチュートリアルでは、**コンテキスト・プロバイダの NGSI proxy** は使用しません。これは以下を行います :
      + [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してリクエストを受信します
      + 独自の API を独自のフォーマットで使用して、公開されているデータ・ソースへのリクエストを行います

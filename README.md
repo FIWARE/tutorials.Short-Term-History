@@ -17,7 +17,7 @@ aggregations of that data.
 
 The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also
 available as
-[Postman documentation](http://fiware.github.io/tutorials.Short-Term-History/)
+[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/)
 
 > **Note** There are breaking changes to the setup of Cygnus between 1.x and
 > 2.x. The **formal mode** section of the tutorial is describing the use of
@@ -153,9 +153,9 @@ This application builds on the components and dummy IoT devices created in
 use three or four FIWARE components depending on the configuration of the
 system: the
 [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the
-[IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/),
-[STH-Comet](http://fiware-cygnus.readthedocs.io/en/latest/) and
-[Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/).
+[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/),
+[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/) and
+[Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/).
 
 Therefore the overall architecture will consist of the following elements:
 
@@ -165,22 +165,22 @@ Therefore the overall architecture will consist of the following elements:
         which will receive requests using
         [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
     -   The FIWARE
-        [IoT Agent for Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/)
+        [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
         which will receive northbound measurements from the dummy IoT devices in
-        [Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+        [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         format and convert them to
         [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) requests
         for the context broker to alter the state of the context entities
-    -   FIWARE [STH-Comet](http://fiware-sth-comet.readthedocs.io/) will:
+    -   FIWARE [STH-Comet](https://fiware-sth-comet.readthedocs.io/) will:
         -   interpret time-based data queries
         -   subscribe to context changes and persist them into a **Mongo-DB**
             database (_minimal_ mode only)
-    -   FIWARE [Cygnus](http://fiware-cygnus.readthedocs.io/en/latest/) where it
-        will subscribe to context changes and persist them into a **Mongo-DB**
-        database (_formal_ mode only)
+    -   FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) where
+        it will subscribe to context changes and persist them into a
+        **Mongo-DB** database (_formal_ mode only)
 
-> :information_source: **Note:** **Cygnus** will only be used if **STH-Comet**
-> is configured in _formal_ mode.
+> :information*source: **Note:** **Cygnus** will only be used if **STH-Comet**
+> is configured in \_formal* mode.
 
 -   A [MongoDB](https://www.mongodb.com/) database:
     -   Used by the **Orion Context Broker** to hold context data information
@@ -201,7 +201,7 @@ Therefore the overall architecture will consist of the following elements:
     -   A webserver acting as set of
         [dummy IoT devices](https://github.com/Fiware/tutorials.IoT-Sensors)
         using the
-        [Ultralight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+        [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         protocol running over HTTP.
     -   The **Context Provider NGSI** proxy is not used in this tutorial. It
         does the following:
