@@ -7,7 +7,7 @@
 <br/>
 [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
-このチュートリアルでは、Mongo-DB データベースから傾向データを取得するために使用される Generic Enabler である [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します。チュートリアルでは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent)で接続した IoT センサをアクティブにし、それらのセンサからの測定値をデータベースに保存し、そのデータの時間ベースの集計を取得します。
+このチュートリアルでは、MongoDB データベースから傾向データを取得するために使用される Generic Enabler である [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します。チュートリアルでは、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent)で接続した IoT センサをアクティブにし、それらのセンサからの測定値をデータベースに保存し、そのデータの時間ベースの集計を取得します。
 
 このチュートリアルでは、全体で [cUrl](https://ec.haxx.se/) コマンドを使用していますが、[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/) も利用できます。
 
@@ -16,7 +16,7 @@
 
 # 内容
 
-- [時系列データのクエリ (Mongo-DB)](#querying-time-series-data-mongo-db)
+- [時系列データのクエリ (MongoDB)](#querying-time-series-data-mongodb)
   * [時系列データの解析](#analyzing-time-series-data)
 - [アーキテクチャ](#architecture)
 - [前提条件](#prerequisites)
@@ -59,15 +59,15 @@
 - [次のステップ](#next-steps)
 
 
-<a name="querying-time-series-data-mongo-db"></a>
-# 時系列データのクエリ (Mongo-DB)
+<a name="querying-time-series-data-mongodb"></a>
+# 時系列データのクエリ (MongoDB)
 
 > "The *"moment"* has no yesterday or tomorrow. It is not the result of thought and therefore has no time."
 >
 > — Bruce Lee
 
 
-FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus** Generic Enabler の組み合わせを使用して、履歴コンテキスト・データを Mongo-DB のようなデータベースに保存できます。これにより、選択したデータベースに一連のデータ・ポイントが書き込まれます。各タイムスタンプ付きデータ・ポイントは、所与の瞬間におけるコンテキスト・エンティティの状態を表します。個々のデータ点はそれ自体では無意味であり、最大値、最小値および傾向などの意味のある統計値が観測されることができるのは、一連のデータ点を組み合わせたときだけです。
+FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus** Generic Enabler の組み合わせを使用して、履歴コンテキスト・データを MongoDB のようなデータベースに保存できます。これにより、選択したデータベースに一連のデータ・ポイントが書き込まれます。各タイムスタンプ付きデータ・ポイントは、所与の瞬間におけるコンテキスト・エンティティの状態を表します。個々のデータ点はそれ自体では無意味であり、最大値、最小値および傾向などの意味のある統計値が観測されることができるのは、一連のデータ点を組み合わせたときだけです。
 
 傾向データの作成と分析は、コンテキスト駆動型システムの一般的な要件です。したがって、FIWARE プラットフォームは、Mong-DB に永続化された時系列データの永続化と解釈の問題に特化した Generic Enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) を提供します。**STH-Comet** 自体は2つのモードで使用できます :
 
@@ -83,7 +83,7 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
 | どのコンポーネントがデータの永続性を担っていますか？ | **STH-Comet** | **Cygnus** |
 | **STH-Comet** の役割は何ですか？ | データの読み書き | データ読み取り専用 |
 | **Cygnus** の役割は何ですか？ | 使用しません | データ書き込み専用 |
-| データはどこに集約されていますか？ | **STH-Comet** にのみ接続された Mongo-DB データベース | **Cygnus** と **STH-Comet** の両方に接続された Mongo-DB データベース |
+| データはどこに集約されていますか？ | **STH-Comet** にのみ接続された MongoDB データベース | **Cygnus** と **STH-Comet** の両方に接続された MongoDB データベース |
 | 他のデータベースを使用するようにシステムを構成できますか？ | いいえ | はい |
 | ソリューションは簡単に拡張できますか？ | 簡単に拡張できません - 単純なシステムで使用します | スケールアップが容易です - 複雑なシステムに使用できます |
 | システムは高いスループットに対処できますか？ | いいえ - スループットが低い場所で使用します | はい - スループットが高い場所で使用します |
@@ -126,8 +126,8 @@ FIWARE プラットフォーム内では、**Orion Context Broker** と **Cygnus
   * FIWARE [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値を受信し、Context Broker の[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエストに変換してコンテキスト・エンティティの状態を変更します
   * FIWARE [STH-Comet](https://fiware-sth-comet.readthedocs.io/) は以下を行います :
     + 時間ベースのデータ・クエリを解釈します
-    + コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*最小*モードのみ)
-  * FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) は、コンテキストの変更をサブスクライブして、**Mongo-DB** データベースに保存します (*正規*モードのみ)
+    + コンテキストの変更をサブスクライブして、**MongoDB** データベースに保存します (*最小*モードのみ)
+  * FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) は、コンテキストの変更をサブスクライブして、**MongoDB** データベースに保存します (*正規*モードのみ)
 
 > :information_source: **注:** : **Cygnus** は、**STH-Comet** が*正規*モードで設定されている場合にのみ使用されます。
 
@@ -263,7 +263,7 @@ cd tutorials.Short-Term-History
 |STH_HOST    |`0.0.0.0`        | STH-Comet がホストされているアドレス - このコンテナ内では、ローカルマシン上のすべての IPv4 アドレスを意味します |
 |STH_PORT    |`8666`           | STH-Comet がリッスンするオペレーション・ポート。コンテキスト・データの変更をサブスクライブするときにも使用されます |
 |DB_PREFIX   |`sth_`           | 指定されていない場合は、各データベースのエンティティに追加されたプレフィックス |
-|DB_URI      |`mongo-db:27017` | STH-Comet が履歴コンテキスト・データを永続化するために接続する Mongo-DB サーバ |
+|DB_URI      |`mongo-db:27017` | STH-Comet が履歴コンテキスト・データを永続化するために接続する MongoDB サーバ |
 |LOGOPS_LEVEL|`DEBUG`          | STH-Comet のログレベル |
 
 
@@ -1053,7 +1053,7 @@ curl -X GET \
 |STH_HOST    |`0.0.0.0`        | STH-Comet がホストされているアドレス - このコンテナ内では、ローカルマシン上のすべての IPv4 アドレスを意味します |
 |STH_PORT    |`8666`           | STH-Comet がリッスンするオペレーション・ポート |
 |DB_PREFIX   |`sth_`           | 指定されていない場合は、各データベースのエンティティに追加されたプレフィックス |
-|DB_URI      |`mongo-db:27017` | STH-Comet が履歴コンテキスト・データを永続化するために接続する Mongo-DB サーバ |
+|DB_URI      |`mongo-db:27017` | STH-Comet が履歴コンテキスト・データを永続化するために接続する MongoDB サーバ |
 |LOGOPS_LEVEL|`DEBUG`          | STH-Comet のログレベル |
 
 `cygnus` コンテナは、2つのポートでリッスンしています :
@@ -1065,7 +1065,7 @@ curl -X GET \
 
 | キー                          | 値           | 説明      |
 |-------------------------------|--------------|-----------|
-|CYGNUS_MONGO_HOSTS         |`mongo-db:27017`  | Cygnus が履歴コンテキスト・データを永続化するために接続する Mongo-DB サーバのカンマ区切りリスト |
+|CYGNUS_MONGO_HOSTS         |`mongo-db:27017`  | Cygnus が履歴コンテキスト・データを永続化するために接続する MongoDB サーバのカンマ区切りリスト |
 |CYGNUS_LOG_LEVEL               |`DEBUG`       | Cygnus のログレベル |
 |CYGNUS_SERVICE_PORT            |`5050`        | コンテキスト・データが変更されたときに Cygnus がリッスンする通知ポート |
 |CYGNUS_API_PORT                |`5080`        | Cygnus が操作上の理由でリッスンするポート |
