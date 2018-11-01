@@ -2,7 +2,7 @@
 
 [![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
-[![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](https://forge.fi-ware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
+[![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](http://forge.fi-ware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
 [![Support badge](https://nexus.lab.fiware.org/repository/raw/public/badges/stackoverflow/fiware.svg)](https://stackoverflow.com/questions/tagged/fiware)
 <br/>
 [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
@@ -1476,13 +1476,13 @@ curl -iX POST \
 ではないため、**STH-Comet** の範疇ではありませんが
 、[Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud)
 や
-[Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage)
+[Knowage](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Knowage)
 などのマッシュアップやダッシュボード・コンポーネントに委任できます。
 
 また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索し
 て表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。こ
 れの例は
-[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/controllers/history.js)
+[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
 の `history` コントローラ内にあります。
 
 基本的な処理は、検索と属性マッピングの 2 つのステップで構成されています。サンプ

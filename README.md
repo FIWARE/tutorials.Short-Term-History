@@ -2,7 +2,7 @@
 
 [![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
-[![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](https://forge.fi-ware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
+[![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](http://forge.fi-ware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
 [![Support badge](https://nexus.lab.fiware.org/repository/raw/public/badges/stackoverflow/fiware.svg)](https://stackoverflow.com/questions/tagged/fiware)
 <br/>
 [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
@@ -1407,13 +1407,13 @@ the domain of **STH-Comet** as it not a graphical tool, but can be delegated to
 a mashup or dashboard component such as
 [Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud)
 or
-[Knowage](https://catalogue-server.fiware.org/enablers/data-visualization-knowage)
+[Knowage](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Knowage)
 
 It can also be retrieved and displayed using a third-party graphing tool
 appropriate to your coding environment - for example
 [chartjs](http://www.chartjs.org/). An example of this can be found within the
 `history` controller in the
-[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/controllers/history.js)
+[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
 
 The basic processing consists of two-step - retrieval and attribute mapping,
 sample code can be seen below:
