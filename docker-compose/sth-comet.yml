@@ -28,7 +28,7 @@ services:
 
 
   sth-comet:
-    image: fiware/sth-comet
+    image: fiware/sth-comet:2.5.0
     hostname: sth-comet
     container_name: fiware-sth-comet
     depends_on:
