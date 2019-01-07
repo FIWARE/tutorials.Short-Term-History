@@ -23,7 +23,10 @@ available as
 
 -   このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
 
-# Contents
+## Contents
+
+<details>
+<summary><strong>Details</strong></summary>
 
 -   [Querying Time Series Data (MongoDB)](#querying-time-series-data-mongodb)
     -   [Analyzing time series data](#analyzing-time-series-data)
@@ -66,6 +69,8 @@ available as
     -   [_formal_ mode - Time Series Data Queries](#formal-mode---time-series-data-queries)
 -   [Accessing Time Series Data Programmatically](#accessing-time-series-data-programmatically)
 -   [Next Steps](#next-steps)
+
+</details>
 
 # Querying Time Series Data (MongoDB)
 

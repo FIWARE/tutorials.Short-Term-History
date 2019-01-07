@@ -22,7 +22,10 @@ IoT センサをアクティブにし、それらのセンサからの測定値�
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
-# 内容
+## 内容
+
+<details>
+<summary>詳細 <b>(クリックして拡大)</b></summary>
 
 -   [時系列データのクエリ (MongoDB)](#querying-time-series-data-mongodb)
     -   [時系列データの解析](#analyzing-time-series-data)
@@ -65,6 +68,8 @@ IoT センサをアクティブにし、それらのセンサからの測定値�
     -   [*正規*モード - 時系列データのクエリ](#formal-mode---time-series-data-queries)
 -   [プログラミングによる時系列データへのアクセス](#accessing-time-series-data-programmatically)
 -   [次のステップ](#next-steps)
+
+</details>
 
 <a name="querying-time-series-data-mongodb"></a>
 
