@@ -20,6 +20,10 @@ IoT センサをアクティブにし、それらのセンサからの測定値�
 、[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/)
 も利用できます。
 
+> **注:** Cygnus の設定に 1.x から 2.x の間で大きな変更があります。
+> チュートリアルの**正規モード**のセクションでは、Cygnus 1.9.0
+> の使い方について説明しています
+
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
 # 内容
