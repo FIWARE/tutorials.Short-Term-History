@@ -61,18 +61,8 @@ case "${command}" in
 		stoppingContainers
 		;;
 	"create")
-		echo "Obtaining Mongo DB image"
-		docker pull mongo:3.6
-		echo "Obtaining Latest Orion Image"
-		docker pull fiware/orion
-		echo "Obtaining Latest UltraLight IoT Agent"
-		docker pull fiware/iotagent-ul
-		echo "Obtaining Latest Cygnus"
-		docker pull fiware/cygnus-ngsi
-		echo "Obtaining Latest STH-Comet"
-		docker pull fiware/sth-comet
-		echo "Obtaining Tutorial Application"
-		docker pull fiware/tutorials.context-provider
+		echo "Pulling Docker images"
+		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware pull
 		;;
 	*)
 		echo "Command not Found."
