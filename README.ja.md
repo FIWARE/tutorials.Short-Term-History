@@ -7,6 +7,8 @@
 <br/>
 [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
+<!-- prettier-ignore -->
+
 このチュートリアルでは、MongoDB データベースから傾向データを取得するために使用さ
 れる Generic Enabler である
 [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します
