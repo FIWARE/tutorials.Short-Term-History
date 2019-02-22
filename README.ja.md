@@ -1154,7 +1154,7 @@ curl -X GET \
 # *正規*モード (Cygnus + STH-Comet)
 
 *正規*構成は **Cygnus** を使用して
-、[前のチュートリアル](https://github.com/Fiware/tutorials.Historic-Context)で示
+、[前のチュートリアル](https://github.com/Fiware/tutorials.Historic-Context-Flume)で示
 したのと同じ方法で、履歴コンテキスト・データを MongoDB データベースに保存します
 。既存の MongoDB インスタンス(標準 `27017` ポートでリスニング) は、**Orion
 Context Broker**，**IoT Agent**、および **Cygnus** によって永続化された履歴コン

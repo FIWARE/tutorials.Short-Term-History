@@ -1020,7 +1020,7 @@ curl -X GET \
 # _formal_ mode (Cygnus + STH-Comet)
 
 The _formal_ configuration is uses **Cygnus** to persist historic context data into a MongoDB database in the same
-manner as had been presented in the [previous tutorial](https://github.com/Fiware/tutorials.Historic-Context). The
+manner as had been presented in the [previous tutorial](https://github.com/Fiware/tutorials.Historic-Context-Flume). The
 existing MongoDB instance (listening on the standard `27017` port) is used to hold data related to the **Orion Context
 Broker**, the **IoT Agent** and the historic context data persisted by **Cygnus**. **STH-Comet** is also attached to the
 same database to read data from it. The overall architecture can be seen below:
