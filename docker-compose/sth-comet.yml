@@ -84,7 +84,11 @@ services:
       - iot-agent
       - sth-comet
     networks:
-      - default
+      default:
+        ipv4_address: 172.18.1.7
+        aliases:
+          - iot-sensors
+          - context-provider
     expose:
       - "3000"
       - "3001"
