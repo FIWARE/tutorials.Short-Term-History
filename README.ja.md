@@ -13,7 +13,7 @@
 れる Generic Enabler である
 [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) について紹介します
 。チュートリアルでは
-、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent)で接続した
+、[前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent)で接続した
 IoT センサをアクティブにし、それらのセンサからの測定値をデータベースに保存し、そ
 のデータの時間ベースの集計を取得します。
 
@@ -134,7 +134,7 @@ Enabler の組み合わせを使用して、履歴コンテキスト・データ
 
 このチュートリアルの目的のために、一連のダミー IoT デバイスが作成され、Context
 Broker に接続されます。使用しているアーキテクチャとプロトコルの詳細は
-、[IoT Sensors チュートリアル](https://github.com/Fiware/tutorials.IoT-Sensors)に
+、[IoT Sensors チュートリアル](https://github.com/FIWARE/tutorials.IoT-Sensors)に
 あります。各デバイスの状態は、次の UltraLight デバイス・モニタの Web ページで確
 認できます : `http://localhost:3000/device/monitor`
 
@@ -153,7 +153,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
 # アーキテクチャ
 
 このアプリケーションは
-、[前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成した
+、[前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent/)で作成した
 コンポーネント と ダミー IoT デバイスをベースにしています
 。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)，[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)，[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/)，
 および [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) の 3 つまたは 4
@@ -204,7 +204,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
     -   HTTP 上で動作する
         [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         プロトコルを使用して
-        、[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)の
+        、[ダミー IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors)の
         セットとして機能する Web サーバ
     -   このチュートリアルでは、**コンテキスト・プロバイダの NGSI proxy** は使用
         しません。これは以下を行います :
@@ -242,7 +242,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
 
 **Docker Compose** は、マルチコンテナ Docker アプリケーションを定義して実行する
 ためのツールです
-。[YAML file](https://github.com/Fiware/tutorials.Short-Term-History/tree/master/docker-compose)
+。[YAML file](https://github.com/FIWARE/tutorials.Short-Term-History/tree/master/docker-compose)
 ファイルは、アプリケーションのために必要なサービスを構成するために使用します。つ
 まり、すべてのコンテナ・サービスは 1 つのコマンドで呼び出すことができます
 。Docker Compose は、デフォルトで Docker for Windows と Docker for Mac の一部と
@@ -285,7 +285,7 @@ cd tutorials.Short-Term-History
 ```
 
 その後、リポジトリ内で提供される
-[services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services)
+[services](https://github.com/FIWARE/tutorials.Short-Term-History/blob/master/services)
 Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期
 化することができます :
 
@@ -1154,7 +1154,7 @@ curl -X GET \
 # *正規*モード (Cygnus + STH-Comet)
 
 *正規*構成は **Cygnus** を使用して
-、[前のチュートリアル](https://github.com/Fiware/tutorials.Historic-Context-Flume)で示
+、[前のチュートリアル](https://github.com/FIWARE/tutorials.Historic-Context-Flume)で示
 したのと同じ方法で、履歴コンテキスト・データを MongoDB データベースに保存します
 。既存の MongoDB インスタンス(標準 `27017` ポートでリスニング) は、**Orion
 Context Broker**，**IoT Agent**、および **Cygnus** によって永続化された履歴コン
@@ -1481,15 +1481,15 @@ curl -iX POST \
 ドユーザにとってほとんど役に立ちません。これは、棒グラフ、折れ線グラフ、またはテ
 ーブルリストに表示するために操作をする必要があります。これはグラフィカル・ツール
 ではないため、**STH-Comet** の範疇ではありませんが
-、[Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud)
+、[Wirecloud](https://github.com/FIWARE/catalogue/blob/master/processing/README.md#Wirecloud)
 や
-[Knowage](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Knowage)
+[Knowage](https://github.com/FIWARE/catalogue/blob/master/processing/README.md#Knowage)
 などのマッシュアップやダッシュボード・コンポーネントに委任できます。
 
 また、コーディング環境に適したサードパーティのグラフ作成ツールを使用して、検索し
 て表示することもできます。たとえば、[chartjs](http://www.chartjs.org/) です。こ
 れの例は
-[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
+[Git Repository](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
 の `history` コントローラ内にあります。
 
 基本的な処理は、検索と属性マッピングの 2 つのステップで構成されています。サンプ

@@ -8,7 +8,7 @@
 
 This tutorial is an introduction to [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) - a generic enabler
 which is used to retrieve trend data from a MongoDB database. The tutorial activates the IoT sensors connected in the
-[previous tutorial](https://github.com/Fiware/tutorials.IoT-Agent) and persists measurements from those sensors into a
+[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Agent) and persists measurements from those sensors into a
 database and retrieves time-based aggregations of that data.
 
 The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also available as
@@ -117,7 +117,7 @@ It can also be used to reduce the significance of each individual data point to 
 
 For the purpose of this tutorial, a series of dummy IoT devices have been created, which will be attached to the context
 broker. Details of the architecture and protocol used can be found in the
-[IoT Sensors tutorial](https://github.com/Fiware/tutorials.IoT-Sensors). The state of each device can be seen on the
+[IoT Sensors tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors). The state of each device can be seen on the
 UltraLight device monitor web page found at: `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
@@ -132,7 +132,7 @@ web page found at: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
 # Architecture
 
 This application builds on the components and dummy IoT devices created in
-[previous tutorials](https://github.com/Fiware/tutorials.IoT-Agent/). It will use three or four FIWARE components
+[previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/). It will use three or four FIWARE components
 depending on the configuration of the system: the
 [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the
 [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/),
@@ -169,7 +169,7 @@ Therefore the overall architecture will consist of the following elements:
         -   Display store information and allow users to interact with the dummy IoT devices
         -   Show which products can be bought at each store
         -   Allow users to "buy" products and reduce the stock count.
-    -   A webserver acting as set of [dummy IoT devices](https://github.com/Fiware/tutorials.IoT-Sensors) using the
+    -   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors) using the
         [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         protocol running over HTTP.
     -   The **Context Provider NGSI** proxy is not used in this tutorial. It does the following:
@@ -195,7 +195,7 @@ technology which allows to different components isolated into their respective e
 -   To install Docker on Linux follow the instructions [here](https://docs.docker.com/install/)
 
 **Docker Compose** is a tool for defining and running multi-container Docker applications. A series of
-[YAML files](https://github.com/Fiware/tutorials.Short-Term-History/tree/master/docker-compose) are used configure the
+[YAML files](https://github.com/FIWARE/tutorials.Short-Term-History/tree/master/docker-compose) are used configure the
 required services for the application. This means all container services can be brought up in a single command. Docker
 Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to
 follow the instructions found [here](https://docs.docker.com/compose/install/)
@@ -228,7 +228,7 @@ cd tutorials.Short-Term-History
 ```
 
 Thereafter, all services can be initialized from the command-line by running the
-[services](https://github.com/Fiware/tutorials.Short-Term-History/blob/master/services) Bash script provided within the
+[services](https://github.com/FIWARE/tutorials.Short-Term-History/blob/master/services) Bash script provided within the
 repository:
 
 ```console
@@ -1020,7 +1020,7 @@ curl -X GET \
 # _formal_ mode (Cygnus + STH-Comet)
 
 The _formal_ configuration is uses **Cygnus** to persist historic context data into a MongoDB database in the same
-manner as had been presented in the [previous tutorial](https://github.com/Fiware/tutorials.Historic-Context-Flume). The
+manner as had been presented in the [previous tutorial](https://github.com/FIWARE/tutorials.Historic-Context-Flume). The
 existing MongoDB instance (listening on the standard `27017` port) is used to hold data related to the **Orion Context
 Broker**, the **IoT Agent** and the historic context data persisted by **Cygnus**. **STH-Comet** is also attached to the
 same database to read data from it. The overall architecture can be seen below:
@@ -1305,12 +1305,12 @@ previous section of this tutorial to request time-series data from **STH-Comet**
 Once the JSON response for a specified time series has been retrieved, displaying the raw data is of little use to an
 end user. It must be manipulated to be displayed in a bar chart, line graph or table listing. This is not within the
 domain of **STH-Comet** as it not a graphical tool, but can be delegated to a mashup or dashboard component such as
-[Wirecloud](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Wirecloud) or
-[Knowage](https://github.com/Fiware/catalogue/blob/master/processing/README.md#Knowage)
+[Wirecloud](https://github.com/FIWARE/catalogue/blob/master/processing/README.md#Wirecloud) or
+[Knowage](https://github.com/FIWARE/catalogue/blob/master/processing/README.md#Knowage)
 
 It can also be retrieved and displayed using a third-party graphing tool appropriate to your coding environment - for
 example [chartjs](http://www.chartjs.org/). An example of this can be found within the `history` controller in the
-[Git Repository](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
+[Git Repository](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/controllers/history.js)
 
 The basic processing consists of two-step - retrieval and attribute mapping, sample code can be seen below:
 
