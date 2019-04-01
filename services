@@ -19,6 +19,12 @@ stoppingContainers () {
 	docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware down -v --remove-orphans
 }
 
+displayServices () {
+	echo ""
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=fiware-*
+	echo ""
+}
+
 if (( $# != 1 )); then
     echo "Illegal number of parameters"
     echo "usage: services [create|cygnus|sth-comet|stop]"
@@ -40,7 +46,7 @@ case "${command}" in
 		echo ""
 		docker-compose --log-level ERROR -f docker-compose/sth-comet.yml -p fiware up -d --remove-orphans
 		loadData
-		echo ""
+		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
 		;;
      "cygnus")
@@ -54,7 +60,7 @@ case "${command}" in
 		echo ""
 		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware up -d --remove-orphans
 		loadData
-		echo ""
+		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
 		;;
 	"stop")
