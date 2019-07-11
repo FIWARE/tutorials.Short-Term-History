@@ -19,7 +19,7 @@ services:
 
   # Cygnus is configured to persist to STH-Comet
   cygnus:
-    image: fiware/cygnus-ngsi:1.10.0
+    image: fiware/cygnus-ngsi:1.13.0
     hostname: cygnus
     container_name: fiware-cygnus
     depends_on:
@@ -63,7 +63,7 @@ services:
 
   # IoT-Agent is configured for the UltraLight Protocol
   iot-agent:
-    image: fiware/iotagent-ul:1.8.0
+    image: fiware/iotagent-ul:1.9.0
     hostname: iot-agent
     container_name: fiware-iot-agent
     depends_on:
