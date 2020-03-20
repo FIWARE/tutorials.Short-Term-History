@@ -458,8 +458,7 @@ curl -iX POST \
     },
     "attrs": [
       "luminosity"
-    ],
-    "attrsFormat": "legacy"
+    ]
   },
   "throttling": 5
 }'
@@ -1207,8 +1206,6 @@ This is done by making a POST request to the `/v2/subscription` endpoint of the 
     measurements from the attached IoT Sensors
 -   The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Motion Sensor** data changes.
 -   The notification `url` must match the configured `CYGNUS_API_PORT`
--   The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1
-    format.
 
 #### :one::four: Request:
 
@@ -1234,12 +1231,11 @@ curl -iX POST \
   },
   "notification": {
     "http": {
-      "url": "http://cygnus:5050/notify"
+      "url": "http://cygnus:5051/notify"
     },
     "attrs": [
       "count"
-    ],
-    "attrsFormat": "legacy"
+    ]
   }
 }'
 ```
@@ -1256,8 +1252,6 @@ the `throttling` attribute in the request body.
     measurements from the attached IoT Sensors
 -   The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only
 -   The notification `url` must match the configured `CYGNUS_API_PORT`
--   The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1
-    format.
 -   The `throttling` value defines the rate that changes are sampled.
 
 #### :one::five: Request:
@@ -1284,12 +1278,11 @@ curl -iX POST \
   },
   "notification": {
     "http": {
-      "url": "http://cygnus:5050/notify"
+      "url": "http://cygnus:5051/notify"
     },
     "attrs": [
       "luminosity"
-    ],
-    "attrsFormat": "legacy"
+    ]
   },
   "throttling": 5
 }'
