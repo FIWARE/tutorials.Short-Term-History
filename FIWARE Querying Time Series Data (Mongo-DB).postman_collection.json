@@ -14,10 +14,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/version",
 							"protocol": "http",
@@ -122,10 +118,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
 							"protocol": "http",
@@ -175,10 +167,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{cygnus}}/v1/version",
 							"protocol": "http",
@@ -199,10 +187,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/version",
 							"protocol": "http",
@@ -237,7 +221,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify Cygnus of all Motion Sensor count changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"count\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrs\": [\n      \"count\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  }\n}"
+							"raw": "{\n  \"description\": \"Notify Cygnus of all Motion Sensor count changes\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Motion.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"count\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5051/notify\"\n    },\n    \"attrs\": [\n      \"count\"\n    ]\n  }\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -251,7 +235,7 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\n\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format."
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\n\nThe rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive\nevery event to be able to aggregate the results.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus**  will be informed of all **Motion Sensor** data changes.\n* The notification `url` must match the configured `CYGNUS_MONGO_SERVICE_PORT`"
 					},
 					"response": []
 				},
@@ -275,7 +259,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"description\": \"Notify Cygnus to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"luminosity\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5050/notify\"\n    },\n    \"attrs\": [\n      \"luminosity\"\n    ],\n    \"attrsFormat\": \"legacy\"\n  },\n  \"throttling\": 5\n}"
+							"raw": "{\n  \"description\": \"Notify Cygnus to sample Lamp changes every five seconds\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \"Lamp.*\"\n      }\n    ],\n    \"condition\": {\n      \"attrs\": [\n        \"luminosity\"\n      ]\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://cygnus:5051/notify\"\n    },\n    \"attrs\": [\n      \"luminosity\"\n    ]\n  },\n  \"throttling\": 5\n}"
 						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
@@ -289,7 +273,7 @@
 								""
 							]
 						},
-						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_API_PORT`\n* The `attrsFormat=legacy` is required since **Cygnus** currently only accepts notifications in the older NGSI v1 format.\n* The `throttling` value defines the rate that changes are sampled."
+						"description": "Once a dynamic context system is up and running, we need to inform **Cygnus** of changes in context.\n**Cygnus** will store the historical context data in a Mongo-DB database and **STH-Comet** will only\nbe used to read the persisted data.\n\nThe luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be\nable to work out relevant statistics such as minimum and maximum values and rates of change.\n\nThis is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**\nand including the `throttling` attribute in the request body.\n\n* The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to measurements from the attached IoT Sensors\n* The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Smart Lamp** data changes only\n* The notification `url` must match the configured `CYGNUS_MONGO_SERVICE_PORT`\n* The `throttling` value defines the rate that changes are sampled."
 					},
 					"response": []
 				},
@@ -307,10 +291,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{orion}}/v2/subscriptions/",
 							"protocol": "http",
@@ -374,10 +354,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?hLimit=3&hOffset=0",
 							"protocol": "http",
@@ -431,10 +407,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?hLimit=3&hOffset=3",
 							"protocol": "http",
@@ -488,10 +460,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?lastN=3",
 							"protocol": "http",
@@ -540,10 +508,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?aggrMethod=sum&aggrPeriod=minute",
 							"protocol": "http",
@@ -572,13 +536,13 @@
 								},
 								{
 									"key": "dateFrom",
-									"value": "2018-01-01T00:00:00.000Z",
+									"value": null,
 									"description": "The starting date and time",
 									"disabled": true
 								},
 								{
 									"key": "dateTo",
-									"value": "2019-12-31T00:00:00.000Z",
+									"value": null,
 									"description": "The final date and time",
 									"disabled": true
 								}
@@ -607,10 +571,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=min&aggrPeriod=minute",
 							"protocol": "http",
@@ -674,10 +634,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=max&aggrPeriod=minute",
 							"protocol": "http",
@@ -706,13 +662,13 @@
 								},
 								{
 									"key": "dateFrom",
-									"value": "2018-01-01T00:00:00.000Z",
+									"value": null,
 									"description": "The starting date and time",
 									"disabled": true
 								},
 								{
 									"key": "dateTo",
-									"value": "2019-12-31T00:00:00.000Z",
+									"value": null,
 									"description": "The final date and time",
 									"disabled": true
 								}
@@ -741,10 +697,6 @@
 								"value": "/"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{sth-comet}}/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?aggrMethod=sum&aggrPeriod=minute",
 							"protocol": "http",
@@ -773,13 +725,13 @@
 								},
 								{
 									"key": "dateFrom",
-									"value": "2018-01-01T00:00:00.000Z",
+									"value": null,
 									"description": "The starting date and time",
 									"disabled": true
 								},
 								{
 									"key": "dateTo",
-									"value": "2019-12-31T00:00:00.000Z",
+									"value": null,
 									"description": "The final date and time",
 									"disabled": true
 								}
@@ -839,19 +791,19 @@
 	],
 	"variable": [
 		{
-			"id": "eddf182d-5088-4a93-b086-6588edcdc6c1",
+			"id": "a76b4b24-84ab-48bc-a2ca-4607b6e61068",
 			"key": "orion",
 			"value": "localhost:1026",
 			"type": "string"
 		},
 		{
-			"id": "36a9ee4c-4999-4dd9-81bf-250634b1d35d",
+			"id": "d7d2c017-8dfe-4d8e-aaa7-584bcd9faaa3",
 			"key": "cygnus",
 			"value": "localhost:5080",
 			"type": "string"
 		},
 		{
-			"id": "adefe0f6-bbdb-44fd-9527-ffab092a3375",
+			"id": "1ad78e02-2af7-4340-a44c-cbbf3d57cff9",
 			"key": "sth-comet",
 			"value": "localhost:8666",
 			"type": "string"
