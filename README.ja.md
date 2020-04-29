@@ -164,13 +164,13 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
 -   4 つの **FIWARE Generic Enablers** :
     -   FIWARE
         [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)
-        は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使
+        は、[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使
         用してリクエストを受信します
     -   FIWARE
         [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
         は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値
         を受信し、Context Broker
-        の[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエ
+        の[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエ
         ストに変換してコンテキスト・エンティティの状態を変更します
     -   FIWARE [STH-Comet](https://fiware-sth-comet.readthedocs.io/) は以下を行
         います :
@@ -208,11 +208,11 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
         セットとして機能する Web サーバ
     -   このチュートリアルでは、**コンテキスト・プロバイダの NGSI proxy** は使用
         しません。これは以下を行います :
-        -   [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使
+        -   [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使
             用してリクエストを受信します
         -   独自の API を独自のフォーマットで使用して、公開されているデータ・ソ
             ースへのリクエストを行います
-        -   [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) 形式
+        -   [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) 形式
             でコンテキスト・データ を Orion Context Broker に返します
 
 要素間のすべての対話は HTTP リクエストによって開始されるため、エンティティはコン
