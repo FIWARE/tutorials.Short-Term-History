@@ -223,6 +223,7 @@ repository and create the necessary images by running the commands as shown:
 ```console
 git clone https://github.com/FIWARE/tutorials.Short-Term-History.git
 cd tutorials.Short-Term-History
+git checkout NGSI-v2
 
 ./services create
 ```
