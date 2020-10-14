@@ -9,7 +9,7 @@ set -e
 
 if (( $# != 1 )); then
     echo "Illegal number of parameters"
-    echo "usage: services [create|cygnus|sth-comet|stop]"
+    echo "usage: services [create|start|stop]"
     exit 1
 fi
 
@@ -18,17 +18,21 @@ loadData () {
 	waitForOrion
 	docker run --rm -v $(pwd)/import-data:/import-data \
 		--network fiware_default \
+		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
+		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
 		--entrypoint /bin/ash curlimages/curl import-data
 	waitForIoTAgent
 	docker run --rm -v $(pwd)/provision-devices:/provision-devices \
 		--network fiware_default \
+		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
+		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
 		--entrypoint /bin/ash curlimages/curl provision-devices
 	echo ""
 }
 
 stoppingContainers () {
 	echo "Stopping containers"
-	docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware down -v --remove-orphans
+	docker-compose --log-level ERROR -f docker-compose.yml -p fiware down -v --remove-orphans
 }
 
 displayServices () {
@@ -93,7 +97,7 @@ case "${command}" in
 	"help")
         echo "usage: services [create|cygnus|sth-comet|stop]"
         ;;
-	 "sth-comet")
+	 "start")
 		stoppingContainers
 		echo -e "Starting five containers \033[1;34mOrion\033[0m, \033[1;34mSTH-Comet\033[0m, \033[1;36mIoT-Agent\033[0m, \033[1mTutorial\033[0m and a \033[1mMongoDB\033[0m database."	
 		echo -e "- \033[1;34mOrion\033[0m is the context broker"
@@ -101,21 +105,9 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo ""
-		docker-compose --log-level ERROR -f docker-compose/sth-comet.yml -p fiware up -d --remove-orphans
-		loadData
-		displayServices
-		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
-		;;
-     "cygnus")
-		stoppingContainers
-		echo -e "Starting five containers \033[1;34mOrion\033[0m, \033[1;34mCygnus\033[0m, \033[1;34mSTH-Comet\033[0m, \033[1;36mIoT-Agent\033[0m, \033[1mTutorial\033[0m and a \033[1mMongoDB\033[0m database."	
-		echo -e "- \033[1;34mOrion\033[0m is the context broker"
-		echo -e "- \033[1;34mCygnus\033[0m is configured to write context data to Mongo-DB"
-		echo -e "- \033[1;34mSTH-Comet\033[0m is reading context data from Mongo-DB"
-		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
-		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors"
-		echo ""
-		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware up -d --remove-orphans
+		docker-compose --log-level ERROR -f docker-compose.yml -p fiware up -d --remove-orphans
+		
+		export CONTEXT_BROKER=orion:1026
 		loadData
 		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
@@ -125,11 +117,11 @@ case "${command}" in
 		;;
 	"create")
 		echo "Pulling Docker images"
-		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware pull
+		docker-compose --log-level ERROR -f docker-compose.yml -p fiware pull
 		;;
 	*)
 		echo "Command not Found."
-		echo "usage: services [create|cygnus|sth-comet|stop]"
+		echo "usage: services [create|start|stop]"
 		exit 127;
 		;;
 esac
