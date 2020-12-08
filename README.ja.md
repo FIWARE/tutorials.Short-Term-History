@@ -332,7 +332,7 @@ mongo-db:
         - "27017:27017"
     networks:
         - default
-    command: --bind_ip_all --smallfiles
+
 ```
 
 <a name="sth-comet-configuration"></a>
@@ -1178,7 +1178,7 @@ mongo-db:
         - "27017:27017"
     networks:
         - default
-    command: --bind_ip_all --smallfiles
+
 ```
 
 <a name="sth-comet-configuration-1"></a>
