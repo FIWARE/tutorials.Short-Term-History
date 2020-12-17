@@ -267,7 +267,6 @@ mongo-db:
         - "27017:27017"
     networks:
         - default
-
 ```
 
 ## STH-Comet Configuration
@@ -1039,7 +1038,6 @@ mongo-db:
         - "27017:27017"
     networks:
         - default
-
 ```
 
 ## STH-Comet Configuration
@@ -1311,7 +1309,7 @@ The basic processing consists of two-step - retrieval and attribute mapping, sam
 
 ```javascript
 function readCometLampLuminosity(id, aggMethod) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         const url = "http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity";
         const options = {
             method: "GET",
@@ -1338,7 +1336,7 @@ function cometToTimeSeries(cometResponse, aggMethod) {
     const values = cometResponse.contextResponses[0].contextElement.attributes[0].values[0];
     let date = moment(values._id.origin);
 
-    _.forEach(values.points, (element) => {
+    _.forEach(values.points, element => {
         data.push({ t: date.valueOf(), y: element[aggMethod] });
         labels.push(date.format("HH:mm"));
         date = date.clone().add(1, "m");
