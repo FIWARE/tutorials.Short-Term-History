@@ -325,7 +325,7 @@ Bash スクリプトを実行することによって、コマンドラインか
 
 ```yaml
 mongo-db:
-    image: mongo:3.6
+    image: mongo:4.2
     hostname: mongo-db
     container_name: db-mongo
     ports:
@@ -1171,7 +1171,7 @@ Context Broker**，**IoT Agent**、および **Cygnus** によって永続化さ
 
 ```yaml
 mongo-db:
-    image: mongo:3.6
+    image: mongo:4.2
     hostname: mongo-db
     container_name: db-mongo
     ports:
