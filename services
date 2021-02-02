@@ -134,6 +134,9 @@ case "${command}" in
 	"stop")
 		stoppingContainers
 		;;
+	"start")
+		./services cygnus
+		;;
 	"create")
 		echo "Pulling Docker images"
 		docker-compose --log-level ERROR -f docker-compose/cygnus-sth-comet.yml -p fiware pull
