@@ -1,63 +1,68 @@
+# WARNING: Do not deploy this tutorial configuration directly to a production environment
+#
+# The tutorial docker-compose files have not been written for production deployment and will not 
+# scale. A proper architecture has been sacrificed to keep the narrative focused on the learning 
+# goals, they are just used to deploy everything onto a single Docker machine. All FIWARE components 
+# are running at full debug and extra ports have been exposed to allow for direct calls to services. 
+# They also contain various obvious security flaws - passwords in plain text, no load balancing,
+# no use of HTTPS and so on. 
+# 
+# This is all to avoid the need of multiple machines, generating certificates, encrypting secrets
+# and so on, purely so that a single docker-compose file can be read as an example to build on, 
+# not use directly. 
+# 
+# When deploying to a production environment, please refer to the Helm Repository
+# for FIWARE Components in order to scale up to a proper architecture:
+# 
+# see: https://github.com/FIWARE/helm-charts/
+#
 version: "3.5"
 services:
-  db:
-    image: timescale/timescaledb-postgis:latest-pg12
-    ports:
-      - 5432:5432
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: orion_ld
-  flask:
-    image: ngsild-flask
-    command: flask run --host=0.0.0.0
-    networks:
-      default:
-        aliases:
-          - flask-app
-    ports:
-        - 8080:5000
-    environment:
-      - PYTHONUNBUFFERED=1
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=orion_ld
-      - POSTGRES_HOST=192.168.0.113
-      - FLASK_APP=/app.py
-
-    depends_on:
-      - db
-  nginx:
-    image: nginx:1.13.7
-    container_name: nginx
-    depends_on:
-      - flask
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - default
-    ports:
-      - 8000:80
-
   # Orion is the context broker
   orion:
-    image: fiware/orion-ld:${ORION_LD_VERSION}
+    image: fiware/orion-ld #:${ORION_LD_VERSION}
     hostname: orion
     container_name: fiware-orion
+    #restart: always
     depends_on:
       - mongo-db
+      - timescale-db
     networks:
       - default
     ports:
       - "${ORION_LD_PORT}:${ORION_LD_PORT}" # localhost:1026
-    command: -dbhost mongo-db -logLevel DEBUG
+    environment:
+      - ORIONLD_TROE=TRUE
+      - ORIONLD_TROE_USER=orion
+      - ORIONLD_TROE_PWD=orion
+      - ORIONLD_TROE_HOST=timescale-db
+      - ORIONLD_MONGO_HOST=mongo-db
+    command: -dbhost mongo-db -logLevel DEBUG -forwarding
     healthcheck:
       test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
+      interval: 5s
+
+  mintaka:
+    image: wistefan/mintaka-j:latest
+    hostname: mintaka
+    container_name: fiware-mintaka
+    depends_on:
+      - timescale-db
+    environment:
+      - DATASOURCES_DEFAULT_HOST=timescale-db
+      - DATASOURCES_DEFAULT_USERNAME=orion
+      - DATASOURCES_DEFAULT_PASSWORD=orion
+      - DATASOURCES_DEFAULT_DATABSE=orion
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    networks:
+      - default
 
   # IoT-Agent is configured for the UltraLight Protocol
   iot-agent:
-    image: fiware/iotagent-ul:${ULTRALIGHT_VERSION}-ld
+    image: fiware/iotagent-ul:${ULTRALIGHT_VERSION}
     hostname: iot-agent
     container_name: fiware-iot-agent
     depends_on:
@@ -84,7 +89,8 @@ services:
       - IOTA_JSON_LD_CONTEXT=http://context:3000/data-models/ngsi-context.jsonld
       - IOTA_FALLBACK_TENANT=openiot
     healthcheck:
-      test: curl --fail -s http://iot-agent:${IOTA_NORTH_PORT}/iot/about || exit 1
+      interval: 5s
+
 
   # Tutorial acts as a series of dummy IoT Sensors over HTTP
   tutorial:
@@ -130,17 +136,39 @@ services:
     expose:
       - "${MONGO_DB_PORT}"
     ports:
-      - "${MONGO_DB_PORT}:${MONGO_DB_PORT}" # localhost:27017 # localhost:27017
+      - "${MONGO_DB_PORT}:${MONGO_DB_PORT}" # localhost:27017
     networks:
       - default
-    command: --bind_ip_all --smallfiles
     volumes:
       - mongo-db:/data
     healthcheck:
       test: |
         host=`hostname --ip-address || echo '127.0.0.1'`; 
         mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1    
+      interval: 5s
 
+
+  timescale-db:
+    image: timescale/timescaledb-postgis:latest-pg12
+    hostname: timescale-db
+    container_name: db-timescale
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U orion" ]
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    environment:
+      - POSTGRES_USER=orion
+      - POSTGRES_PASSWORD=orion
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - default
+    
 networks:
   default:
     ipam:
