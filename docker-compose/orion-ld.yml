@@ -37,6 +37,7 @@ services:
       - ORIONLD_TROE_PWD=orion
       - ORIONLD_TROE_HOST=timescale-db
       - ORIONLD_MONGO_HOST=mongo-db
+      - ORIONLD_MULTI_SERVICE=TRUE
     command: -dbhost mongo-db -logLevel DEBUG -forwarding
     healthcheck:
       test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
