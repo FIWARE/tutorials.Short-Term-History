@@ -119,6 +119,7 @@ loadData () {
 
 stoppingContainers () {
 	echo "Stopping containers"
+	docker-compose --log-level ERROR -f docker-compose/mintaka.yml down -v
 	docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware down -v --remove-orphans
 	docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml -p fiware down -v --remove-orphans
 }
@@ -175,7 +176,9 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo ""
-		docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware up -d --remove-orphans
+		docker-compose --log-level ERROR -f docker-compose/mintaka.yml -p fiware up -d --remove-orphans
+		pause 10
+		docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware up -d
 		waitForMongo
 		addDatabaseIndex
 		waitForContext

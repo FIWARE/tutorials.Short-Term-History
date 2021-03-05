@@ -20,13 +20,12 @@ version: "3.5"
 services:
   # Orion is the context broker
   orion:
-    image: fiware/orion-ld #:${ORION_LD_VERSION}
+    image: fiware/orion-ld:troetest #:${ORION_LD_VERSION}
     hostname: orion
     container_name: fiware-orion
     restart: always
     depends_on:
       - mongo-db
-      - timescale-db
     networks:
       - default
     ports:
@@ -38,28 +37,10 @@ services:
       - ORIONLD_TROE_HOST=timescale-db
       - ORIONLD_MONGO_HOST=mongo-db
       - ORIONLD_MULTI_SERVICE=TRUE
-    command: -dbhost mongo-db -logLevel DEBUG -forwarding
+    command: -dbhost mongo-db -logLevel DEBUG -t0-255 -forwarding 
     healthcheck:
       test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
       interval: 5s
-
-  mintaka:
-    image: wistefan/mintaka-j:latest
-    hostname: mintaka
-    container_name: fiware-mintaka
-    depends_on:
-      - timescale-db
-    environment:
-      - DATASOURCES_DEFAULT_HOST=timescale-db
-      - DATASOURCES_DEFAULT_USERNAME=orion
-      - DATASOURCES_DEFAULT_PASSWORD=orion
-      - DATASOURCES_DEFAULT_DATABSE=orion
-    expose:
-      - "8080"
-    ports:
-      - "8080:8080"
-    networks:
-      - default
 
   # IoT-Agent is configured for the UltraLight Protocol
   iot-agent:
@@ -90,7 +71,7 @@ services:
       - IOTA_JSON_LD_CONTEXT=http://context:3000/data-models/ngsi-context.jsonld
       - IOTA_FALLBACK_TENANT=openiot
     healthcheck:
-      interval: 5s
+      interval: 30s
 
 
   # Tutorial acts as a series of dummy IoT Sensors over HTTP
@@ -147,28 +128,6 @@ services:
         host=`hostname --ip-address || echo '127.0.0.1'`; 
         mongo --quiet $host/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)' && echo 0 || echo 1    
       interval: 5s
-
-
-  timescale-db:
-    image: timescale/timescaledb-postgis:latest-pg12
-    hostname: timescale-db
-    container_name: db-timescale
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U orion" ]
-      interval: 15s
-      timeout: 15s
-      retries: 5
-      start_period: 60s
-    environment:
-      - POSTGRES_USER=orion
-      - POSTGRES_PASSWORD=orion
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432"
-    networks:
-      - default
     
 networks:
   default:
