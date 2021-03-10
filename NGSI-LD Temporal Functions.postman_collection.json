@@ -45,7 +45,8 @@
 					{
 						"key": "NGSILD-Tenant",
 						"value": "openiot",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					},
 					{
 						"key": "Link",
@@ -54,7 +55,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow003",
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Building:farm001",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -63,7 +64,7 @@
 					"path": [
 						"temporal",
 						"entities",
-						"urn:ngsi-ld:Device:cow003"
+						"urn:ngsi-ld:Building:farm001"
 					]
 				}
 			},
