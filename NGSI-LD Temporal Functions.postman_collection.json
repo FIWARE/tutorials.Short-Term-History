@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "d884c338-6244-4305-a96a-7dd5543dc909",
+		"name": "NGSI-LD Temporal Functions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Timeseries Cow",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						"urn:ngsi-ld:Device:cow003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Timeseries Building",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<http://context-provider:3000/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						"urn:ngsi-ld:Device:cow003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cow CB",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<http://context-provider:3000/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						"urn:ngsi-ld:Device:cow003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Building CB",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Building:farm001/?attrs=name,location&options=keyValues",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:Building:farm001",
+						""
+					],
+					"query": [
+						{
+							"key": "attrs",
+							"value": "name,location"
+						},
+						{
+							"key": "options",
+							"value": "keyValues"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
