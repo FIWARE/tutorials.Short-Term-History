@@ -13,16 +13,17 @@
 					{
 						"key": "NGSILD-Tenant",
 						"value": "openiot",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					},
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow003",
+					"raw": "http://localhost:8080/temporal/entities/?type=Gebäude",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -31,7 +32,143 @@
 					"path": [
 						"temporal",
 						"entities",
-						"urn:ngsi-ld:Device:cow003"
+						""
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "Gebäude"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Timeseries Cow Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Device:cow001?q=d==\"DRINKING\"&attrs=heartRate,d&timerel=between&time=2021-03-11T08:38:46.602&endTime=2021-03-11T08:39:05.511",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						"urn:ngsi-ld:Device:cow001"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "d==\"DRINKING\""
+						},
+						{
+							"key": "attrs",
+							"value": "heartRate,d"
+						},
+						{
+							"key": "timerel",
+							"value": "between"
+						},
+						{
+							"key": "time",
+							"value": "2021-03-11T08:38:46.602"
+						},
+						{
+							"key": "endTime",
+							"value": "2021-03-11T08:39:05.511"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Timeseries Cow Copy 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/?type=Tractor&timerel=between&time=2021-03-11T08:07:51.555&endTime=2021-03-11T08:41:31.597&options=temporalValues&georel=near;maxDistance==2000&geometry=Point&coordinates=[8,40,0]",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						""
+					],
+					"query": [
+						{
+							"key": "attrs",
+							"value": "location,d",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "Tractor"
+						},
+						{
+							"key": "timerel",
+							"value": "between"
+						},
+						{
+							"key": "time",
+							"value": "2021-03-11T08:07:51.555"
+						},
+						{
+							"key": "endTime",
+							"value": "2021-03-11T08:41:31.597"
+						},
+						{
+							"key": "options",
+							"value": "temporalValues"
+						},
+						{
+							"key": "timeproperty",
+							"value": "modifiedAt",
+							"disabled": true
+						},
+						{
+							"key": "georel",
+							"value": "near;maxDistance==2000"
+						},
+						{
+							"key": "geometry",
+							"value": "Point"
+						},
+						{
+							"key": "coordinates",
+							"value": "[8,40,0]"
+						}
 					]
 				}
 			},
@@ -50,7 +187,7 @@
 					},
 					{
 						"key": "Link",
-						"value": "<http://context-provider:3000/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
 						"type": "text"
 					}
 				],
@@ -136,6 +273,55 @@
 						"v1",
 						"entities",
 						"urn:ngsi-ld:Building:farm001",
+						""
+					],
+					"query": [
+						{
+							"key": "attrs",
+							"value": "name,location"
+						},
+						{
+							"key": "options",
+							"value": "keyValues"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Building CB Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Device:tractor001/?attrs=name,location&options=keyValues",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:Device:tractor001",
 						""
 					],
 					"query": [
