@@ -20,7 +20,7 @@ version: "3.5"
 services:
 
   mintaka:
-    image: wistefan/mintaka-j:latest
+    image: fiware/mintaka
     hostname: mintaka
     container_name: fiware-mintaka
     depends_on:
