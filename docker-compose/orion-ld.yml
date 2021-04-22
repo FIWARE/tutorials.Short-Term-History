@@ -20,7 +20,7 @@ version: "3.5"
 services:
   # Orion is the context broker
   orion:
-    image: fiware/orion-ld #:${ORION_LD_VERSION}
+    image: fiware/orion-ld:${ORION_LD_VERSION}
     hostname: orion
     container_name: fiware-orion
     restart: always
@@ -110,8 +110,8 @@ services:
       - IOTA_JSON_LD_CONTEXT=http://context:3000/data-models/ngsi-context.jsonld
       - NGSI_LD_TENANT=openiot
 
-      - PIG_COUNT=40
-      - COW_COUNT=40
+      - PIG_COUNT=4
+      - COW_COUNT=4
 
   # Databases
   mongo-db:

@@ -20,7 +20,7 @@ version: "3.5"
 services:
 
   mintaka:
-    image: fiware/mintaka
+    image: fiware/mintaka:${MINTAKA_VERSION}
     hostname: mintaka
     container_name: fiware-mintaka
     depends_on:
@@ -32,9 +32,9 @@ services:
       - DATASOURCES_DEFAULT_DATABSE=orion
       - DATASOURCES_DEFAULT_MAXIMUM_POOL_SIZE=2
     expose:
-      - "8080"
+      - "${MINTAKA_PORT}"
     ports:
-      - "8080:8080"
+      - "${MINTAKA_PORT}:${MINTAKA_PORT}"
     networks:
       - default
 
