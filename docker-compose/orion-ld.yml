@@ -37,7 +37,7 @@ services:
       - ORIONLD_TROE_HOST=timescale-db
       - ORIONLD_MONGO_HOST=mongo-db
       - ORIONLD_MULTI_SERVICE=TRUE
-    command: -dbhost mongo-db -logLevel DEBUG -t0-255 -forwarding 
+    command: -dbhost mongo-db -logLevel INFO -forwarding 
     healthcheck:
       test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
       interval: 5s
@@ -59,7 +59,7 @@ services:
       - IOTA_CB_PORT=${ORION_LD_PORT} # port the context broker listens on to update context
       - IOTA_NORTH_PORT=${IOTA_NORTH_PORT}
       - IOTA_REGISTRY_TYPE=mongodb #Whether to hold IoT device info in memory or in a database
-      - IOTA_LOG_LEVEL=DEBUG # The log level of the IoT Agent
+      - IOTA_LOG_LEVEL=INFO # The log level of the IoT Agent
       - IOTA_TIMESTAMP=true # Supply timestamp information with each measurement
       - IOTA_AUTOCAST=true # Ensure Ultralight number values are read as numbers not strings
       - IOTA_MONGO_HOST=mongo-db # The host name of MongoDB
@@ -109,6 +109,9 @@ services:
       - MONGO_URL=mongodb://mongo-db:27017
       - IOTA_JSON_LD_CONTEXT=http://context:3000/data-models/ngsi-context.jsonld
       - NGSI_LD_TENANT=openiot
+
+      - PIG_COUNT=40
+      - COW_COUNT=40
 
   # Databases
   mongo-db:

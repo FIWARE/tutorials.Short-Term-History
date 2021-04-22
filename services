@@ -114,6 +114,9 @@ loadData () {
 		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
 		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
 		--entrypoint /bin/ash curlimages/curl provision-devices
+	docker run --rm -v $(pwd)/link-devices:/link-devices \
+		--network fiware_default \
+		--entrypoint /bin/ash curlimages/curl link-devices
 	echo ""
 }
 
