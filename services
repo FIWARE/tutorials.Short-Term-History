@@ -9,7 +9,7 @@ set -e
 
 SCORPIO="http://scorpio:9090/scorpio/v1/info/"
 ORION="http://orion:1026/version"
-CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld"
+CONTEXT="http://context/ngsi-context.jsonld"
 
 if (( $# != 1 )); then
 	echo "Illegal number of parameters"
@@ -76,9 +76,9 @@ waitForContext () {
 
 waitForContext () {
 	echo -e "\n⏳ Waiting for \033[1m@context\033[0m to be available\n"
-	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://context-provider:3000/data-models/ngsi-context.jsonld'` -eq 000 ]
+	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://context/ngsi-context.jsonld'` -eq 000 ]
 	do 
-	  echo -e "@context HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://context-provider:3000/data-models/ngsi-context.jsonld'` " (waiting for 200)"
+	  echo -e "@context HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://context/ngsi-context.jsonld'` " (waiting for 200)"
 	  sleep 1
 	done
 }
@@ -93,9 +93,8 @@ waitForMongo () {
 
 waitForIoTAgent () {
 	echo -e "\n⏳ Waiting for \033[1;36mIoT-Agent\033[0m to be available\n"
-	while ! [ `docker inspect --format='{{.State.Health.Status}}' fiware-iot-agent` == "healthy" ]
-
-	do 
+	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://iot-agent:4041/version'` -eq 000 ]
+ 	do 
 	  echo -e "IoT Agent HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:4041/version'` " (waiting for 200)"
 	  sleep 6
 	done
@@ -106,13 +105,15 @@ loadData () {
 	docker run --rm -v $(pwd)/import-data:/import-data \
 		--network fiware_default \
 		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
-		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
+		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context/ngsi-context.jsonld" \
+		-e PIG_COUNT=${PIG_COUNT:-4} \
+		-e COW_COUNT=${COW_COUNT:-4} \
 		--entrypoint /bin/ash curlimages/curl import-data
 	waitForIoTAgent
 	docker run --rm -v $(pwd)/provision-devices:/provision-devices \
 		--network fiware_default \
 		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
-		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
+		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context/ngsi-context.jsonld" \
 		--entrypoint /bin/ash curlimages/curl provision-devices
 	docker run --rm -v $(pwd)/link-devices:/link-devices \
 		--network fiware_default \
@@ -173,11 +174,12 @@ case "${command}" in
         ;;
 	 "orion")
 		stoppingContainers
-		echo -e "Starting six containers \033[1;34mOrion\033[0m, \033[1;34mMintaka\033[0m, \033[1;36mIoT-Agent\033[0m, \033[1mTutorial\033[0m and \033[1mMongoDB\033[0m and \033[1mTimescale\033[0m databases."	
+		echo -e "Starting seven containers \033[1;34mOrion\033[0m, \033[1;34mMintaka\033[0m, \033[1;36mIoT-Agent\033[0m, \033[1mTutorial\033[0m, a linked data \033[1mContext\033[0m and \033[1mMongoDB\033[0m and \033[1mTimescale\033[0m databases."	
 		echo -e "- \033[1;34mOrion\033[0m is the context broker"
 		echo -e "- \033[1;34mMintaka\033[0m will read and write to Mongo-DB"
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
+		echo -e "- \033[1mContext\033[0m holds the linked data @context files"
 		echo ""
 		docker-compose --log-level ERROR -f docker-compose/mintaka.yml -p fiware up -d --remove-orphans
 		pause 10

@@ -13,22 +13,59 @@
 					{
 						"key": "NGSILD-Tenant",
 						"value": "openiot",
-						"type": "text",
-						"disabled": true
+						"type": "text"
 					},
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://localhost:9092/temporal/entities/?type=Gebäude",
+					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "9092",
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities",
+						"urn:ngsi-ld:Animal:cow001"
+					],
+					"query": [
+						{
+							"key": "lastN",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Timeseries Cow Copy 3",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
 					"path": [
 						"temporal",
 						"entities",
@@ -37,7 +74,27 @@
 					"query": [
 						{
 							"key": "type",
-							"value": "Gebäude"
+							"value": "Animal"
+						},
+						{
+							"key": "pageSize",
+							"value": "2"
+						},
+						{
+							"key": "lastN",
+							"value": "5"
+						},
+						{
+							"key": "q",
+							"value": "sex==\"female\""
+						},
+						{
+							"key": "timeproperty",
+							"value": "modifiedAt"
+						},
+						{
+							"key": "options",
+							"value": "count"
 						}
 					]
 				}
@@ -66,7 +123,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/temporal/entities/?type=Tractor&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-03-12T13:55:37.621Z",
+					"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -80,7 +137,7 @@
 					"query": [
 						{
 							"key": "type",
-							"value": "Tractor"
+							"value": "Device"
 						},
 						{
 							"key": "q",
@@ -97,7 +154,7 @@
 						},
 						{
 							"key": "georel",
-							"value": "near%3BmaxDistance==2000"
+							"value": "near%3BmaxDistance==800"
 						},
 						{
 							"key": "geometry",
@@ -113,7 +170,7 @@
 						},
 						{
 							"key": "timeAt",
-							"value": "2021-03-12T13:55:37.621Z"
+							"value": "2021-04-22T08:33:51.255Z"
 						}
 					]
 				}
@@ -246,7 +303,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Tractor",
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow001",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -256,12 +313,45 @@
 						"ngsi-ld",
 						"v1",
 						"entities",
-						""
+						"urn:ngsi-ld:Animal:cow001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cow CB Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:Animal:cow005"
 					],
 					"query": [
 						{
-							"key": "type",
-							"value": "Tractor"
+							"key": "options",
+							"value": "keyValues"
 						}
 					]
 				}
@@ -281,8 +371,7 @@
 					{
 						"key": "NGSILD-Tenant",
 						"value": "openiot",
-						"type": "text",
-						"disabled": true
+						"type": "text"
 					},
 					{
 						"key": "Accept",
@@ -292,7 +381,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Building:farm001/?attrs=name,location&options=keyValues",
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow001",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -302,18 +391,7 @@
 						"ngsi-ld",
 						"v1",
 						"entities",
-						"urn:ngsi-ld:Building:farm001",
-						""
-					],
-					"query": [
-						{
-							"key": "attrs",
-							"value": "name,location"
-						},
-						{
-							"key": "options",
-							"value": "keyValues"
-						}
+						"urn:ngsi-ld:Animal:cow001"
 					]
 				}
 			},
@@ -347,7 +425,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device",
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -363,11 +441,6 @@
 						{
 							"key": "type",
 							"value": "Device"
-						},
-						{
-							"key": "options",
-							"value": "keyValues",
-							"disabled": true
 						},
 						{
 							"key": "georel",
@@ -386,8 +459,15 @@
 						},
 						{
 							"key": "attrs",
-							"value": "heartRate,location",
-							"disabled": true
+							"value": "heartRate,d,location"
+						},
+						{
+							"key": "options",
+							"value": "keyValues"
+						},
+						{
+							"key": "limit",
+							"value": "2"
 						}
 					]
 				}
@@ -395,7 +475,7 @@
 			"response": []
 		},
 		{
-			"name": "New Request",
+			"name": "Building CB Copy 2",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -403,22 +483,149 @@
 						"key": "Link",
 						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
 						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Prefer",
+						"value": "body=json",
+						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://umbrella.fiware.dev/orion-beam/ngsi-ld/v1/entities/urn:ngsi-ld:Building:farm001",
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
 					"protocol": "http",
 					"host": [
-						"umbrella",
-						"fiware",
-						"dev"
+						"localhost"
 					],
+					"port": "1026",
 					"path": [
-						"orion-beam",
 						"ngsi-ld",
 						"v1",
 						"entities",
-						"urn:ngsi-ld:Building:farm001"
+						""
+					],
+					"query": [
+						{
+							"key": "georel",
+							"value": "near;maxDistance==2000"
+						},
+						{
+							"key": "geometry",
+							"value": "Point"
+						},
+						{
+							"key": "coordinates",
+							"value": "[13.402,52.471]"
+						},
+						{
+							"key": "attrs",
+							"value": "heartRate,d,location",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "Animal"
+						},
+						{
+							"key": "q",
+							"value": "sex==\"female\";species==\"dairy cattle\""
+						},
+						{
+							"key": "limit",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "options",
+							"value": "keyValues,count"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Building CB Copy 3",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text"
+					},
+					{
+						"key": "Prefer",
+						"value": "body=json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?q=sex== \"female\"&type=Animal&options=keyValues",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						""
+					],
+					"query": [
+						{
+							"key": "georel",
+							"value": "near;maxDistance==2000",
+							"disabled": true
+						},
+						{
+							"key": "geometry",
+							"value": "Point",
+							"disabled": true
+						},
+						{
+							"key": "coordinates",
+							"value": "[13.364,52.52]",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "sex== \"female\""
+						},
+						{
+							"key": "type",
+							"value": "Animal"
+						},
+						{
+							"key": "options",
+							"value": "keyValues"
+						},
+						{
+							"key": "limit",
+							"value": "5",
+							"disabled": true
+						}
 					]
 				}
 			},
