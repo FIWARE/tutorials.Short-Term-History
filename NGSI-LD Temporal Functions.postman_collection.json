@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Timeseries Cow",
+			"name": "Last 5 status updates of an Entity",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -17,7 +17,7 @@
 					},
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 						"type": "text"
 					}
 				],
@@ -44,7 +44,7 @@
 			"response": []
 		},
 		{
-			"name": "Timeseries Cow Copy 3",
+			"name": "Temporal Queries without observedAt",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -55,7 +55,7 @@
 					},
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 						"type": "text"
 					}
 				],
@@ -102,7 +102,7 @@
 			"response": []
 		},
 		{
-			"name": "Timeseries Cow Copy",
+			"name": "Geofenced Temporal Queries",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -113,7 +113,7 @@
 					},
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 						"type": "text"
 					},
 					{
@@ -123,7 +123,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z",
+					"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z&pageSize=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -171,6 +171,10 @@
 						{
 							"key": "timeAt",
 							"value": "2021-04-22T08:33:51.255Z"
+						},
+						{
+							"key": "pageSize",
+							"value": "2"
 						}
 					]
 				}
@@ -287,7 +291,7 @@
 			"response": []
 		},
 		{
-			"name": "Cow CB",
+			"name": "Retrieve a Cow attached to a Device",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -320,7 +324,7 @@
 			"response": []
 		},
 		{
-			"name": "Cow CB Copy",
+			"name": "KeyValues of an entity",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -359,46 +363,7 @@
 			"response": []
 		},
 		{
-			"name": "Building CB",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow001",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						"urn:ngsi-ld:Animal:cow001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Building CB Copy",
+			"name": "Retrieve a Device",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -475,7 +440,7 @@
 			"response": []
 		},
 		{
-			"name": "Building CB Copy 2",
+			"name": "Geofenced Entities",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -555,13 +520,13 @@
 			"response": []
 		},
 		{
-			"name": "Building CB Copy 3",
+			"name": "Geofenced Entites with filtering",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
 						"type": "text"
 					},
 					{
@@ -581,7 +546,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?q=sex== \"female\"&type=Animal&options=keyValues",
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -596,22 +561,19 @@
 					"query": [
 						{
 							"key": "georel",
-							"value": "near;maxDistance==2000",
-							"disabled": true
+							"value": "near;maxDistance==2000"
 						},
 						{
 							"key": "geometry",
-							"value": "Point",
-							"disabled": true
+							"value": "Point"
 						},
 						{
 							"key": "coordinates",
-							"value": "[13.364,52.52]",
-							"disabled": true
+							"value": "[13.364,52.52]"
 						},
 						{
 							"key": "q",
-							"value": "sex== \"female\""
+							"value": "sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22"
 						},
 						{
 							"key": "type",
