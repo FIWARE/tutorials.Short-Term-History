@@ -182,7 +182,7 @@
 			"response": []
 		},
 		{
-			"name": "Timeseries Cow Copy 2",
+			"name": "Geofenced Tractor",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -363,6 +363,45 @@
 			"response": []
 		},
 		{
+			"name": "KeyValues of an entity Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:Animal:cow005"
+					],
+					"query": [
+						{
+							"key": "options",
+							"value": "keyValues"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Retrieve a Device",
 			"request": {
 				"method": "GET",
@@ -440,7 +479,164 @@
 			"response": []
 		},
 		{
-			"name": "Geofenced Entities",
+			"name": "Retrieve Tractors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Prefer",
+						"value": "body=json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						""
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "Device"
+						},
+						{
+							"key": "georel",
+							"value": "near;maxDistance==2000",
+							"disabled": true
+						},
+						{
+							"key": "geometry",
+							"value": "Point",
+							"disabled": true
+						},
+						{
+							"key": "coordinates",
+							"value": "[13.364,52.52]",
+							"disabled": true
+						},
+						{
+							"key": "attrs",
+							"value": "heartRate,d,location"
+						},
+						{
+							"key": "options",
+							"value": "keyValues"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Geofenced Animal Entities",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Link",
+						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+						"type": "text"
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "openiot",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/geo+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Prefer",
+						"value": "body=json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						""
+					],
+					"query": [
+						{
+							"key": "georel",
+							"value": "near;maxDistance==2000"
+						},
+						{
+							"key": "geometry",
+							"value": "Point"
+						},
+						{
+							"key": "coordinates",
+							"value": "[13.402,52.471]"
+						},
+						{
+							"key": "attrs",
+							"value": "heartRate,d,location",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "Animal"
+						},
+						{
+							"key": "q",
+							"value": "sex==\"female\";species==\"dairy cattle\""
+						},
+						{
+							"key": "limit",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "options",
+							"value": "keyValues,count"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Geofenced Entities Copy",
 			"request": {
 				"method": "GET",
 				"header": [

@@ -83,7 +83,7 @@ do
        animals="$animals \"legalID\": { \"type\": \"Property\", \"value\": \"M-boar$number-$pigName\" }"
       else 
        addCondition "female" "sow";
-       animals="$animals \"legalID\": { \"type\": \"Property\", \"value\": \"M-sow$number-$pigName\" }"
+       animals="$animals \"legalID\": { \"type\": \"Property\", \"value\": \"F-sow$number-$pigName\" }"
       fi
       animals="$animals },"
     fi

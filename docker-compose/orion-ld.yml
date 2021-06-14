@@ -46,7 +46,8 @@ services:
       - ORIONLD_TROE_HOST=timescale-db
       - ORIONLD_MONGO_HOST=mongo-db
       - ORIONLD_MULTI_SERVICE=TRUE
-    command: -dbhost mongo-db -logLevel INFO -forwarding 
+      - ORIONLD_DISABLE_FILE_LOG=TRUE
+    command: -dbhost mongo-db -logLevel ERROR -troePoolSize 10 -forwarding 
     healthcheck:
       test: curl --fail -s http://orion:${ORION_LD_PORT}/version || exit 1
       interval: 10s
@@ -104,7 +105,7 @@ services:
       - "${TUTORIAL_APP_PORT}:${TUTORIAL_APP_PORT}" # localhost:3000
       - "${TUTORIAL_DUMMY_DEVICE_PORT}:${TUTORIAL_DUMMY_DEVICE_PORT}" # localhost:3001
     environment:
-      - DEBUG=tutorial:*
+    #  - DEBUG=tutorial:*
       - WEB_APP_PORT=${TUTORIAL_APP_PORT} # Port used by the content provider proxy and web-app for viewing data
       - IOTA_HTTP_HOST=iot-agent
       - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT}
