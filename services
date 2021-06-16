@@ -167,6 +167,21 @@ addDatabaseIndex () {
 	echo -e " \033[1;32mdone\033[0m"
 }
 
+addIoTDatabaseIndex () {
+	printf "Adding appropriate \033[1mMongoDB\033[0m indexes for \033[1;36mIoT-Agent\033[0m  ..."
+	docker exec  db-mongo mongo --eval '
+	conn = new Mongo();
+	db = conn.getDB("iotagentul");
+	db.createCollection("devices");
+	db.devices.createIndex({"_id.service": 1, "_id.id": 1, "_id.type": 1});
+	db.devices.createIndex({"_id.type": 1});
+	db.devices.createIndex({"_id.id": 1});
+	db.createCollection("groups");
+	db.groups.createIndex({"_id.resource": 1, "_id.apikey": 1, "_id.service": 1});
+	db.groups.createIndex({"_id.type": 1});' > /dev/null
+	echo -e " \033[1;32mdone\033[0m"
+}
+
 command="$1"
 case "${command}" in
 	"help")
@@ -192,6 +207,24 @@ case "${command}" in
 		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
 		;;
+
+	"scorpio")
+		export $(cat .env | grep "#" -v)
+		stoppingContainers
+		echo -e "Starting seven containers \033[1;34mScorpio\033[0m, \033[1mKafka\033[0m, \033[1mZookeeper\033[0m and a \033[1mPostgres\033[0m database, \033[1;36mIoT-Agent\033[0m, \033[1mTutorial\033[0m and a \033[1mMongoDB\033[0m database."
+		echo -e "- \033[1;34mScorpio\033[0m is the context broker"
+		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
+		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
+		echo ""
+		docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml -p fiware up -d --remove-orphans
+		waitForMongo
+		addIoTDatabaseIndex
+		waitForContext
+		waitForScorpio
+		loadData scorpio:9090
+		displayServices
+		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
+		;;
 	"stop")
 		export $(cat .env | grep "#" -v)
 		stoppingContainers
@@ -210,7 +243,7 @@ case "${command}" in
 		;;
 	*)
 		echo "Command not Found."
-		echo "usage: services [create|start|stop]"
+		echo "usage: services [create|orion|scorpio|stop]"
 		exit 127;
 		;;
 esac
