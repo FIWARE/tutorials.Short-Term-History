@@ -2,13 +2,16 @@
 #
 #  Command Line Interface to start all services associated with the Getting-Started Tutorial
 #
-#  For this tutorial the commands are merely a convenience script to run docker-compose
-#
+#  For this tutorial the commands are merely a convenience script to run ${dockerCmd}#
 
 set -e
 
-if (( $# != 1 )); then
-    echo "Illegal number of parameters"
+dockerCmd="docker compose"
+if (( $# == 2 )); then
+    dockerCmd="docker-compose"
+fi
+
+if (( $# < 1 )); then    echo "Illegal number of parameters"
     echo "usage: services [create|cygnus|sth-comet|stop]"
     exit 1
 fi
@@ -35,7 +38,7 @@ loadData () {
 
 stoppingContainers () {
 	echo "Stopping running containers"
-	docker-compose -f docker-compose/cygnus-sth-comet.yml  down -v --remove-orphans
+	${dockerCmd} -f docker-compose/cygnus-sth-comet.yml down -v --remove-orphans
 }
 
 displayServices () {
@@ -118,7 +121,7 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo ""
-		docker-compose -f docker-compose/sth-comet.yml  up -d --remove-orphans
+		${dockerCmd} -f docker-compose/sth-comet.yml up -d --remove-orphans
 		loadData
 		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
@@ -132,7 +135,7 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors"
 		echo ""
-		docker-compose -f docker-compose/cygnus-sth-comet.yml  up -d --remove-orphans
+		${dockerCmd} -f docker-compose/cygnus-sth-comet.yml up -d --remove-orphans
 		loadData
 		displayServices
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
@@ -149,7 +152,7 @@ case "${command}" in
 		export $(cat .env | grep "#" -v)
 		echo "Pulling Docker images"
 		docker pull curlimages/curl
-		docker-compose -f docker-compose/cygnus-sth-comet.yml  pull
+		${dockerCmd} -f docker-compose/cygnus-sth-comet.yml  pull
 		;;
 	*)
 		echo "Command not Found."
