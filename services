@@ -147,7 +147,7 @@ case "${command}" in
 		;;
 	"start")
 		export $(cat .env | grep "#" -v)
-		./services cygnus
+		./services cygnus $2
 		;;
 	"create")
 		export $(cat .env | grep "#" -v)
