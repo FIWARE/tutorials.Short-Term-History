@@ -1,189 +1,85 @@
-[![FIWARE Banner](https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png)](https://www.fiware.org/developers)
-[![NGSI v2](https://img.shields.io/badge/NGSI-v2-5dc0cf.svg)](https://fiware-ges.github.io/orion/api/v2/stable/)
+# Temporal Interfaces[<img src="https://img.shields.io/badge/NGSI-LD-d6604d.svg" width="90"  align="left" />](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.04.01_60/gs_cim009v010401p.pdf)[<img src="https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png" align="left" width="162">](https://www.fiware.org/)<br/>
 
 [![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://github.com/FIWARE/catalogue/blob/master/core/README.md)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
-[![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](http://forge.fiware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
 [![Support badge](https://img.shields.io/badge/tag-fiware-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware)
-<br/> [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
+[![JSON LD](https://img.shields.io/badge/JSON--LD-1.1-f06f38.svg)](https://w3c.github.io/json-ld-syntax/) <br/>
+[![Documentation](https://img.shields.io/readthedocs/ngsi-ld-tutorials.svg)](https://ngsi-ld-tutorials.rtfd.io)
 
-This tutorial is an introduction to [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) - a generic enabler
-which is used to retrieve trend data from a MongoDB database. The tutorial activates the IoT sensors connected in the
-[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Agent) and persists measurements from those sensors into a
+This tutorial is an introduction to the temporal interface of NGSI-LD, an **optional** add-on to context broker implementations. The tutorial activates the IoT animal collars connected in the
+[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD) and persists measurements from those sensors into a
 database and retrieves time-based aggregations of that data.
 
 The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also available as
-[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/)
+[Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/ngsi-ld.html)
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
-
--   このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)。
 
 ## Contents
 
 <details>
 <summary><strong>Details</strong></summary>
 
--   [Querying Time Series Data (MongoDB)](#querying-time-series-data-mongodb)
-    -   [Analyzing time series data](#analyzing-time-series-data)
--   [Architecture](#architecture)
--   [Prerequisites](#prerequisites)
-    -   [Docker and Docker Compose](#docker-and-docker-compose)
-    -   [Cygwin for Windows](#cygwin-for-windows)
--   [Start Up](#start-up)
--   [_minimal_ mode (STH-Comet only)](#minimal-mode-sth-comet-only)
-    -   [Database Server Configuration](#database-server-configuration)
-    -   [STH-Comet Configuration](#sth-comet-configuration)
-    -   [_minimal_ mode - Start up](#minimal-mode---start-up)
-        -   [STH-Comet - Checking Service Health](#sth-comet---checking-service-health)
-        -   [Generating Context Data](#generating-context-data)
-    -   [_minimal_ mode - Subscribing STH-Comet to Context Changes](#minimal-mode---subscribing-sth-comet-to-context-changes)
-        -   [STH-Comet - Aggregate Motion Sensor Count Events](#sth-comet---aggregate-motion-sensor-count-events)
-        -   [STH-Comet - Sample Lamp Luminosity](#sth-comet---sample-lamp-luminosity)
--   [Time Series Data Queries](#time-series-data-queries)
-    -   [Prerequisites](#prerequisites-1)
-        -   [Check that Subscriptions Exist](#check-that-subscriptions-exist)
-    -   [Offsets, Limits and Pagination](#offsets-limits-and-pagination)
-        -   [List the first N sampled values](#list-the-first-n-sampled-values)
-        -   [List N sampled values at an Offset](#list-n-sampled-values-at-an-offset)
-        -   [List the latest N sampled values](#list-the-latest-n-sampled-values)
-    -   [Time Period Queries](#time-period-queries)
-        -   [List the sum of values over a time period](#list-the-sum-of-values-over-a-time-period)
-        -   [List the minimum of a value over a time period](#list-the-minimum-of-a-value-over-a-time-period)
-        -   [List the maximum of a value over a time period](#list-the-maximum-of-a-value-over-a-time-period)
--   [_formal_ mode (Cygnus + STH-Comet)](#formal-mode-cygnus--sth-comet)
-    -   [Database Server Configuration](#database-server-configuration-1)
-    -   [STH-Comet Configuration](#sth-comet-configuration-1)
-    -   [Cygnus Configuration](#cygnus-configuration)
-    -   [_formal_ mode - Start up](#formal-mode---start-up)
-        -   [STH-Comet - Checking Service Health](#sth-comet---checking-service-health-1)
-        -   [Cygnus - Checking Service Health](#cygnus---checking-service-health)
-        -   [Generating Context Data](#generating-context-data-1)
-    -   [_formal_ mode - Subscribing Cygnus to Context Changes](#formal-mode---subscribing-cygnus-to-context-changes)
-        -   [Cygnus - Aggregate Motion Sensor Count Events](#cygnus---aggregate-motion-sensor-count-events)
-        -   [Cygnus - Sample Lamp Luminosity](#cygnus---sample-lamp-luminosity)
-    -   [_formal_ mode - Time Series Data Queries](#formal-mode---time-series-data-queries)
--   [Accessing Time Series Data Programmatically](#accessing-time-series-data-programmatically)
--   [Next Steps](#next-steps)
 
 </details>
 
-# Querying Time Series Data (MongoDB)
+# Querying Temporal Data
 
-> "The _"moment"_ has no yesterday or tomorrow. It is not the result of thought and therefore has no time."
+> "I could dance with you till the cows come home. Better still, I'll dance with the cows and you come home."
 >
-> — Bruce Lee
+> — Groucho Marx (Duck Soup)
 
-Within the FIWARE platform, historical context data can be persisted to a database (such as MongoDB) using a combination
-of the **Orion Context Broker** and the **Cygnus** generic enabler. This results in a series of data points being
-written to the database of your choice. Each time-stamped data point represents the state of context entities at a given
-moment in time. The individual data points are relatively meaningless on their own, it is only through combining a
+NGSI-LD introduces a standardized mechanism for persisting and retrieving historical context data. Conventionally, context brokers only deal with current context - they have no memory, however NGSI-LD context brokers can be extended to offer historical context data in a variety of JSON based formats. This additional functionality comes at a cost however, and for performance reasons, may not be available by default.
+
+Enabled Context brokers can persist historic context using the database of their choice. The NGSI-LD temporal interface is agnostic to the actual persistence mechanism to be used by the context broker - the interface merely specifies the outputs required when various queries take place. Furthermore NGSI-LD also specifies a mechanism for amending values of historic context using the `instanceId` attribute.
+
+The result is a series of data points timestamped using the `observedAt` _property-of-a-property_. Each time-stamped data point represents the state of context entities at a given moment in time. The individual data points are relatively meaningless on their own, it is only through combining a
 series data points that meaningful statistics such as maxima, minima and trends can be observed.
 
-The creation and analysis of trend data is a common requirement of context-driven systems - therefore the FIWARE
-platform offers a generic enabler ([STH-Comet](https://fiware-sth-comet.readthedocs.io/)) specifically to deal with the
-issue of persisting and interpreting time series data persisted into MongoDB. **STH-Comet** itself can be used in two
-modes:
+The creation and analysis of trend data is a common requirement of context-driven systems. Within FIWARE, there are two common paradigms in use - either activating the temporal interface or subscribing to individual context entities and persisting them into a time-series database (using a component such as QuantumLeap) - the latter is described in a [separate tutorial](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD).
 
--   In _minimal_ mode, **STH-Comet** is responsible for both data collection and interpreting the data when requested
--   In _formal_ mode, the collection of data is delegated to **Cygnus**, **STH-Comet** merely reads from an existing
-    database.
-
-Of the two modes of operation, the _formal_ mode is more flexible, but _minimal_ mode is simpler and easier to set-up.
-The key differences between the two are summarized in the table below:
-
-|                                                        | _minimal_ mode                                    | _formal_ mode                                                   |
-| ------------------------------------------------------ | ------------------------------------------------- | --------------------------------------------------------------- |
-| Is the system easy to set-up properly?                 | Only one configuration supported - Easy to set up | Highly configurable - Complex to set up                         |
-| Which component is responsible for a data persistence? | **STH-Comet**                                     | **Cygnus**                                                      |
-| What is the role of **STH-Comet**?                     | Reading and writing data                          | Data Read only                                                  |
-| What is the role of **Cygnus**?                        | Not Used                                          | Data Write only                                                 |
-| Where is the data aggregated?                          | MongoDB database connected to **STH-Comet** only  | MongoDB database connected to both **Cygnus** and **STH-Comet** |
-| Can the system be configured to use other databases?   | No                                                | Yes                                                             |
-| Does the solution scale easily?                        | Does not scale easily - use for simple systems    | Scales easily - use for complex systems                         |
-| Can the system cope with high rates of throughput?     | No - use where throughput is low                  | Yes - use where throughput is high                              |
-
-## Analyzing time series data
-
-The appropriate use of time series data analysis will depend on your use case and the reliability of the data
-measurements you receive. Time series data analysis can be used to answer questions such as:
-
--   What was the maximum measurement of a device within a given time period?
--   What was the average measurement of a device within a given time period?
--   What was the sum of the measurements sent by a device within a given time period?
-
-It can also be used to reduce the significance of each individual data point to exclude outliers by smoothing.
+Which mechanism to use should be it should be borne in mind when architecting such a system. The advantage of using a subscription mechanism is that only the subscribed entities are persisted, saving disk space. The advantage of the temporal interface is that it is provided by the context broker directly - no subscriptions are needed and HTTP traffic is reduced. Furthermore, the temporal interface can be queried across all context entities, not merely those which satisfy a subscription.
 
 #### Device Monitor
 
-For the purpose of this tutorial, a series of dummy IoT devices have been created, which will be attached to the context
+For the purpose of this tutorial, a series of dummy animal collar IoT devices have been created, which will be attached to the context
 broker. Details of the architecture and protocol used can be found in the
-[IoT Sensors tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2). The state of each device can be
+[IoT Sensors tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-LD). The state of each device can be
 seen on the UltraLight device monitor web page found at: `http://localhost:3000/device/monitor`
 
-![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
-
-#### Device History
-
-Once **STH-Comet** has started aggregating data, the historical state of each device can be seen on the device history
-web page found at: `http://localhost:3000/device/history/urn:ngsi-ld:Store:001`
-
-![](https://fiware.github.io/tutorials.Short-Term-History/img/history-graphs.png)
+![FIWARE Monitor](https://fiware.github.io/tutorials.Time-Series-Data/img/farm-devices.png)
 
 # Architecture
 
 This application builds on the components and dummy IoT devices created in
-[previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/). It will use three or four FIWARE components
-depending on the configuration of the system: the
-[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the
-[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/),
-[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/) and
-[Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/).
+[previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD). It will use two FIWARE components: the
+[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) and the
+[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/). In addition the optional temporal interface is serviced using an add-on called **Mintaka**.
 
 Therefore the overall architecture will consist of the following elements:
 
--   Four **FIWARE Generic Enablers**:
-    -   The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests
-        using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
-    -   The FIWARE [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) which will
-        receive northbound measurements from the dummy IoT devices in
-        [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
-        format and convert them to [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) requests for the
-        context broker to alter the state of the context entities
-    -   FIWARE [STH-Comet](https://fiware-sth-comet.readthedocs.io/) will:
-        -   interpret time-based data queries
-        -   subscribe to context changes and persist them into a **MongoDB** database (_minimal_ mode only)
-    -   FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) where it will subscribe to context changes and
-        persist them into a **MongoDB** database (_formal_ mode only)
-
-> :information*source: **Note:** **Cygnus** will only be used if **STH-Comet** is configured in \_formal* mode.
-
--   A [MongoDB](https://www.mongodb.com/) database:
+-   The [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using
+    [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+-   The FIWARE [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive
+    northbound device measures requests using [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) syntax and convert them to
+    [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+-   The underlying [MongoDB](https://www.mongodb.com/) database :
     -   Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and
         registrations
     -   Used by the **IoT Agent** to hold device information such as device URLs and Keys
-    -   Used as a data sink to hold time-based historical context data
-        -   In _minimal_ mode - this is read and populated by **STH-Comet**
-        -   In _formal_ mode - this is populated by **Cygnus** and read by **STH-Comet**
--   Three **Context Providers**:
-    -   The **Stock Management Frontend** is not used in this tutorial. It does the following:
-        -   Display store information and allow users to interact with the dummy IoT devices
-        -   Show which products can be bought at each store
-        -   Allow users to "buy" products and reduce the stock count.
-    -   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2)
+-   A [Timescale](https://www.timescale.com/) timeseries database for persisting historic context.
+-   The **Mintaka** add-on which services the temporal interface and is also responsible for persisting the context
+-   The **Tutorial Application** does the following:
+    -   Offers static `@context` files defining the context entities within the system.
+    -   Acts as set of dummy [agricultural IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-LD)
         using the
-        [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+        [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         protocol running over HTTP.
-    -   The **Context Provider NGSI** proxy is not used in this tutorial. It does the following:
-        -   receive requests using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
-        -   makes requests to publicly available data sources using their own APIs in a proprietary format
-        -   returns context data back to the Orion Context Broker in
-            [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) format.
 
 Since all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run
 from exposed ports.
 
-The specific architecture of both the _minimal_ and _formal_ configurations is discussed below.
+![](https://fiware.github.io/tutorials.IoT-Agent/img/architecture-ld.png)
 
 # Prerequisites
 
@@ -225,13 +121,13 @@ repository and create the necessary images by running the commands as shown:
 ```console
 git clone https://github.com/FIWARE/tutorials.Short-Term-History.git
 cd tutorials.Short-Term-History
-git checkout NGSI-v2
+git checkout NGSI-LD
 
 ./services create
 ```
 
 Thereafter, all services can be initialized from the command-line by running the
-[services](https://github.com/FIWARE/tutorials.Short-Term-History/blob/NGSI-v2/services) Bash script provided within the
+[services](https://github.com/FIWARE/tutorials.Short-Term-History/blob/NGSI-LD/services) Bash script provided within the
 repository:
 
 ```console
@@ -247,7 +143,7 @@ the previous tutorials and provision the dummy IoT sensors on startup.
 > ./services stop
 > ```
 
-# _minimal_ mode (STH-Comet only)
+# Mintaka mode (STH-Comet only)
 
 In the _minimal_ configuration, **STH-Comet** is used to persisting historic context data and also used to make
 time-based queries. All operations take place on the same port `8666`. The MongoDB instance listening on the standard
@@ -256,38 +152,47 @@ Broker** and the **IoT Agent**. The overall architecture can be seen below:
 
 ![](https://fiware.github.io/tutorials.Short-Term-History/img/sth-comet.png)
 
-## Database Server Configuration
+## Minitaka Configuration
 
 ```yaml
-mongo-db:
-    image: mongo:4.2
-    hostname: mongo-db
-    container_name: db-mongo
+mintaka:
+    image: fiware/mintaka:${MINTAKA_VERSION}
+    hostname: mintaka
+    container_name: fiware-mintaka
+    depends_on:
+      - timescale-db
+    environment:
+      - DATASOURCES_DEFAULT_HOST=timescale-db
+      - DATASOURCES_DEFAULT_USERNAME=orion
+      - DATASOURCES_DEFAULT_PASSWORD=orion
+      - DATASOURCES_DEFAULT_DATABSE=orion
+      - DATASOURCES_DEFAULT_MAXIMUM_POOL_SIZE=2
+    expose:
+      - "8080"
     ports:
-        - "27017:27017"
-    networks:
-        - default
+      - "8080:8080"
 ```
 
-## STH-Comet Configuration
+## Orion Configuration
 
 ```yaml
-sth-comet:
-    image: fiware/sth-comet
-    hostname: sth-comet
-    container_name: fiware-sth-comet
+ orion:
+    image: fiware/orion-ld:${ORION_LD_VERSION}
+    hostname: orion
+    container_name: fiware-orion
     depends_on:
-        - mongo-db
-    networks:
-        - default
+      - mongo-db
     ports:
-        - "8666:8666"
+      - "1026:1026"
     environment:
-        - STH_HOST=0.0.0.0
-        - STH_PORT=8666
-        - DB_PREFIX=sth_
-        - DB_URI=mongo-db:27017
-        - LOGOPS_LEVEL=DEBUG
+      - ORIONLD_TROE=TRUE
+      - ORIONLD_TROE_USER=orion
+      - ORIONLD_TROE_PWD=orion
+      - ORIONLD_TROE_HOST=timescale-db
+      - ORIONLD_MONGO_HOST=mongo-db
+      - ORIONLD_MULTI_SERVICE=TRUE
+      - ORIONLD_DISABLE_FILE_LOG=TRUE
+    command: -dbhost mongo-db -logLevel ERROR -troePoolSize 10 -forwarding
 ```
 
 The `sth-comet` container is listening on one port:

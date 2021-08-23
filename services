@@ -126,6 +126,7 @@ stoppingContainers () {
 	docker-compose --log-level ERROR -f docker-compose/mintaka.yml -p fiware down -v --remove-orphans
 	docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware down -v --remove-orphans
 	docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml -p fiware down -v --remove-orphans
+	docker volume prune -f
 }
 
 displayServices () {

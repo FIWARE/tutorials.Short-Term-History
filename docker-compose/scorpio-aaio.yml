@@ -77,9 +77,16 @@ services:
     depends_on:
       - kafka
       - postgres
-    healthcheck:
-      test: curl --fail -s http://scorpio:${SCORPIO_PORT}/scorpio/v1/info/ || exit 1
-
+    #healthcheck:
+    #  test: curl --fail -s http://scorpio:${SCORPIO_PORT}/scorpio/v1/info/ || exit 1
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 640M
+        reservations:
+          cpus: '0.6'
+          memory: 480M
 
   # Tutorial acts as a series of dummy IoT Sensors over HTTP
   tutorial:
