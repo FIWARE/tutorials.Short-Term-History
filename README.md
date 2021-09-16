@@ -295,7 +295,7 @@ coming from the devices can then be seen on the same page.
 Once the system is up and running, context data is updated automatically, historical information can be queried using the `/temporal/entities/` endpoint. The port to query will vary based on the context broker used - for Scorpio `/temporal/entities/` is integrated in the standard `9090`port, for Orion + Mintaka, `/entities` are requested on port `1026` and `/temporal/entities/` on port `8080`. These port mappings can be altered by amending the `docker-compose` file of course.
 
 
-### List the last N sampled values
+### List the last N sampled values for an entity
 
 This example shows the last 3 changes from the entity `urn:ngsi-ld:Animal:cow002`.
 
@@ -313,9 +313,11 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
   -d 'lastN=3'
 ```
 
+Note that when requesting a single entity, `timerel=before` and `timeAt=<current_time>` are implied by the Mintaka implementation of the temporal interface, these parameters may need to be explicitly added when working with other context brokers.
+
 #### Response:
 
-The response is a single entity - if an attribute is static (like `sex`) only one `value` is returned for that attribute. If an attribute is changing (like `heartRate`) up to N values are returned. The request is returning full normalized JSON-LD for every value, which includes _properties of properties_, so you can see which Devices have the provided various readings and which units are being used. Every value has an associated `instanceId` which can be used for futher manipulation of the individual entries where supported.
+The response is a single entity - if an attribute is changing (like `heartRate`) up to N values are returned. The request is returning full normalized JSON-LD for every value, which includes _properties of properties_, so you can see which Devices have the provided various readings and which units are being used. Every value has an associated `instanceId` which can be used for futher manipulation of the individual entries where supported.
 
 In the example below, `heartRate` and `location` have been provided by a single Device.
 
@@ -323,26 +325,6 @@ In the example below, `heartRate` and `location` have been provided by a single 
 {
     "id": "urn:ngsi-ld:Animal:cow002",
     "type": "Animal",
-    "phenologicalCondition": {
-        "type": "Property",
-        "value": "femaleAdult",
-        "instanceId": "urn:ngsi-ld:attribute:instance:c6efa008-1629-11ec-aced-0242ac120106"
-    },
-    "legalID": {
-        "type": "Property",
-        "value": "F-cow002-Trotter",
-        "instanceId": "urn:ngsi-ld:attribute:instance:c6efa51c-1629-11ec-aced-0242ac120106"
-    },
-    "name": {
-        "type": "Property",
-        "value": "Trotter",
-        "instanceId": "urn:ngsi-ld:attribute:instance:c6ef9bee-1629-11ec-aced-0242ac120106"
-    },
-    "sex": {
-        "type": "Property",
-        "value": "female",
-        "instanceId": "urn:ngsi-ld:attribute:instance:c6ef9e00-1629-11ec-aced-0242ac120106"
-    },
     "heartRate": [
         {
             "type": "Property",
@@ -450,86 +432,278 @@ In the example below, `heartRate` and `location` have been provided by a single 
 }
 ```
 
+### List the last N sampled values of an attribute of an entity
 
-### List the last N sampled values of an attribute
+All of the usual query parameters from the `/entities` endpoint are also supported with `/temporal/entities` - to obtain results for a single attribute, just add the `attrs` parameter and include a comma-delimited list of attributes to receive.
 
-All of the usual query parameters from the `/entities` endpoint are also supported with `/temporal/entities` - to obtain results for a single attribute, just add the `attrs` parameter.
-
-This example shows the last 3 changes of `heartRate` from the entity `urn:ngsi-ld:Animal:cow002`.
+This example shows just the last 3 changes of `heartRate` from the entity `urn:ngsi-ld:Animal:cow002`.
 
 #### :two: Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
+curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
-
+  -d 'attrs=heartRate'
 ```
 
 #### Response:
 
-The response is a single entity - if an attribute is static (like `sex`) only one `value` is returned for that attribute. If an attribute is changing (like `heartRate`) up to N values are returned. The request is returning full normalized JSON-LD for every value, which includes _properties of properties_, so you can see which Devices have the provided various readings and which units are being used. Every value has an associated `instanceId` which can be used for futher manipulation of the individual entries where supported.
-
-### List N sampled values at an Offset
-
-This example shows the fourth, fifth and sixth sampled `count` values from `Motion:001`.
-
-To obtain the short term history of a context entity attribute, send a GET request to
-`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
-
-the `hLimit` parameter restricts the result to N values. Setting `hOffset` to a non-zero value will start from the Nth
-measurement
-
-#### :six: Request:
-
-```console
-curl -X GET \
-  'http://localhost:8666/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?hLimit=3&hOffset=3' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /'
-```
-
-#### Response:
+The response is a single entity with a single attribute array holding values of`heartRate`
 
 ```json
 {
-    "contextResponses": [
+    "id": "urn:ngsi-ld:Animal:cow001",
+    "type": "Animal",
+    "heartRate": [
         {
-            "contextElement": {
-                "attributes": [
-                    {
-                        "name": "count",
-                        "values": [
-                            {
-                                "recvTime": "2018-06-21T12:37:00.358Z",
-                                "attrType": "Integer",
-                                "attrValue": "1"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:37:01.368Z",
-                                "attrType": "Integer",
-                                "attrValue": "0"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:37:07.461Z",
-                                "attrType": "Integer",
-                                "attrValue": "1"
-                            }
-                        ]
-                    }
-                ],
-                "id": "Motion:001",
-                "isPattern": false,
-                "type": "Motion"
-            },
-            "statusCode": {
-                "code": "200",
-                "reasonPhrase": "OK"
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:41.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:95b296d0-16d8-11ec-90f3-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:95b2991e-16d8-11ec-90f3-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 53.0,
+            "observedAt": "2021-09-16T10:26:31.178Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8f4e048c-16d8-11ec-8e17-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8f4e061c-16d8-11ec-8e17-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:26.308Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e408-16d8-11ec-b8cd-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e570-16d8-11ec-b8cd-0242ac120106"
             }
         }
     ]
 }
+```
+
+
+
+### Simplified temporal representation of an entity
+
+In much the same manner as the `options=keyValues` parameter reduces entities to simple key-value pairs, the equivalent `options=temporalValues` reduces each attribute to a series of tuples - one value and one timestamp for each entry.
+
+The simplified temporal representation can be requested by adding the `options` parameter as shown:
+
+#### :three: Request:
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'lastN=3' \
+  -d 'options=temporalValues'
+```
+
+#### Response:
+
+The response is a single entity with an array  of tuples for each attribute which has an `observedAt`_property-of-a-property_. In this case `heartRate` and `location` are returned. As
+can be seen, the first element of each tuple corresponds to the  historic `value` of the attribute. The `type` of each attribute is also returned.
+
+```json
+{
+    "id": "urn:ngsi-ld:Animal:cow002",
+    "type": "Animal",
+    "location": {
+        "type": "GeoProperty",
+        "values": [
+            [
+                {
+                    "type": "Point", "coordinates": [13.416, 52.485, 0.0]
+                },
+                "2021-09-16T10:59:58.790Z"
+            ],
+            [
+                {
+                    "type": "Point", "coordinates": [13.417, 52.485, 0.0]
+                },
+                "2021-09-16T10:59:54.038Z"
+            ],
+            [
+                {
+                    "type": "Point", "coordinates": [13.417, 52.484, 0.0]
+                },
+                "2021-09-16T10:59:52.138Z"
+            ]
+        ]
+    },
+    "heartRate": {
+        "type": "Property",
+        "values": [
+            [
+                52.0,
+                "2021-09-16T10:59:58.790Z"
+            ],
+            [
+                51.0,
+                "2021-09-16T10:59:54.038Z"
+            ],
+            [
+                50.0,
+                "2021-09-16T10:59:52.138Z"
+            ]
+        ]
+    }
+}
+```
+
+
+### Temporal Queries without observedAt
+
+Temporal Operations rely heavily on the use of the `observedAt` _property of a property_, queries but can also be made against static attributes using the `timeproperty` parameter to switch the time index for the query to make a look-up against `modifiedAt`
+
+#### :four: Request:
+
+The following query is requesting data about the bulls within the herd. Because the `sex`attribute is unchanging, `timeproperty=modifiedAt` must be used.
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Animal' \
+  -d 'pageSize=2' \
+  -d 'lastN=3' \
+  -d 'q=sex==%22male%22' \
+  -d 'timeproperty=modifiedAt' \
+  -d 'options=count' \
+  -d 'attrs=sex,heartRate' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>' \
+
+```
+
+
+`timerel=before` and `timeAt=<current_time>` are required parameters. `<current_time>` is a date-time expressed in UTC format like `2021-09-16T11:00Z` - seconds and milliseconds are optional
+
+#### Response:
+
+The response returns two entities along with the two requested attributes as shown. As can be seen. the `heartRate` is returning three previous values and the `sex` is returning a single property. Single value static attributes are reduced from an Array of one element down to an object because this is the format specified in JSON-LD syntax
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Animal:cow001",
+        "type": "Animal",
+        "sex": {
+            "type": "Property",
+            "value": "male",
+            "modifiedAt": "2021-09-16T10:22:39.650Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:0776b1b2-16d8-11ec-9e96-0242ac120106"
+        },
+        "heartRate": [
+        {
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:41.108Z",
+            "modifiedAt": "2021-09-16T10:26:41.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:95b296d0-16d8-11ec-90f3-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:95b2991e-16d8-11ec-90f3-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 53.0,
+            "observedAt": "2021-09-16T10:26:31.178Z",
+            "modifiedAt": "2021-09-16T10:26:31.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8f4e048c-16d8-11ec-8e17-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8f4e061c-16d8-11ec-8e17-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:26.308Z",
+            "modifiedAt": "2021-09-16T10:26:26.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e408-16d8-11ec-b8cd-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow001",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e570-16d8-11ec-b8cd-0242ac120106"
+            }
+        }
+    ]
+    },
+    {
+        "id": "urn:ngsi-ld:Animal:cow021",
+        "type": "Animal",
+        "sex": {
+            "type": "Property",
+            "value": "male",
+            "modifiedAt": "2021-09-16T10:22:39.650Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:07792b40-16d8-11ec-9e96-0242ac120106"
+        },
+        "heartRate": [
+        {
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:41.108Z",
+            "modifiedAt": "2021-09-16T10:26:41.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:95b296d0-16d8-11ec-90f3-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow021",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:95b2991e-16d8-11ec-90f3-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 53.0,
+            "observedAt": "2021-09-16T10:26:31.178Z",
+            "modifiedAt": "2021-09-16T10:26:31.108Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8f4e048c-16d8-11ec-8e17-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow021",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8f4e061c-16d8-11ec-8e17-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 52.0,
+            "observedAt": "2021-09-16T10:26:26.308Z",
+            "modifiedAt": "2021-09-16T10:26:41.308Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e408-16d8-11ec-b8cd-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow021",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:8ca9e570-16d8-11ec-b8cd-0242ac120106"
+            }
+        }
+    ]
+    }
+]
 ```
 
 ### List the latest N sampled values
