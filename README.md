@@ -528,21 +528,15 @@ can be seen, the first element of each tuple corresponds to the  historic `value
         "type": "GeoProperty",
         "values": [
             [
-                {
-                    "type": "Point", "coordinates": [13.416, 52.485, 0.0]
-                },
+                { "type": "Point", "coordinates": [13.416, 52.485, 0.0]},
                 "2021-09-16T10:59:58.790Z"
             ],
             [
-                {
-                    "type": "Point", "coordinates": [13.417, 52.485, 0.0]
-                },
+                { "type": "Point", "coordinates": [13.417, 52.485, 0.0]},
                 "2021-09-16T10:59:54.038Z"
             ],
             [
-                {
-                    "type": "Point", "coordinates": [13.417, 52.484, 0.0]
-                },
+                { "type": "Point", "coordinates": [13.417, 52.484, 0.0]},
                 "2021-09-16T10:59:52.138Z"
             ]
         ]
@@ -550,18 +544,9 @@ can be seen, the first element of each tuple corresponds to the  historic `value
     "heartRate": {
         "type": "Property",
         "values": [
-            [
-                52.0,
-                "2021-09-16T10:59:58.790Z"
-            ],
-            [
-                51.0,
-                "2021-09-16T10:59:54.038Z"
-            ],
-            [
-                50.0,
-                "2021-09-16T10:59:52.138Z"
-            ]
+            [ 52.0, "2021-09-16T10:59:58.790Z" ],
+            [ 51.0, "2021-09-16T10:59:54.038Z" ],
+            [ 50.0, "2021-09-16T10:59:52.138Z" ]
         ]
     }
 }
@@ -706,65 +691,357 @@ The response returns two entities along with the two requested attributes as sho
 ]
 ```
 
-### List the latest N sampled values
 
-This example shows latest three sampled `count` values from `Motion:001`.
+The equivalent simplified format can be retrived by setting `options=temporalValues`
 
-To obtain the short term history of a context entity attribute, send a GET request to
-`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
+#### :five: Request:
 
-If the `lastN` parameter is set, the result will return the N latest measurements only.
+The following query is requesting data about the bulls within the herd. Because the `sex`attribute is unchanging, `timeproperty=modifiedAt` must be used.
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Animal' \
+  -d 'pageSize=2' \
+  -d 'lastN=3' \
+  -d 'q=sex==%22male%22' \
+  -d 'timeproperty=modifiedAt' \
+  -d 'options=temporalValues' \
+  -d 'attrs=sex,heartRate' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>' \
+
+```
+
+
+
+#### Response:
+
+The response returns two entities along with the two requested attributes as shown. As can be seen. the `heartRate` is returning three previous values and the `sex` is returning a single property. The second element within each tuple - the timestamp represents the `modifiedAt` property.
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Animal:cow001",
+        "type": "Animal",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 52.0, "2021-09-16T10:59:59.329Z"],
+                [ 51.0, "2021-09-16T10:59:54.169Z"],
+                [ 50.0, "2021-09-16T10:59:52.479Z"]
+            ]
+        },
+        "sex": {
+            "type": "Property",
+            "values": [
+                [ "male", "2021-09-16T10:22:39.650Z"]
+            ]
+        }
+    },
+    {
+        "id": "urn:ngsi-ld:Animal:cow021",
+        "type": "Animal",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 52.0, "2021-09-16T10:59:59.375Z"],
+                [ 51.0, "2021-09-16T10:59:54.167Z"],
+                [ 51.0, "2021-09-16T10:59:52.441Z"]
+            ]
+        },
+        "sex": {
+            "type": "Property",
+            "values": [
+                [ "male", "2021-09-16T10:22:39.650Z"]
+            ]
+        }
+    }
+]
+```
+
+
+### Pagination operations
+
+Because temporal operations can end up returning very large payloads, it is possible to reduce the scope of the request, the `pageSize=2` parameter means that only two entities are returned:
+
+#### :six: Request:
+
+```console
+curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Animal' \
+  -d 'pageSize=2' \
+  -d 'lastN=3' \
+  -d 'q=sex==%22male%22' \
+  -d 'timeproperty=modifiedAt' \
+  -d 'options=temporalValues,count' \
+  -d 'attrs=sex,heartRate' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>'
+```
+
+It should be noted that the API also responded with a **206 Partial Content** HTTP Code, indicating that more data is available which would match the query. Adding `count` to the `options` parameter returns additional information in the headers of the response
+
+#### Response Headers:
+
+```text
+Content-Range: date-time 2021-09-16T11:00-2021-09-16T10:22:39.650/3
+Page-Size: 2
+Next-Page: urn:ngsi-ld:Animal:pig001
+NGSILD-Results-Count: 17
+Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
+Date: Thu, 16 Sep 2021 14:12:32 GMT
+Content-Type: application/ld+json
+content-length: 540
+connection: keep-alive
+```
+
+
+-  The **Content-Range** header describes the overall range of timestamps retrieved.
+-  The **Page-Size** header returns the number entries in the array - this may be fewer than requested
+-  The **Next-Page** header indicates the next entity to be retrieved.
+-  The **NGSILD-Results-Count** indicates the total number of entities which matched the request.
+
+In the example above, where two Animals were retrived, the returned headers indicate that 17 male animals are living on the farm and that the next entity to be returned would be `urn:ngsi-ld:Animal:pig001`
+
+Making the same request with an additional `pageAnchor` parameter will retrieve the next two entities
 
 #### :seven: Request:
 
+
 ```console
-curl -X GET \
-  'http://localhost:8666/STH/v1/contextEntities/type/Motion/id/Motion:001/attributes/count?lastN=3' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /'
+curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Animal' \
+  -d 'pageSize=2' \
+  -d 'lastN=3' \
+  -d 'q=sex==%22male%22' \
+  -d 'timeproperty=modifiedAt' \
+  -d 'options=temporalValues,count' \
+  -d 'attrs=sex,heartRate' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>' \
+  -d 'pageAnchor=urn:ngsi-ld:Animal:pig001' \
+```
+
+
+#### Response Headers:
+
+If the `pageAnchor` parameter is sent, an additional `Previous-Page` header is added to the response, indicating the first entity of the previous query
+
+```text
+Content-Range: date-time 2021-09-16T11:00-2021-09-16T10:22:39.650/3
+Page-Size: 2
+Next-Page: urn:ngsi-ld:Animal:pig005
+Previous-Page: urn:ngsi-ld:Animal:cow001
+NGSILD-Results-Count: 17
+Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
+Date: Thu, 16 Sep 2021 14:27:14 GMT
+Content-Type: application/ld+json
+content-length: 540
+connection: keep-alive
+```
+
+
+#### Response:
+
+Within the response body, two male pigs are now returned, once again the API also responded with a **206 Partial Content** HTTP Code, indicating further male animals can be found on the farm.
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Animal:pig003",
+        "type": "Animal",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 63.0, "2021-09-16T10:59:59.201Z"],
+                [ 62.0, "2021-09-16T10:59:53.916Z"],
+                [ 63.0, "2021-09-16T10:59:52.453Z"]
+            ]
+        },
+        "sex": {
+            "type": "Property",
+            "values": [
+                [ "male", "2021-09-16T10:22:39.650Z"]
+            ]
+        }
+    },
+    {
+        "id": "urn:ngsi-ld:Animal:pig001",
+        "type": "Animal",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 61.0, "2021-09-16T10:59:59.089Z"],
+                [ 62.0, "2021-09-16T10:59:53.726Z"],
+                [ 63.0, "2021-09-16T10:59:52.449Z"]
+            ]
+        },
+        "sex": {
+            "type": "Property",
+            "values": [
+                [ "male", "2021-09-16T10:22:39.650Z"]
+            ]
+        }
+    }
+]
+```
+
+### Filtering Temporal requests using the `q` parameter
+
+
+A device such as an animal collar, sends its data to the context broker via an IoT Agent, the corresponding entity is stored in the context broker.
+
+#### :eight: Request:
+
+```console
+curl -L -X GET \
+  'http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Device:pig003' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'NGSILD-Tenant: openiot'
 ```
 
 #### Response:
 
+The entity is following the standard **Device** data model and has attributes such as `location` and`controlledAsset` (i.e. the **Animal** entity that is wearing the device). Because the animal collars are monitoring `heartRate`, that attribute has also been added to the model.
+
 ```json
 {
-    "contextResponses": [
-        {
-            "contextElement": {
-                "attributes": [
-                    {
-                        "name": "count",
-                        "values": [
-                            {
-                                "recvTime": "2018-06-21T12:47:28.377Z",
-                                "attrType": "Integer",
-                                "attrValue": "0"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:48:08.930Z",
-                                "attrType": "Integer",
-                                "attrValue": "1"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:48:13.989Z",
-                                "attrType": "Integer",
-                                "attrValue": "0"
-                            }
-                        ]
-                    }
-                ],
-                "id": "Motion:001",
-                "isPattern": false,
-                "type": "Motion"
-            },
-            "statusCode": {
-                "code": "200",
-                "reasonPhrase": "OK"
-            }
-        }
-    ]
+    "@context": "http://context/ngsi-context.jsonld",
+    "id": "urn:ngsi-ld:Device:pig003",
+    "type": "Device",
+    "heartRate": {
+        "value": 65,
+        "type": "Property",
+        "unitCode": "5K",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "status": {
+        "value": "3",
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "location": {
+        "value": {
+            "type": "Point",
+            "coordinates": [
+                13.356,
+                52.511
+            ]
+        },
+        "type": "GeoProperty",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "controlledAsset": {
+        "object": "urn:ngsi-ld:Animal:pig003",
+        "type": "Relationship",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "description": {
+        "value": "Animal Collar",
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "category": {
+        "value": "sensor",
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "controlledProperty": {
+        "value": [
+            "heartRate",
+            "location",
+            "status"
+        ],
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "supportedProtocol": {
+        "value": "ul20",
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    },
+    "d": {
+        "value": "FORAGING",
+        "type": "Property",
+        "observedAt": "2021-09-16T15:24:15.781Z"
+    }
 }
 ```
+
+
+As can be seen, every returned attribute has an `observedAt` _property of a property_, this means that any attributes can be used as part of the filter for a temporal request
+
+The following request returns the `heartRate` registered when the state of an animal is described as `FORAGING`, and also returns the associated animal entity that wears it.
+
+#### :nine: Request:
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Device' \
+  -d 'q=d==%22FORAGING%22' \
+  -d 'attrs=heartRate,controlledAsset' \
+  -d 'options=temporalValues' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>' \
+  -d 'pageSize=2' \
+  -d 'lastN=2'
+```
+
+
+#### Response:
+
+The response returns the requested attributes in simplified temporal format.
+
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Device:pig001",
+        "type": "Device",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 64.0, "2021-09-16T15:45:58.455Z"],
+                [ 63.0, "2021-09-16T15:45:53.586Z"]
+            ]
+        },
+        "controlledAsset": {
+            "type": "Relationship",
+            "objects": [
+                [ "urn:ngsi-ld:Animal:pig001", "2021-09-16T15:45:58.455Z"],
+                [ "urn:ngsi-ld:Animal:pig001", "2021-09-16T15:45:53.586Z"]
+            ]
+        }
+    },
+    {
+        "id": "urn:ngsi-ld:Device:pig002",
+        "type": "Device",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 64.0, "2021-09-16T15:50:00.659Z"],
+                [ 65.0, "2021-09-16T15:49:56.099Z"]
+            ]
+        },
+        "controlledAsset": {
+            "type": "Relationship",
+            "objects": [
+                [ "urn:ngsi-ld:Animal:pig002", "2021-09-16T15:50:00.659Z"],
+                [ "urn:ngsi-ld:Animal:pig002", "2021-09-16T15:49:56.099Z"]
+            ]
+        }
+    }
+]
+```
+
 
 ## Time Period Queries
 
