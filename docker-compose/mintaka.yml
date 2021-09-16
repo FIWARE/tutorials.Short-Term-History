@@ -29,8 +29,10 @@ services:
       - DATASOURCES_DEFAULT_HOST=timescale-db
       - DATASOURCES_DEFAULT_USERNAME=orion
       - DATASOURCES_DEFAULT_PASSWORD=orion
-      - DATASOURCES_DEFAULT_DATABSE=orion
+      - DATASOURCES_DEFAULT_DATABASE=orion
       - DATASOURCES_DEFAULT_MAXIMUM_POOL_SIZE=2
+      - ENDPOINTS_INFO_ENABLED=true
+      - ENDPOINTS_INFO_SENSITIVE=false
     expose:
       - "${MINTAKA_PORT}"
     ports:
@@ -39,7 +41,7 @@ services:
       - default
 
   timescale-db:
-    image: timescale/timescaledb-postgis:latest-pg12
+    image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
     hostname: timescale-db
     container_name: db-timescale
     healthcheck:
@@ -52,13 +54,11 @@ services:
       - POSTGRES_USER=orion
       - POSTGRES_PASSWORD=orion
       - POSTGRES_HOST_AUTH_METHOD=trust
-    #command: ["postgres", "-c", "max_connections=200"]
     command: ["postgres", "-c", "log_statement=none"]
-    #command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/logs", "-c", "log_filename=postgresql.log", "-c", "log_statement=all"]           
     expose:
-      - "5432"
+      - "${TIMESCALE_PORT}"
     ports:
-      - "5432:5432"
+      - "${TIMESCALE_PORT}:${TIMESCALE_PORT}"
     networks:
       - default
     volumes:

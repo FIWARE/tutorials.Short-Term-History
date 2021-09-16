@@ -29,11 +29,11 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 >
 > — Groucho Marx (Duck Soup)
 
-NGSI-LD introduces a standardized mechanism for persisting and retrieving historical context data. Conventionally, context brokers only deal with current context - they have no memory, however NGSI-LD context brokers can be extended to offer historical context data in a variety of JSON based formats. This additional functionality comes at a cost however, and for performance reasons, may not be available by default.
+NGSI-LD introduces a standardized mechanism for persisting and retrieving historical context data. Conventionally, context brokers only deal with current context - they have no memory, however NGSI-LD context brokers can be extended to offer historical context data in a variety of JSON based formats. Temporal functions are classified as an optional interface for NGSI-LD context brokers, since the additional functionality comes at a cost, and is not mandatory by default for performance reasons.
 
-Enabled Context brokers can persist historic context using the database of their choice. The NGSI-LD temporal interface is agnostic to the actual persistence mechanism to be used by the context broker - the interface merely specifies the outputs required when various queries take place. Furthermore NGSI-LD also specifies a mechanism for amending values of historic context using the `instanceId` attribute.
+Context broker with the temporal inteface enabled can persist historic context using the database of their choice. The NGSI-LD temporal interface is agnostic to the actual persistence mechanism to be used by the context broker - the interface merely specifies the outputs required when various queries take place. Furthermore NGSI-LD also specifies a mechanism for amending values of historic context using the `instanceId` attribute.
 
-The result is a series of data points timestamped using the `observedAt` _property-of-a-property_. Each time-stamped data point represents the state of context entities at a given moment in time. The individual data points are relatively meaningless on their own, it is only through combining a
+The result is a series of data points timestamped using the `observedAt` _property-of-a-property_. Each time-stamped data point represents the state of context entities at a given moment in time. The individual data points are not particularly useful on their own, it is only through combining a
 series data points that meaningful statistics such as maxima, minima and trends can be observed.
 
 The creation and analysis of trend data is a common requirement of context-driven systems. Within FIWARE, there are two common paradigms in use - either activating the temporal interface or subscribing to individual context entities and persisting them into a time-series database (using a component such as QuantumLeap) - the latter is described in a [separate tutorial](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD).
@@ -143,14 +143,16 @@ the previous tutorials and provision the dummy IoT sensors on startup.
 > ./services stop
 > ```
 
-# Mintaka mode (STH-Comet only)
+# Configuring Orion and Mintaka for Temporal Operations
 
-In the _minimal_ configuration, **STH-Comet** is used to persisting historic context data and also used to make
-time-based queries. All operations take place on the same port `8666`. The MongoDB instance listening on the standard
-`27017` port is used to hold data the historic context data as well as holding data related to the **Orion Context
-Broker** and the **IoT Agent**. The overall architecture can be seen below:
+Within our Smart Farm, context data about the state of the animals is received via various devices. Therefore an IoT Agent is used to convert the data into NGSI-LD format. This is then recieved at the context broker.
+Normally the context broker would only hold the latest state of the system (in Mongo-DB), however with a
+temporally enabled context broker, Orion also persists data into a Timescale database. In this instance Orion is only
+responsible for writing data into the the timescale datebase. This keeps the system fast and
+responsive. The Mintaka component is responsible for listening for temporal interface requests and constructing the relevant
+query to run against Timescale. The overall architecture can be seen below:
 
-![](https://fiware.github.io/tutorials.Short-Term-History/img/sth-comet.png)
+![](https://fiware.github.io/tutorials.Short-Term-History/img/architecture-ld.png)
 
 ## Minitaka Configuration
 
@@ -172,6 +174,21 @@ mintaka:
     ports:
       - "8080:8080"
 ```
+
+The `mintaka` container is listening on one port:
+
+-   Temporal operations must be requested on port `8080` is where the service will be listen
+
+The `mintaka` container is driven by environment variables as shown:
+
+| Key          | Value            | Description                                                                                                    |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| DATASOURCES_DEFAULT_HOST     | `timescale-db`        | The address where the Timescale database is hosted        |
+| DATASOURCES_DEFAULT_USERNAME     | `orion`           | User to log in as when accessing the Timescale database  |
+| DATASOURCES_DEFAULT_PASSWORD    | `orion`           | The password to use if none is provided                                                 |
+| DATASOURCES_DEFAULT_DATABASE       | `orion` | The name of the database used when the `NGSILD-Tenant` header has not been used with persisting context                             |
+| DATASOURCES_DEFAULT_MAXIMUM_POOL_SIZE | `2`          | The maximum number of concurrent requests       |
+
 
 ## Orion Configuration
 
@@ -195,27 +212,24 @@ mintaka:
     command: -dbhost mongo-db -logLevel ERROR -troePoolSize 10 -forwarding
 ```
 
-The `sth-comet` container is listening on one port:
-
--   The Operations for port for STH-Comet - `8666` is where the service will be listening for notifications from the
-    Orion context broker as well as time based query requests from cUrl or Postman
-
-The `sth-comet` container is driven by environment variables as shown:
+The `orion` container is listening on its standard port `1026`, the `troePoolSize` flag in the command limits the
+number of concurrent connections to use.
 
 | Key          | Value            | Description                                                                                                    |
 | ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------- |
-| STH_HOST     | `0.0.0.0`        | The address where STH-Comet is hosted - within this container it means all IPv4 addresses on the local machine |
-| STH_PORT     | `8666`           | Operations Port that STH-Comet listens on, it is also used when subscribing to context data changes            |
-| DB_PREFIX    | `sth_`           | The prefix added to each database entity if none is provided                                                   |
-| DB_URI       | `mongo-db:27017` | The MongoDB server which STH-Comet will contact to persist historical context data                             |
-| LOGOPS_LEVEL | `DEBUG`          | The logging level for STH-Comet                                                                                |
+| ORIONLD_TROE     | `TRUE`        | Whether to offer temporal representation of entities     |
+| ORIONLD_TROE_USER     | `orion`           | User to log in as when accessing the Timescale database  |
+| ORIONLD_TROE_PWD    | `orion`           | The password to use if none is provided                                                 |
+| ORIONLD_TROE_HOST     | `timescale-db`        | The address where the Timescale database is hosted        |
+| ORIONLD_MULTI_SERVICE       | `TRUE` | Whether to enable multitenancy                            |
+| ORIONLD_DISABLE_FILE_LOG | `TRUE`          | The file log is  disabled to improve speed    |
 
-## _minimal_ mode - Start up
+## Start up
 
-To start the system using the _minimal_ configuration using **STH-Comet** only, run the following command:
+To start the system, run the following command:
 
 ```console
-./services sth-comet
+./services start
 ```
 
 ### STH-Comet - Checking Service Health
