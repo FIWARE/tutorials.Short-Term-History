@@ -131,17 +131,15 @@ Thereafter, all services can be initialized from the command-line by running the
 repository:
 
 ```console
-./services <command>
+./services orion|scorpio
 ```
-
-Where `<command>` will vary depending upon the mode we wish to activate. This command will also import seed data from
-the previous tutorials and provision the dummy IoT sensors on startup.
 
 > :information_source: **Note:** If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
 > ./services stop
 > ```
+
 
 # Configuring Orion and Mintaka for Temporal Operations
 
@@ -177,7 +175,7 @@ mintaka:
 
 The `mintaka` container is listening on one port:
 
--   Temporal operations must be requested on port `8080` is where the service will be listen
+-   Temporal operations must be requested on port `8080` is where the service will be listening
 
 The `mintaka` container is driven by environment variables as shown:
 
@@ -232,16 +230,16 @@ To start the system, run the following command:
 ./services start
 ```
 
-### STH-Comet - Checking Service Health
+### Mintaka - Checking Service Health
 
-Once STH-Comet is running, you can check the status by making an HTTP request to the exposed `STH_PORT` port. If the
-response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
+Once Mintaka is running, you can check the status by making an HTTP request to the `info` endpoint on the exposed port.
+Since the configuration includes `ENDPOINTS_INFO_ENABLED=true` and `ENDPOINTS_INFO_SENSITIVE=false` the endpoint should return a response
 
 #### :one: Request:
 
 ```console
-curl -X GET \
-  'http://localhost:8666/version'
+curl -L -X GET \
+  'http://localhost:8080/info'
 ```
 
 #### Response:
@@ -250,7 +248,17 @@ The response will look similar to the following:
 
 ```json
 {
-    "version": "2.3.0-next"
+    "git": {
+        "revision": "e2352fc668dd8fc8ed340bc15447acc3c9ad40be"
+    },
+    "build": {
+        "time": "15 September 2021, 13:48:25 +0000"
+    },
+    "project": {
+        "artifact-id": "mintaka",
+        "group-id": "org.fiware",
+        "version": "0.3.26"
+    }
 }
 ```
 
@@ -262,266 +270,206 @@ The response will look similar to the following:
 > docker ps
 > ```
 >
-> You should see several containers running. If `sth-comet` or `cygnus` is not running, you can restart the containers
+> You should see several containers running. If `orion` or `mintaka` is not running, you can restart the containers
 > as necessary.
 
 ### Generating Context Data
 
 For the purpose of this tutorial, we must be monitoring a system where the context is periodically being updated. The
-dummy IoT Sensors can be used to do this. Open the device monitor page at `http://localhost:3000/device/monitor` and
-unlock a **Smart Door** and switch on a **Smart Lamp**. This can be done by selecting an appropriate the command from
-the drop down list and pressing the `send` button. The stream of measurements coming from the devices can then be seen
-on the same page:
+dummy IoT Sensors can be used to do this.
 
-![](https://fiware.github.io/tutorials.Short-Term-History/img/door-open.gif)
+Details of various buildings around the farm can be found in the tutorial application. Open
+`http://localhost:3000/app/farm/urn:ngsi-ld:Building:farm001` to display a building with an associated filling sensor
+and thermostat.
 
-## _minimal_ mode - Subscribing STH-Comet to Context Changes
+![](https://fiware.github.io/tutorials.Subscriptions/img/fmis.png)
 
-Once a dynamic context system is up and running, under minimal mode, **STH-Comet** needs to be informed of changes in
-context. Therefore we need to set up a subscription in the **Orion Context Broker** to notify **STH-Comet** of these
-changes. The details of the subscription will differ dependent upon the device being monitored and the sampling rate.
+Remove some hay from the barn, update the thermostat and open the device monitor page at
+`http://localhost:3000/device/monitor` and start a **Tractor** and switch on a **Smart Lamp**. This can be done by
+selecting an appropriate command from the drop-down list and pressing the `send` button. The stream of measurements
+coming from the devices can then be seen on the same page.
 
-### STH-Comet - Aggregate Motion Sensor Count Events
 
-The rate of change of the **Motion Sensor** is driven by events in the real-world. We need to receive every event to be
-able to aggregate the results.
+## Temporal Operations
 
-This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker**.
+Once the system is up and running, context data is updated automatically, historical information can be queried using the `/temporal/entities/` endpoint. The port to query will vary based on the context broker used - for Scorpio `/temporal/entities/` is integrated in the standard `9090`port, for Orion + Mintaka, `/entities` are requested on port `1026` and `/temporal/entities/` on port `8080`. These port mappings can be altered by amending the `docker-compose` file of course.
 
--   The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to
-    measurements from the attached IoT Sensors
--   The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Motion Sensor** data
-    changes.
--   The notification `url` must match the configured `STH_PORT`
--   The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1
-    format.
+
+### List the last N sampled values
+
+This example shows the last 3 changes from the entity `urn:ngsi-ld:Animal:cow002`.
+
+To obtain temporal data of a context entity attribute, send a GET request to
+`../temporal/entities/<entity-id>`
+
+the `lastN` parameter restricts the result to N values.
+
+#### :one: Request:
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'lastN=3'
+```
+
+#### Response:
+
+The response is a single entity - if an attribute is static (like `sex`) only one `value` is returned for that attribute. If an attribute is changing (like `heartRate`) up to N values are returned. The request is returning full normalized JSON-LD for every value, which includes _properties of properties_, so you can see which Devices have the provided various readings and which units are being used. Every value has an associated `instanceId` which can be used for futher manipulation of the individual entries where supported.
+
+In the example below, `heartRate` and `location` have been provided by a single Device.
+
+```json
+{
+    "id": "urn:ngsi-ld:Animal:cow002",
+    "type": "Animal",
+    "phenologicalCondition": {
+        "type": "Property",
+        "value": "femaleAdult",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6efa008-1629-11ec-aced-0242ac120106"
+    },
+    "legalID": {
+        "type": "Property",
+        "value": "F-cow002-Trotter",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6efa51c-1629-11ec-aced-0242ac120106"
+    },
+    "name": {
+        "type": "Property",
+        "value": "Trotter",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6ef9bee-1629-11ec-aced-0242ac120106"
+    },
+    "sex": {
+        "type": "Property",
+        "value": "female",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6ef9e00-1629-11ec-aced-0242ac120106"
+    },
+    "heartRate": [
+        {
+            "type": "Property",
+            "value": 51.0,
+            "observedAt": "2021-09-15T13:41:37.888Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a6d2045e-162a-11ec-93ed-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a6d20a6c-162a-11ec-93ed-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 50.0,
+            "observedAt": "2021-09-15T13:41:34.568Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a4b64b62-162a-11ec-9bda-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a4b64d4c-162a-11ec-9bda-0242ac120106"
+            }
+        },
+        {
+            "type": "Property",
+            "value": 51.0,
+            "observedAt": "2021-09-15T13:41:33.508Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a43b6852-162a-11ec-9dd5-0242ac120106",
+            "unitCode": "5K",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a43b6ba4-162a-11ec-9dd5-0242ac120106"
+            }
+        }
+    ],
+    "location": [
+        {
+            "type": "GeoProperty",
+            "value": {
+                "type": "Point",
+                "coordinates": [
+                    13.404,
+                    52.47,
+                    0.0
+                ]
+            },
+            "observedAt": "2021-09-15T13:41:37.888Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a6d20ce2-162a-11ec-93ed-0242ac120106",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a6d21782-162a-11ec-93ed-0242ac120106"
+            }
+        },
+        {
+            "type": "GeoProperty",
+            "value": {
+                "type": "Point",
+                "coordinates": [
+                    13.404,
+                    52.471,
+                    0.0
+                ]
+            },
+            "observedAt": "2021-09-15T13:41:34.568Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a4b64e00-162a-11ec-9bda-0242ac120106",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a4b650c6-162a-11ec-9bda-0242ac120106"
+            }
+        },
+        {
+            "type": "GeoProperty",
+            "value": {
+                "type": "Point",
+                "coordinates": [
+                    13.404,
+                    52.471,
+                    0.0
+                ]
+            },
+            "observedAt": "2021-09-15T13:41:33.508Z",
+            "instanceId": "urn:ngsi-ld:attribute:instance:a43b6d20-162a-11ec-9dd5-0242ac120106",
+            "providedBy": {
+                "object": "urn:ngsi-ld:Device:cow002",
+                "type": "Relationship",
+                "instanceId": "urn:ngsi-ld:attribute:instance:a43b70a4-162a-11ec-9dd5-0242ac120106"
+            }
+        }
+    ],
+    "species": {
+        "type": "Property",
+        "value": "dairy cattle",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6ef9a04-1629-11ec-aced-0242ac120106"
+    },
+    "reproductiveCondition": {
+        "type": "Property",
+        "value": "active",
+        "instanceId": "urn:ngsi-ld:attribute:instance:c6efa292-1629-11ec-aced-0242ac120106"
+    }
+}
+```
+
+
+### List the last N sampled values of an attribute
+
+All of the usual query parameters from the `/entities` endpoint are also supported with `/temporal/entities` - to obtain results for a single attribute, just add the `attrs` parameter.
+
+This example shows the last 3 changes of `heartRate` from the entity `urn:ngsi-ld:Animal:cow002`.
 
 #### :two: Request:
 
 ```console
-curl -iX POST \
-  'http://localhost:1026/v2/subscriptions/' \
-  -H 'Content-Type: application/json' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /' \
-  -d '{
-  "description": "Notify STH-Comet of all Motion Sensor count changes",
-  "subject": {
-    "entities": [
-      {
-        "idPattern": "Motion.*"
-      }
-    ],
-    "condition": {"attrs": ["count"] }
-  },
-  "notification": {
-    "http": {
-      "url": "http://sth-comet:8666/notify"
-    },
-    "attrs": [
-      "count"
-    ],
-    "attrsFormat": "legacy"
-  }
-}'
-```
+curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'lastN=3' \
 
-### STH-Comet - Sample Lamp Luminosity
-
-The luminosity of the **Smart Lamp** is constantly changing, we only need to **sample** the values to be able to work
-out relevant statistics such as minimum and maximum values and rates of change.
-
-This is done by making a POST request to the `/v2/subscription` endpoint of the **Orion Context Broker** and including
-the `throttling` attribute in the request body.
-
--   The `fiware-service` and `fiware-servicepath` headers are used to filter the subscription to only listen to
-    measurements from the attached IoT Sensors
--   The `idPattern` in the request body ensures that **STH-Comet** will be informed of all **Smart Lamp** data changes
-    only
--   The notification `url` must match the configured `STH_PORT`
--   The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1
-    format.
--   The `throttling` value defines the rate that changes are sampled.
-
-> :information_source: **Note:** Be careful when throttling subscriptions as sequential updates will not be persisted as
-> expected.
->
-> For example if an UltraLight device sends the measurement `t|20|l|1200` it will be a single atomic commit and both
-> attributes will be included the notification to **STH-Comet** however is a device sends `t|20#l|1200` this will be
-> treated as two atomic commits - a notification will be sent for the first change in `t`, but the second change in `l`
-> will be ignored as the entity has been recently updated within the sampling period.
-
-#### :three: Request:
-
-```console
-curl -iX POST \
-  'http://localhost:1026/v2/subscriptions/' \
-  -H 'Content-Type: application/json' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /' \
-  -d '{
-  "description": "Notify Cygnus to sample Lamp luminosity every five seconds",
-  "subject": {
-    "entities": [
-      {
-        "idPattern": "Lamp.*"
-      }
-    ],
-    "condition": {
-      "attrs": [
-        "luminosity"
-      ]
-    }
-  },
-  "notification": {
-    "http": {
-      "url": "http://sth-comet:8666/notify"
-    },
-    "attrs": [
-      "luminosity"
-    ]
-  },
-  "throttling": 5
-}'
-```
-
-# Time Series Data Queries
-
-The queries in this section assume you have already connected **STH-Comet** using either _minimal_ mode or _formal_ mode
-and have collected some data.
-
-## Prerequisites
-
-**STH-Comet** will only be able to retrieve time series data if sufficient data points have already been aggregated
-within the system. Please ensure that the **Smart Door** has been unlocked and the **Smart Lamp** has been switched on
-and the subscriptions have been registered. Data should be collected for at least a minute before the tutorial.
-
-### Check that Subscriptions Exist
-
-You can note that the `fiware-service` and `fiware-servicepath` headers must be set in the query and match the values
-used when setting up the subscription
-
-#### :four: Request:
-
-```console
-curl -X GET \
-  'http://localhost:1026/v2/subscriptions/' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /'
 ```
 
 #### Response:
 
-```json
-[
-    {
-        "id": "5b39e3c11615e2e55a8df103",
-        "description": "Notify STH-Comet of all Motion Sensor count changes",
-        "status": "active",
-        "subject": { ...ETC },
-        "notification": {
-            "timesSent": 6,
-            "lastNotification": "2018-07-02T08:36:04.00Z",
-            "attrs": ["count"],
-            "attrsFormat": "legacy",
-            "http": { "url": "http://sth-comet:8666/notify" },
-            "lastSuccess": "2018-07-02T08:36:04.00Z"
-        }
-    },
-    {
-        "id": "5b39e3c31615e2e55a8df104",
-        "description": "Notify STH-Comet to sample Lamp changes every five seconds",
-        "status": "active",
-        "subject": { ...ETC },
-        "notification": {
-            "timesSent": 4,
-            "lastNotification": "2018-07-02T08:36:00.00Z",
-            "attrs": ["luminosity"],
-            "attrsFormat": "legacy",
-            "http": { "url": "http://sth-comet:8666/notify" },
-            "lastSuccess": "2018-07-02T08:36:01.00Z"
-        },
-        "throttling": 5
-    }
-]
-```
-
-The result should not be empty. Within the `notification` section of the response, you can see several additional
-`attributes` which describe the health of each subscription.
-
-If the criteria of the subscription have been met, `timesSent` should be greater than `0`. A zero value would indicate
-that the `subject` of the subscription is incorrect or the subscription has created with the wrong `fiware-service-path`
-or `fiware-service` header
-
-The `lastNotification` should be a recent timestamp - if this is not the case, then the devices are not regularly
-sending data. Remember to unlock the **Smart Door** and switch on the **Smart Lamp**
-
-The `lastSuccess` should match the `lastNotification` date - if this is not the case then **Cygnus** or **STH Comet**
-are not receiving the subscription properly. Check that the hostname and port are correct.
-
-Finally, check that the `status` of the subscription is `active` - an expired subscription will not fire.
-
-## Offsets, Limits and Pagination
-
-### List the first N sampled values
-
-This example shows the first 3 sampled `luminosity` values from `Lamp:001`.
-
-To obtain the short term history of a context entity attribute, send a GET request to
-`../STH/v1/contextEntities/type/<Entity>/id/<entity-id>/attributes/<attribute>`
-
-the `hLimit` parameter restricts the result to N values. `hOffset=0` will start with the first value.
-
-#### :five: Request:
-
-```console
-curl -X GET \
-  'http://localhost:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity?hLimit=3&hOffset=0' \
-  -H 'fiware-service: openiot' \
-  -H 'fiware-servicepath: /'
-```
-
-#### Response:
-
-```json
-{
-    "contextResponses": [
-        {
-            "contextElement": {
-                "attributes": [
-                    {
-                        "name": "luminosity",
-                        "values": [
-                            {
-                                "recvTime": "2018-06-21T12:20:19.841Z",
-                                "attrType": "Integer",
-                                "attrValue": "1972"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:20:20.819Z",
-                                "attrType": "Integer",
-                                "attrValue": "1982"
-                            },
-                            {
-                                "recvTime": "2018-06-21T12:20:29.923Z",
-                                "attrType": "Integer",
-                                "attrValue": "1937"
-                            }
-                        ]
-                    }
-                ],
-                "id": "Lamp:001",
-                "isPattern": false,
-                "type": "Lamp"
-            },
-            "statusCode": {
-                "code": "200",
-                "reasonPhrase": "OK"
-            }
-        }
-    ]
-}
-```
+The response is a single entity - if an attribute is static (like `sex`) only one `value` is returned for that attribute. If an attribute is changing (like `heartRate`) up to N values are returned. The request is returning full normalized JSON-LD for every value, which includes _properties of properties_, so you can see which Devices have the provided various readings and which units are being used. Every value has an associated `instanceId` which can be used for futher manipulation of the individual entries where supported.
 
 ### List N sampled values at an Offset
 
