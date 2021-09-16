@@ -1043,6 +1043,91 @@ The response returns the requested attributes in simplified temporal format.
 ```
 
 
+### Geofencing Temporal requests using the `georel` parameter
+
+In the same fashion that entities with a `location` can be geofiltered using the `georel` parameter, temporal queries can be made against GeoProperty attributes which are observed
+over time.  As could be seen from the **Device** query previously, the `location` attribute
+of each animal collar has an `observedAt` _property-of-a-property_ and therefore can be used
+to trace location over time.
+
+
+The following request returns the `heartRate` registered when the state of an animal is when it is less than 800 meters from a fixed point, and also returns the associated animal entity that wears it.
+
+#### :nine: Request:
+
+```console
+curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+  -H 'NGSILD-Tenant: openiot' \
+  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -d 'type=Device' \
+  -d 'georel=near%3BmaxDistance==800' \
+  -d 'geometry=Point' \
+  -d 'coordinates=%5B13.364,52.52%5D' \
+  -d 'attrs=heartRate,controlledAsset' \
+  -d 'options=temporalValues' \
+  -d 'timerel=before' \
+  -d 'timeAt=<current_time>' \
+  -d 'pageSize=2' \
+  -d 'lastN=3'
+```
+
+
+#### Response:
+
+The response returns the requested attributes in simplified temporal format.
+
+
+```json
+[
+    {
+        "id": "urn:ngsi-ld:Device:pig001",
+        "type": "Device",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 66.0, "2021-09-16T15:21:59.574Z" ],
+                [ 66.0, "2021-09-16T15:21:54.788Z" ],
+                [ 64.0, "2021-09-16T15:21:44.759Z" ]
+            ]
+        },
+        "controlledAsset": {
+            "type": "Relationship",
+            "objects": [
+                [ "urn:ngsi-ld:Animal:pig001", "2021-09-16T15:21:59.574Z" ],
+                [ "urn:ngsi-ld:Animal:pig001", "2021-09-16T15:21:54.788Z" ],
+                [ "urn:ngsi-ld:Animal:pig001", "2021-09-16T15:21:44.759Z" ]
+            ]
+        }
+    },
+    {
+        "id": "urn:ngsi-ld:Device:pig002",
+        "type": "Device",
+        "heartRate": {
+            "type": "Property",
+            "values": [
+                [ 64.0, "2021-09-16T16:23:57.731Z" ],
+                [ 63.0, "2021-09-16T16:23:52.839Z" ],
+                [ 62.0, "2021-09-16T16:23:47.102Z" ]
+            ]
+        },
+        "controlledAsset": {
+            "type": "Relationship",
+            "objects": [
+                [ "urn:ngsi-ld:Animal:pig002", "2021-09-16T16:23:57.731Z" ],
+                [ "urn:ngsi-ld:Animal:pig002", "2021-09-16T16:23:52.839Z" ],
+                [ "urn:ngsi-ld:Animal:pig002", "2021-09-16T16:23:47.102Z" ]
+            ]
+        }
+    }
+]
+```
+
+
+
+
+
+
+
 ## Time Period Queries
 
 ### List the sum of values over a time period
