@@ -6,786 +6,815 @@
 	},
 	"item": [
 		{
-			"name": "Last 5 status updates of an Entity",
+			"name": "Temporal Operations",
+			"item": [
+				{
+					"name": "Last 5 status updates of an Entity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								"urn:ngsi-ld:Animal:cow001"
+							],
+							"query": [
+								{
+									"key": "lastN",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Last 5 status updates of an Entity Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								"urn:ngsi-ld:Animal:cow001"
+							],
+							"query": [
+								{
+									"key": "lastN",
+									"value": "5"
+								},
+								{
+									"key": "attrs",
+									"value": "heartRate"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Temporal Queries without observedAt",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "Animal"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								},
+								{
+									"key": "lastN",
+									"value": "5"
+								},
+								{
+									"key": "q",
+									"value": "sex==\"female\""
+								},
+								{
+									"key": "timeproperty",
+									"value": "modifiedAt"
+								},
+								{
+									"key": "options",
+									"value": "count"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Last 5 status updates of an Entity Copy 2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								"urn:ngsi-ld:Animal:cow001"
+							],
+							"query": [
+								{
+									"key": "lastN",
+									"value": "5"
+								},
+								{
+									"key": "attrs",
+									"value": "heartRate"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a specific Animal Collar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							},
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/geo+json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Prefer",
+								"value": "body=json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Device:pig003",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								"urn:ngsi-ld:Device:pig003"
+							],
+							"query": [
+								{
+									"key": "georel",
+									"value": "near;maxDistance==2000",
+									"disabled": true
+								},
+								{
+									"key": "geometry",
+									"value": "Point",
+									"disabled": true
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.364,52.52]",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Geofenced Temporal Queries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z&pageSize=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "Device"
+								},
+								{
+									"key": "q",
+									"value": "d==\"DRINKING\"",
+									"disabled": true
+								},
+								{
+									"key": "attrs",
+									"value": "location,controlledAsset"
+								},
+								{
+									"key": "options",
+									"value": "temporalValues"
+								},
+								{
+									"key": "georel",
+									"value": "near%3BmaxDistance==800"
+								},
+								{
+									"key": "geometry",
+									"value": "Point"
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.364,52.52]"
+								},
+								{
+									"key": "timerel",
+									"value": "after"
+								},
+								{
+									"key": "timeAt",
+									"value": "2021-04-22T08:33:51.255Z"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Timeseries Building",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Building:farm001?timeproperty=modifiedAt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"temporal",
+								"entities",
+								"urn:ngsi-ld:Building:farm001"
+							],
+							"query": [
+								{
+									"key": "timeproperty",
+									"value": "modifiedAt"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Cow attached to a Device",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow001",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								"urn:ngsi-ld:Animal:cow001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KeyValues of an entity",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								"urn:ngsi-ld:Animal:cow005"
+							],
+							"query": [
+								{
+									"key": "options",
+									"value": "keyValues"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KeyValues of an entity Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								"urn:ngsi-ld:Animal:cow005"
+							],
+							"query": [
+								{
+									"key": "options",
+									"value": "keyValues"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve a Device",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"type": "text"
+							},
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/geo+json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Prefer",
+								"value": "body=json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "Device"
+								},
+								{
+									"key": "georel",
+									"value": "near;maxDistance==2000",
+									"disabled": true
+								},
+								{
+									"key": "geometry",
+									"value": "Point",
+									"disabled": true
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.364,52.52]",
+									"disabled": true
+								},
+								{
+									"key": "attrs",
+									"value": "heartRate,d,location"
+								},
+								{
+									"key": "options",
+									"value": "keyValues"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Geofenced Queries",
+			"item": [
+				{
+					"name": "Geofenced Animal Entities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"type": "text"
+							},
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/geo+json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Prefer",
+								"value": "body=json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "georel",
+									"value": "near;maxDistance==2000"
+								},
+								{
+									"key": "geometry",
+									"value": "Point"
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.402,52.471]"
+								},
+								{
+									"key": "attrs",
+									"value": "heartRate,d,location",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "Animal"
+								},
+								{
+									"key": "q",
+									"value": "sex==\"female\";species==\"dairy cattle\""
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "options",
+									"value": "keyValues,count"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Geofenced Entities Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Link",
+								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"type": "text"
+							},
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/geo+json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Prefer",
+								"value": "body=json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "georel",
+									"value": "near;maxDistance==2000"
+								},
+								{
+									"key": "geometry",
+									"value": "Point"
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.402,52.471]"
+								},
+								{
+									"key": "attrs",
+									"value": "heartRate,d,location",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "Animal"
+								},
+								{
+									"key": "q",
+									"value": "sex==\"female\";species==\"dairy cattle\""
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "options",
+									"value": "keyValues,count"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Geofenced Entites with filtering",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Link",
+								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"type": "text"
+							},
+							{
+								"key": "NGSILD-Tenant",
+								"value": "openiot",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/geo+json",
+								"type": "text"
+							},
+							{
+								"key": "Prefer",
+								"value": "body=json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1026",
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities",
+								""
+							],
+							"query": [
+								{
+									"key": "georel",
+									"value": "near;maxDistance==2000"
+								},
+								{
+									"key": "geometry",
+									"value": "Point"
+								},
+								{
+									"key": "coordinates",
+									"value": "[13.364,52.52]"
+								},
+								{
+									"key": "q",
+									"value": "sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22"
+								},
+								{
+									"key": "type",
+									"value": "Animal"
+								},
+								{
+									"key": "options",
+									"value": "keyValues"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Check that Mintaka is running",
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5",
+					"raw": "http://localhost:8080/info",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"temporal",
-						"entities",
-						"urn:ngsi-ld:Animal:cow001"
-					],
-					"query": [
-						{
-							"key": "lastN",
-							"value": "5"
-						}
+						"info"
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Temporal Queries without observedAt",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"temporal",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "type",
-							"value": "Animal"
-						},
-						{
-							"key": "pageSize",
-							"value": "2"
-						},
-						{
-							"key": "lastN",
-							"value": "5"
-						},
-						{
-							"key": "q",
-							"value": "sex==\"female\""
-						},
-						{
-							"key": "timeproperty",
-							"value": "modifiedAt"
-						},
-						{
-							"key": "options",
-							"value": "count"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Geofenced Temporal Queries",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z&pageSize=2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"temporal",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "type",
-							"value": "Device"
-						},
-						{
-							"key": "q",
-							"value": "d==\"DRINKING\"",
-							"disabled": true
-						},
-						{
-							"key": "attrs",
-							"value": "location,controlledAsset"
-						},
-						{
-							"key": "options",
-							"value": "temporalValues"
-						},
-						{
-							"key": "georel",
-							"value": "near%3BmaxDistance==800"
-						},
-						{
-							"key": "geometry",
-							"value": "Point"
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.364,52.52]"
-						},
-						{
-							"key": "timerel",
-							"value": "after"
-						},
-						{
-							"key": "timeAt",
-							"value": "2021-04-22T08:33:51.255Z"
-						},
-						{
-							"key": "pageSize",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Geofenced Tractor",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/temporal/entities/?type=Tractor&timerel=between&timeAt=2021-03-11T08:07:51.555&endTimeAt=2021-03-11T08:41:31.597&options=temporalValues&georel=near%3BmaxDistance==2000&geometry=Point&coordinates=[8,40,0]",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"temporal",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "attrs",
-							"value": "location,d",
-							"disabled": true
-						},
-						{
-							"key": "type",
-							"value": "Tractor"
-						},
-						{
-							"key": "timerel",
-							"value": "between"
-						},
-						{
-							"key": "timeAt",
-							"value": "2021-03-11T08:07:51.555"
-						},
-						{
-							"key": "endTimeAt",
-							"value": "2021-03-11T08:41:31.597"
-						},
-						{
-							"key": "options",
-							"value": "temporalValues"
-						},
-						{
-							"key": "timeproperty",
-							"value": "modifiedAt",
-							"disabled": true
-						},
-						{
-							"key": "georel",
-							"value": "near%3BmaxDistance==2000"
-						},
-						{
-							"key": "geometry",
-							"value": "Point"
-						},
-						{
-							"key": "coordinates",
-							"value": "[8,40,0]"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Timeseries Building",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Building:farm001",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"temporal",
-						"entities",
-						"urn:ngsi-ld:Building:farm001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Retrieve a Cow attached to a Device",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow001",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						"urn:ngsi-ld:Animal:cow001"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "KeyValues of an entity",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						"urn:ngsi-ld:Animal:cow005"
-					],
-					"query": [
-						{
-							"key": "options",
-							"value": "keyValues"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "KeyValues of an entity Copy",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						"urn:ngsi-ld:Animal:cow005"
-					],
-					"query": [
-						{
-							"key": "options",
-							"value": "keyValues"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Retrieve a Device",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Prefer",
-						"value": "body=json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "type",
-							"value": "Device"
-						},
-						{
-							"key": "georel",
-							"value": "near;maxDistance==2000",
-							"disabled": true
-						},
-						{
-							"key": "geometry",
-							"value": "Point",
-							"disabled": true
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.364,52.52]",
-							"disabled": true
-						},
-						{
-							"key": "attrs",
-							"value": "heartRate,d,location"
-						},
-						{
-							"key": "options",
-							"value": "keyValues"
-						},
-						{
-							"key": "limit",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Retrieve Tractors",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Prefer",
-						"value": "body=json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "type",
-							"value": "Device"
-						},
-						{
-							"key": "georel",
-							"value": "near;maxDistance==2000",
-							"disabled": true
-						},
-						{
-							"key": "geometry",
-							"value": "Point",
-							"disabled": true
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.364,52.52]",
-							"disabled": true
-						},
-						{
-							"key": "attrs",
-							"value": "heartRate,d,location"
-						},
-						{
-							"key": "options",
-							"value": "keyValues"
-						},
-						{
-							"key": "limit",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Geofenced Animal Entities",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Prefer",
-						"value": "body=json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "georel",
-							"value": "near;maxDistance==2000"
-						},
-						{
-							"key": "geometry",
-							"value": "Point"
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.402,52.471]"
-						},
-						{
-							"key": "attrs",
-							"value": "heartRate,d,location",
-							"disabled": true
-						},
-						{
-							"key": "type",
-							"value": "Animal"
-						},
-						{
-							"key": "q",
-							"value": "sex==\"female\";species==\"dairy cattle\""
-						},
-						{
-							"key": "limit",
-							"value": "3",
-							"disabled": true
-						},
-						{
-							"key": "options",
-							"value": "keyValues,count"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Geofenced Entities Copy",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Prefer",
-						"value": "body=json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "georel",
-							"value": "near;maxDistance==2000"
-						},
-						{
-							"key": "geometry",
-							"value": "Point"
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.402,52.471]"
-						},
-						{
-							"key": "attrs",
-							"value": "heartRate,d,location",
-							"disabled": true
-						},
-						{
-							"key": "type",
-							"value": "Animal"
-						},
-						{
-							"key": "q",
-							"value": "sex==\"female\";species==\"dairy cattle\""
-						},
-						{
-							"key": "limit",
-							"value": "3",
-							"disabled": true
-						},
-						{
-							"key": "options",
-							"value": "keyValues,count"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Geofenced Entites with filtering",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Link",
-						"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
-						"type": "text"
-					},
-					{
-						"key": "NGSILD-Tenant",
-						"value": "openiot",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/geo+json",
-						"type": "text"
-					},
-					{
-						"key": "Prefer",
-						"value": "body=json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "1026",
-					"path": [
-						"ngsi-ld",
-						"v1",
-						"entities",
-						""
-					],
-					"query": [
-						{
-							"key": "georel",
-							"value": "near;maxDistance==2000"
-						},
-						{
-							"key": "geometry",
-							"value": "Point"
-						},
-						{
-							"key": "coordinates",
-							"value": "[13.364,52.52]"
-						},
-						{
-							"key": "q",
-							"value": "sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22"
-						},
-						{
-							"key": "type",
-							"value": "Animal"
-						},
-						{
-							"key": "options",
-							"value": "keyValues"
-						},
-						{
-							"key": "limit",
-							"value": "5",
-							"disabled": true
-						}
-					]
-				}
+				},
+				"description": "Once Mintaka is running, you can check the status by making an HTTP request to the `info` endpoint on the exposed port. \nSince the configuration includes `ENDPOINTS_INFO_ENABLED=true` and `ENDPOINTS_INFO_SENSITIVE=false` the endpoint should return a response"
 			},
 			"response": []
 		}
