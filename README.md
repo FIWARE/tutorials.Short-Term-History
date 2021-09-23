@@ -16,6 +16,8 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)。
 
+* このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
+
 ## Contents
 
 <details>
@@ -28,9 +30,9 @@ The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also a
     -   [Cygwin for Windows](#cygwin-for-windows)
 -   [Start Up](#start-up)
 -   [Configuring Orion and Mintaka for Temporal Operations](#configuring-orion-and-mintaka-for-temporal-operations)
-    -   [Minitaka Configuration](#minitaka-configuration)
+    -   [Mintaka Configuration](#mintaka-configuration)
     -   [Orion Configuration](#orion-configuration)
-    -   [Start up](#start-up)
+    -   [Start up](#start-up-1)
         -   [Mintaka - Checking Service Health](#mintaka---checking-service-health)
         -   [Generating Context Data](#generating-context-data)
     -   [Temporal Operations](#temporal-operations)
@@ -57,7 +59,7 @@ offer historical context data in a variety of JSON based formats. Temporal funct
 interface for NGSI-LD context brokers, since the additional functionality comes at a cost, and is not mandatory by
 default for performance reasons.
 
-Context broker with the temporal inteface enabled can persist historic context using the database of their choice. The
+Context broker with the temporal interface enabled can persist historic context using the database of their choice. The
 NGSI-LD temporal interface is agnostic to the actual persistence mechanism to be used by the context broker - the
 interface merely specifies the outputs required when various queries take place. Furthermore NGSI-LD also specifies a
 mechanism for amending values of historic context using the `instanceId` attribute.
@@ -74,7 +76,7 @@ persisting them into a time-series database (using a component such as QuantumLe
 
 Which mechanism to use should be it should be borne in mind when architecting such a system. The advantage of using a
 subscription mechanism is that only the subscribed entities are persisted, saving disk space. The advantage of the
-temporal interface is that it is provided by the context broker directly - no subscriptions are needed and HTTP traffic
+temporal interface is that it is provided by the context broker directly - no subscriptions are needed, and HTTP traffic
 is reduced. Furthermore, the temporal interface can be queried across all context entities, not merely those which
 satisfy a subscription.
 
@@ -92,10 +94,10 @@ seen on the UltraLight device monitor web page found at: `http://localhost:3000/
 This application builds on the components and dummy IoT devices created in
 [previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD). It will use two FIWARE components: the
 [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) and the
-[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/). In addition the optional temporal
+[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/). In addition, the optional temporal
 interface is serviced using an add-on called **Mintaka**.
 
-Therefore the overall architecture will consist of the following elements:
+Therefore, the overall architecture will consist of the following elements:
 
 -   The [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using
     [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
@@ -132,10 +134,10 @@ technology which allows to different components isolated into their respective e
 -   To install Docker on Linux follow the instructions [here](https://docs.docker.com/install/)
 
 **Docker Compose** is a tool for defining and running multi-container Docker applications. A series of
-[YAML files](https://github.com/FIWARE/tutorials.Short-Term-History/tree/master/docker-compose) are used configure the
-required services for the application. This means all container services can be brought up in a single command. Docker
-Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to
-follow the instructions found [here](https://docs.docker.com/compose/install/)
+[YAML files](https://github.com/FIWARE/tutorials.Short-Term-History/blob/NGSI-LD/docker-compose/orion-ld.yml) are used
+configure the required services for the application. This means all container services can be brought up in a single
+command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users
+will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
 
 You can check your current **Docker** and **Docker Compose** versions using the following commands:
 
@@ -181,17 +183,17 @@ repository:
 
 # Configuring Orion and Mintaka for Temporal Operations
 
-Within our Smart Farm, context data about the state of the animals is received via various devices. Therefore an IoT
+Within our Smart Farm, context data about the state of the animals is received via various devices. Therefore, an IoT
 Agent is used to convert the data into NGSI-LD format. This is then received at the context broker. Normally the context
 broker would only hold the latest state of the system (in Mongo-DB), however with a temporally enabled context broker,
 Orion also persists data into a Timescale database. In this instance Orion is only responsible for writing data into the
-timescale datebase. This keeps the system fast and responsive. The Mintaka component is responsible for listening
+timescale database. This keeps the system fast and responsive. The Mintaka component is responsible for listening
 for temporal interface requests and constructing the relevant query to run against Timescale. The overall architecture
 can be seen below:
 
 ![](https://fiware.github.io/tutorials.Short-Term-History/img/architecture-ld.png)
 
-## Minitaka Configuration
+## Mintaka Configuration
 
 ```yaml
 mintaka:
@@ -340,9 +342,9 @@ file of course.
 
 This example shows the last 3 changes from the entity `urn:ngsi-ld:Animal:cow002`.
 
-To obtain temporal data of a context entity attribute, send a GET request to `../temporal/entities/<entity-id>`
+To obtain temporal data of a context entity attribute, send a GET request to `../temporal/entities/<entity-id>`.
 
-the `lastN` parameter restricts the result to N values.
+The `lastN` parameter restricts the result to N values.
 
 #### :one: Request:
 
@@ -485,7 +487,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
 
 #### Response:
 
-The response is a single entity with a single attribute array holding values of`heartRate`
+The response is a single entity with a single attribute array holding values of `heartRate`.
 
 ```json
 {
@@ -587,7 +589,7 @@ against `modifiedAt`
 
 #### :four: Request:
 
-The following query is requesting data about the bulls within the herd. Because the `sex`attribute is unchanging,
+The following query is requesting data about the bulls within the herd. Because the `sex` attribute is unchanging,
 `timeproperty=modifiedAt` must be used.
 
 ```console
@@ -611,7 +613,7 @@ format like `2021-09-16T11:00Z` - seconds and milliseconds are optional
 
 #### Response:
 
-The response returns two entities along with the two requested attributes as shown. As can be seen. the `heartRate` is
+The response returns two entities along with the two requested attributes as shown. As can be seen, the `heartRate` is
 returning three previous values and the `sex` is returning a single property. Single value static attributes are reduced
 from an Array of one element down to an object because this is the format specified in JSON-LD syntax
 
@@ -722,11 +724,11 @@ from an Array of one element down to an object because this is the format specif
 ]
 ```
 
-The equivalent simplified format can be retrived by setting `options=temporalValues`
+The equivalent simplified format can be retrieved by setting `options=temporalValues`
 
 #### :five: Request:
 
-The following query is requesting data about the bulls within the herd. Because the `sex`attribute is unchanging,
+The following query is requesting data about the bulls within the herd. Because the `sex` attribute is unchanging,
 `timeproperty=modifiedAt` must be used.
 
 ```console
@@ -747,7 +749,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 
 #### Response:
 
-The response returns two entities along with the two requested attributes as shown. As can be seen. the `heartRate` is
+The response returns two entities along with the two requested attributes as shown. As can be seen, the `heartRate` is
 returning three previous values and the `sex` is returning a single property. The second element within each tuple - the
 timestamp represents the `modifiedAt` property.
 
@@ -932,7 +934,7 @@ curl -L -X GET \
 
 #### Response:
 
-The entity is following the standard **Device** data model and has attributes such as `location` and`controlledAsset`
+The entity is following the standard **Device** data model and has attributes such as `location` and `controlledAsset`
 (i.e. the **Animal** entity that is wearing the device). Because the animal collars are monitoring `heartRate`, that
 attribute has also been added to the model.
 
