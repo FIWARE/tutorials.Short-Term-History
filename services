@@ -10,7 +10,12 @@ SCORPIO="http://scorpio:9090/scorpio/v1/info/"
 ORION="http://orion:1026/version"
 CONTEXT="http://context/ngsi-context.jsonld"
 
-if (( $# != 1 )); then
+dockerCmd="docker compose"
+if (( $# == 2 )); then
+    dockerCmd="docker-compose"
+fi
+
+if (( $# < 1 )); then
 	echo "Illegal number of parameters"
 	echo "usage: services [create|orion|scorpio|stop]"
 	exit 1
@@ -59,6 +64,24 @@ waitForScorpio () {
 		echo -e "Context Broker HTTP state: ${response} (waiting for 200)"
 		pause 60
 		getHeartbeat "${SCORPIO}"
+	done
+}
+
+waitForStellio () {
+	echo -e "\n⏳ Waiting for \033[1;34mStellio\033[0m to respond\n"
+	waitSeconds=30
+	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://stellio:8080/ngsi-ld/v1/entities/?type=X'` -eq 000 ]
+	do 
+	  echo -e "Context Broker HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:8080/ngsi-ld/v1/entities/?type=X'` " (waiting for 500)"
+	  echo -e "Waiting for ${waitSeconds} seconds ..."
+	  sleep ${waitSeconds}
+	done
+	echo -e "\n⏳ Waiting for all \033[1;34mStellio\033[0m services to be available\n"
+	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://stellio:8080/ngsi-ld/v1/entities/?type=X'` -eq 500 ]
+	do 
+	  echo -e "Context Broker HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:8080/ngsi-ld/v1/entities/?type=X'` " (waiting for 200)"
+	  echo -e "Waiting for ${waitSeconds} seconds ..."
+	  sleep ${waitSeconds}
 	done
 }
 
@@ -122,10 +145,13 @@ loadData () {
 
 stoppingContainers () {
 	echo "Stopping containers"
-	docker-compose --log-level ERROR -f docker-compose/mintaka.yml -p fiware down -v --remove-orphans
-	docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware down -v --remove-orphans
-	docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml -p fiware down -v --remove-orphans
-	docker volume prune -f
+	${dockerCmd} -f docker-compose/mintaka.yml -p fiware down -v --remove-orphans
+	VOLUMES=$(docker volume ls -qf dangling=true) 
+	if [[ -n $VOLUMES ]]; then 
+		echo "Removing old volumes"
+		docker volume rm $VOLUMES
+	fi
+
 }
 
 displayServices () {
@@ -157,6 +183,7 @@ addDatabaseIndex () {
 	docker exec  db-mongo mongo --eval '
 	conn = new Mongo();
 	db = conn.getDB("iotagentul");
+	db.getCollectionNames().forEach(c=>db[c].drop());
 	db.createCollection("devices");
 	db.devices.createIndex({"_id.service": 1, "_id.id": 1, "_id.type": 1});
 	db.devices.createIndex({"_id.type": 1}); 
@@ -172,6 +199,7 @@ addIoTDatabaseIndex () {
 	docker exec  db-mongo mongo --eval '
 	conn = new Mongo();
 	db = conn.getDB("iotagentul");
+	db.getCollectionNames().forEach(c=>db[c].drop());
 	db.createCollection("devices");
 	db.devices.createIndex({"_id.service": 1, "_id.id": 1, "_id.type": 1});
 	db.devices.createIndex({"_id.type": 1});
@@ -196,9 +224,9 @@ case "${command}" in
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo -e "- \033[1mContext\033[0m holds the linked data @context files"
 		echo ""
-		docker-compose --log-level ERROR -f docker-compose/mintaka.yml -p fiware up -d --remove-orphans
+		${dockerCmd} -f docker-compose/mintaka.yml -p fiware up -d --remove-orphans --renew-anon-volumes
 		pause 10
-		docker-compose --log-level ERROR -f docker-compose/orion-ld.yml -p fiware up -d
+		${dockerCmd} -f docker-compose/common.yml -f docker-compose/orion-ld.yml -p fiware up -d --renew-anon-volumes
 		waitForMongo
 		addDatabaseIndex
 		waitForContext
@@ -216,7 +244,7 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo ""
-		docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml -p fiware up -d --remove-orphans
+		${dockerCmd} -f docker-compose/common.yml -f docker-compose/scorpio-aaio.yml -p fiware up -d --remove-orphans --renew-anon-volumes
 		waitForMongo
 		addIoTDatabaseIndex
 		waitForContext
@@ -237,9 +265,7 @@ case "${command}" in
 		export $(cat .env | grep "#" -v)
 		echo "Pulling Docker images"
 		docker pull curlimages/curl
-		docker-compose --log-level ERROR -f docker-compose/scorpio-aaio.yml pull
-		docker-compose --log-level ERROR -f docker-compose/orion-ld.yml pull
-		docker-compose --log-level ERROR -f docker-compose/mintaka.yml pull
+		${dockerCmd} -f docker-compose/common.yml -f docker-compose/common.yml -f docker-compose/scorpio-aaio.yml -f docker-compose/orion-ld.yml -f docker-compose/stellio.yml -f docker-compose/mintaka.yml pull
 		;;
 	*)
 		echo "Command not Found."
