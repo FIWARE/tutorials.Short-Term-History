@@ -14,7 +14,7 @@
 チュートリアルでは全体で [cUrl](https://ec.haxx.se/) コマンドを使用しますが、
 [Postman ドキュメント](https://fiware.github.io/tutorials.Short-Term-History/ngsi-ld.html) としても利用できます。
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)。
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
 ## コンテンツ
 
