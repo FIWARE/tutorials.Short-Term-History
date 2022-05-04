@@ -113,10 +113,11 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 -   [Timescale](https://www.timescale.com/) は、履歴コンテキストを永続化する時系列データベースです
 -   **Mintaka** アドオン は、テンポラル・インターフェースを提供し、コンテキストを永続化します
 -   **チュートリアル・アプリケーション** 次のことを行います:
-    -   `@context` システム内のコンテキスト・エンティティを定義する静的ファイルを提供します
     -   HTTP 上で実行される [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         プロトコルを使用して、ダミーの [農業用 IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-LD)
         のセットとして機能します
+-   HTTP **Web-Server** は、システム内のコンテキスト・エンティティを定義する静的な `@context` ファイルを提供します
+
 
 要素間のすべての相互作用は HTTP リクエストによって開始されるため、エンティティをコンテナ化して、公開されたポートから
 実行できます。
