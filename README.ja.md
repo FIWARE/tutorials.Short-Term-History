@@ -5,8 +5,7 @@
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
 [![NGSI v1](https://img.shields.io/badge/NGSI-v1-ff69b4.svg)](http://forge.fiware.org/docman/view.php/7/3213/FI-WARE_NGSI_RESTful_binding_v1.0.zip)
 [![Support badge](https://img.shields.io/badge/tag-fiware-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware)
-<br/>
-[![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
+<br/> [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
 <!-- prettier-ignore -->
 
@@ -25,7 +24,7 @@ IoT センサをアクティブにし、それらのセンサからの測定値�
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/4824d3171f823935dcab)
 
-## 内容
+## コンテンツ
 
 <details>
 <summary>詳細 <b>(クリックして拡大)</b></summary>
@@ -243,7 +242,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
 
 **Docker Compose** は、マルチコンテナ Docker アプリケーションを定義して実行する
 ためのツールです
-。[YAML file](https://github.com/FIWARE/tutorials.Short-Term-History/tree/master/docker-compose)
+。[YAML file](https://github.com/FIWARE/tutorials.Short-Term-History/tree/NGSI-v2/docker-compose)
 ファイルは、アプリケーションのために必要なサービスを構成するために使用します。つ
 まり、すべてのコンテナ・サービスは 1 つのコマンドで呼び出すことができます
 。Docker Compose は、デフォルトで Docker for Windows と Docker for Mac の一部と
@@ -259,7 +258,7 @@ docker-compose -v
 docker version
 ```
 
-Docker バージョン 18.03 以降と Docker Compose 1.29 以上を使用していることを確認
+Docker バージョン 20.10 以降と Docker Compose 1.29 以上を使用していることを確認
 し、必要に応じてアップグレードしてください。
 
 <a name="cygwin-for-windows"></a>
@@ -550,8 +549,7 @@ curl -iX POST \
     },
     "attrs": [
       "luminosity"
-    ],
-    "attrsFormat": "legacy"
+    ]
   },
   "throttling": 5
 }'
@@ -1057,7 +1055,8 @@ curl -X GET \
                                         "offset": 22,
                                         "samples": 5,
                                         "min": 1855
-                                    }, ..etc
+                                    },
+                                    ...etc
                                 ]
                             }
                         ]
@@ -1400,12 +1399,11 @@ curl -iX POST \
   },
   "notification": {
     "http": {
-      "url": "http://cygnus:5050/notify"
+      "url": "http://cygnus:5051/notify"
     },
     "attrs": [
       "count"
-    ],
-    "attrsFormat": "legacy"
+    ]
   }
 }'
 ```
@@ -1455,12 +1453,11 @@ curl -iX POST \
   },
   "notification": {
     "http": {
-      "url": "http://cygnus:5050/notify"
+      "url": "http://cygnus:5051/notify"
     },
     "attrs": [
       "luminosity"
-    ],
-    "attrsFormat": "legacy"
+    ]
   },
   "throttling": 5
 }'
@@ -1498,9 +1495,8 @@ curl -iX POST \
 
 ```javascript
 function readCometLampLuminosity(id, aggMethod) {
-    return new Promise(function(resolve, reject) {
-        const url =
-            "http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity";
+    return new Promise(function (resolve, reject) {
+        const url = "http://sth-comet:8666/STH/v1/contextEntities/type/Lamp/id/Lamp:001/attributes/luminosity";
         const options = {
             method: "GET",
             url: url,
@@ -1523,12 +1519,10 @@ function cometToTimeSeries(cometResponse, aggMethod) {
     const data = [];
     const labels = [];
 
-    const values =
-        cometResponse.contextResponses[0].contextElement.attributes[0]
-            .values[0];
+    const values = cometResponse.contextResponses[0].contextElement.attributes[0].values[0];
     let date = moment(values._id.origin);
 
-    _.forEach(values.points, element => {
+    _.forEach(values.points, (element) => {
         data.push({ t: date.valueOf(), y: element[aggMethod] });
         labels.push(date.format("HH:mm"));
         date = date.clone().add(1, "m");
@@ -1552,10 +1546,10 @@ function cometToTimeSeries(cometResponse, aggMethod) {
 高度な機能を追加することで、アプリケーションに複雑さを加える方法を知りたいですか
 ？このシリーズ
 の[他のチュートリアル](https://www.letsfiware.jp/fiware-tutorials)を読むことで見
-つけることができます :
+つけることができます
 
 ---
 
 ## License
 
-[MIT](LICENSE) © 2018-2020 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2018-2022 FIWARE Foundation e.V.
