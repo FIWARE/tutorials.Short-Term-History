@@ -120,6 +120,7 @@ waitForIoTAgent () {
 	done
 }
 
+export $(cat .env | grep "#" -v)
 command="$1"
 case "${command}" in
 	"help")
@@ -153,15 +154,12 @@ case "${command}" in
 		echo -e "Now open \033[4mhttp://localhost:3000/device/monitor\033[0m"
 		;;
 	"stop")
-		export $(cat .env | grep "#" -v)
 		stoppingContainers
 		;;
 	"start")
-		export $(cat .env | grep "#" -v)
 		./services cygnus $2
 		;;
 	"create")
-		export $(cat .env | grep "#" -v)
 		echo "Pulling Docker images"
 		docker pull curlimages/curl
 		${dockerCmd} -f docker-compose/cygnus-sth-comet.yml  pull
