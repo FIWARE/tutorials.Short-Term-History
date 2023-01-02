@@ -188,9 +188,9 @@ Within our Smart Farm, context data about the state of the animals is received v
 Agent is used to convert the data into NGSI-LD format. This is then received at the context broker. Normally the context
 broker would only hold the latest state of the system (in Mongo-DB), however with a temporally enabled context broker,
 Orion also persists data into a Timescale database. In this instance Orion is only responsible for writing data into the
-timescale database. This keeps the system fast and responsive. The Mintaka component is responsible for listening
-for temporal interface requests and constructing the relevant query to run against Timescale. The overall architecture
-can be seen below:
+timescale database. This keeps the system fast and responsive. The Mintaka component is responsible for listening for
+temporal interface requests and constructing the relevant query to run against Timescale. The overall architecture can
+be seen below:
 
 ![](https://fiware.github.io/tutorials.Short-Term-History/img/architecture-ld.png)
 
