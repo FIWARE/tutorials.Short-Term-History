@@ -23,6 +23,7 @@ services:
     image: fiware/mintaka:${MINTAKA_VERSION}
     hostname: mintaka
     container_name: fiware-mintaka
+    restart: always
     depends_on:
       - timescale-db
     environment:
