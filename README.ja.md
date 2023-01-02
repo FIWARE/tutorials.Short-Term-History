@@ -89,7 +89,7 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 
 <a name="architecture"></a>
 
-# アーキテクチャ 
+# アーキテクチャ
 
 このアプリケーションは、[以前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD)で作成された
 コンポーネントとダミーの IoT デバイスに基づいて構築されています。これは、2つのFIWAREのコンポーネントを使用します。
@@ -124,7 +124,7 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 
 <a name="prerequisites"></a>
 
-# 前提条件 
+# 前提条件
 
 <a name="docker-and-docker-compose"></a>
 
@@ -1180,4 +1180,4 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 
 ## License
 
-[MIT](LICENSE) © 2021 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2021-2023 FIWARE Foundation e.V.
