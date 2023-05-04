@@ -274,7 +274,7 @@ mongo-db:
 
 ```yaml
 sth-comet:
-    image: fiware/sth-comet
+    image: quay.io/fiware/sth-comet
     hostname: sth-comet
     container_name: fiware-sth-comet
     depends_on:
@@ -1045,7 +1045,7 @@ mongo-db:
 
 ```yaml
 sth-comet:
-    image: fiware/sth-comet
+    image: quay.io/fiware/sth-comet
     hostname: sth-comet
     container_name: fiware-sth-comet
     depends_on:
@@ -1066,7 +1066,7 @@ sth-comet:
 
 ```yaml
 cygnus:
-    image: fiware/cygnus-ngsi:latest
+    image: quay.io/fiware/cygnus-ngsi:latest
     hostname: cygnus
     container_name: fiware-cygnus
     depends_on:
