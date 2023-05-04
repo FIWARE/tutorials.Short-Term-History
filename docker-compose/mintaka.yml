@@ -20,7 +20,7 @@ version: "3.8"
 services:
 
   mintaka:
-    image: fiware/mintaka:${MINTAKA_VERSION}
+    image: quay.io/fiware/mintaka:${MINTAKA_VERSION}
     hostname: mintaka
     container_name: fiware-mintaka
     restart: always

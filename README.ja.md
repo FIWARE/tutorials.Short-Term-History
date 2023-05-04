@@ -209,7 +209,7 @@ Broker はシステムの最新の状態 (Mongo-DB 内) のみを保持します
 
 ```yaml
 mintaka:
-    image: fiware/mintaka:${MINTAKA_VERSION}
+    image: quay.io/fiware/mintaka:${MINTAKA_VERSION}
     hostname: mintaka
     container_name: fiware-mintaka
     depends_on:
@@ -246,7 +246,7 @@ mintaka:
 
 ```yaml
 orion:
-    image: fiware/orion-ld:${ORION_LD_VERSION}
+    image: quay.io/fiware/orion-ld:${ORION_LD_VERSION}
     hostname: orion
     container_name: fiware-orion
     depends_on:
