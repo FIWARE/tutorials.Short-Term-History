@@ -33,7 +33,7 @@ services:
     networks:
       - default
     ports:
-      - "${ORION_LD_PORT}:${ORION_LD_PORT}" # localhost:1026
+      - ${EXPOSED_PORT:-1026}:${ORION_LD_PORT:-1026}
     environment:
       - ORIONLD_TROE=TRUE
       - ORIONLD_TROE_USER=orion
