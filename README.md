@@ -157,7 +157,8 @@ Therefore the overall architecture will consist of the following elements:
     -   FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) where it will subscribe to context changes and
         persist them into a **MongoDB** database (_formal_ mode only)
 
-> :information*source: **Note:** **Cygnus** will only be used if **STH-Comet** is configured in \_formal* mode.
+> [!NOTE]
+>  **Cygnus** will only be used if **STH-Comet** is configured in \_formal* mode.
 
 -   A [MongoDB](https://www.mongodb.com/) database:
     -   Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and
