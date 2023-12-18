@@ -176,7 +176,8 @@ repository:
 ./services [orion|scorpio|stellio]
 ```
 
-> :information_source: **Note:** If you want to clean up and start over again you can do so with the following command:
+> [!NOTE]
+>  If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
 > ./services stop
@@ -278,7 +279,7 @@ Once Mintaka is running, you can check the status by making an HTTP request to t
 Since the configuration includes `ENDPOINTS_INFO_ENABLED=true` and `ENDPOINTS_INFO_SENSITIVE=false` the endpoint should
 return a response
 
-#### :one: Request:
+#### 1️⃣ Request:
 
 ```console
 curl -L -X GET \
@@ -348,7 +349,7 @@ To obtain temporal data of a context entity attribute, send a GET request to `..
 
 The `lastN` parameter restricts the result to N values.
 
-#### :one: Request:
+#### 1️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
@@ -477,7 +478,7 @@ receive.
 
 This example shows just the last 3 changes of `heartRate` from the entity `urn:ngsi-ld:Animal:cow002`.
 
-#### :two: Request:
+#### 2️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
@@ -543,7 +544,7 @@ In much the same manner as the `options=keyValues` parameter reduces entities to
 
 The simplified temporal representation can be requested by adding the `options` parameter as shown:
 
-#### :three: Request:
+#### 3️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
@@ -589,7 +590,7 @@ Temporal Operations rely heavily on the use of the `observedAt` _property of a p
 against static attributes using the `timeproperty` parameter to switch the time index for the query to make a look-up
 against `modifiedAt`
 
-#### :four: Request:
+#### 4️⃣ Request:
 
 The following query is requesting data about the bulls within the herd. Because the `sex` attribute is unchanging,
 `timeproperty=modifiedAt` must be used.
@@ -728,7 +729,7 @@ from an Array of one element down to an object because this is the format specif
 
 The equivalent simplified format can be retrieved by setting `options=temporalValues`
 
-#### :five: Request:
+#### 5️⃣ Request:
 
 The following query is requesting data about the bulls within the herd. Because the `sex` attribute is unchanging,
 `timeproperty=modifiedAt` must be used.
@@ -797,7 +798,7 @@ timestamp represents the `modifiedAt` property.
 Because temporal operations can end up returning very large payloads, it is possible to reduce the scope of the request,
 the `pageSize=2` parameter means that only two entities are returned:
 
-#### :six: Request:
+#### 6️⃣ Request:
 
 ```console
 curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
@@ -842,7 +843,7 @@ the farm and that the next entity to be returned would be `urn:ngsi-ld:Animal:pi
 
 Making the same request with an additional `pageAnchor` parameter will retrieve the next two entities
 
-#### :seven: Request:
+#### 7️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
@@ -925,7 +926,7 @@ Content** HTTP Code, indicating further male animals can be found on the farm.
 A device such as an animal collar, sends its data to the context broker via an IoT Agent, the corresponding entity is
 stored in the context broker.
 
-#### :eight: Request:
+#### 8️⃣ Request:
 
 ```console
 curl -L -X GET \
@@ -1003,7 +1004,7 @@ can be used as part of the filter for a temporal request
 The following request returns the `heartRate` registered when the state of an animal is described as `FORAGING`, and
 also returns the associated animal entity that wears it.
 
-#### :nine: Request:
+#### 9️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
@@ -1074,7 +1075,7 @@ can be used to trace location over time.
 The following request returns the `heartRate` registered when the state of an animal is when it is less than 800 meters
 from a fixed point, and also returns the associated animal entity that wears it.
 
-#### :nine: Request:
+#### 9️⃣ Request:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \

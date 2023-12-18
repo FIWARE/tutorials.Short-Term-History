@@ -293,7 +293,7 @@ Mintaka が実行されたら、公開されたポートの `info` エンドポ�
 できます。構成には `ENDPOINTS_INFO_ENABLED=true`と `ENDPOINTS_INFO_SENSITIVE=false` が含まれているため、エンドポイント
 はレスポンスを返す必要があります。
 
-#### :one: リクエスト:
+#### 1️⃣ リクエスト:
 
 ```console
 curl -L -X GET \
@@ -367,7 +367,7 @@ curl -L -X GET \
 
 この `lastN` パラメータは、結果を N 個に制限します。
 
-#### :one: リクエスト:
+#### 1️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
@@ -497,7 +497,7 @@ Mintaka 実装によって暗示されるため、他の Context Broker と連�
 
 この例は、エンティティ `urn:ngsi-ld:Animal:cow002` から `heartRate` の最後の3つの変更のみを示しています。
 
-#### :two: リクエスト:
+#### 2️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
@@ -565,7 +565,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
 
 簡略化された時間表現は、次のように `options` パラメータを追加することでリクエストできます:
 
-#### :three: リクエスト:
+#### 3️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
@@ -612,7 +612,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
 使用して静的属性に対して作成し、クエリの時間インデックスを切り替えて、`modifiedAt` に対してルックアップを作成することも
 できます。
 
-#### :four: リクエスト:
+#### 4️⃣ リクエスト:
 
 次のクエリは、群れ内の雄牛に関するデータをリクエストしています。`sex` 属性は変更されないため、`timeproperty=modifiedAt`
 を使用する必要があります。
@@ -751,7 +751,7 @@ UTC 形式で表された日時です。秒とミリ秒はオプションです
 
 同等の簡略化された形式は、`options=temporalValues` を設定することで取得できます。
 
-#### :five: リクエスト:
+#### 5️⃣ リクエスト:
 
 次のクエリは、群れ内の雄牛に関するデータを要求しています。`sex` 属性は変更されないため、`timeproperty=modifiedAt`
 を使用する必要があります。
@@ -822,7 +822,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 テンポラル操作は非常に大きなペイロードを返す可能性があるため、リクエストの範囲を縮小することができます。この
 `pageSize=2` パラメータは、2つのエンティティのみが返されることを意味します。
 
-#### :six: リクエスト:
+#### 6️⃣ リクエスト:
 
 ```console
 curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
@@ -867,7 +867,7 @@ connection: keep-alive
 
 追加の `pageAnchor` パラメータを使用して同じリクエストを行うと、次の2つのエンティティが取得されます:
 
-#### :seven: リクエスト:
+#### 7️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
@@ -952,7 +952,7 @@ connection: keep-alive
 動物の首輪などのデバイスは、IoT Anget を介してそのデータを Context Broker に送信します。対応するエンティティは
 Context Broker に保存されます。
 
-#### :eight: リクエスト:
+#### 8️⃣ リクエスト:
 
 ```console
 curl -L -X GET \
@@ -1030,7 +1030,7 @@ curl -L -X GET \
 次のリクエストは、動物の状態が `FORAGING` (採餌) として記述されているときに登録された `heartRate` を返し、それを身に
 付けている関連する Animal エンティティも返します。
 
-#### :nine: リクエスト:
+#### 9️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
@@ -1103,7 +1103,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 次のリクエストは、動物の状態が定点から800メートル未満のときに登録された `heartRate` を返し、それを身に付けている
 関連する動物エンティティも返します。
 
-#### :nine: リクエスト:
+#### 9️⃣ リクエスト:
 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
