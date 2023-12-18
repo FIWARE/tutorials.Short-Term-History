@@ -393,7 +393,7 @@ STH-Comet が実行されると、公開されている `STH_PORT` ポートへ�
 行うことで状態を確認できます。レスポンスがブランクの場合は、通常、**STH-Comet**
 が実行されていないか、別のポートでリッスンしているためです。
 
-#### :one: リクエスト :
+#### 1️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -463,7 +463,7 @@ curl -X GET \
 -   **STH-Comet** は、現在、古い NGSI v1 形式の通知のみを受け付けるため
     、`attrsFormat=legacy` が必要です
 
-#### :two: リクエスト :
+#### 2️⃣ リクエスト :
 
 ```console
 curl -iX POST \
@@ -522,7 +522,7 @@ curl -iX POST \
 > れます。`t` の最初の変更に対して通知が送られますが、エンティティがサンプリング
 > 期間内に最近更新されたので、`l`の第 2 の変更は無視されます。
 
-#### :three: リクエスト :
+#### 3️⃣ リクエスト :
 
 ```console
 curl -iX POST \
@@ -581,7 +581,7 @@ curl -iX POST \
 `fiware-service` および `fiware-servicepath` ヘッダはクエリに設定し、サブスクリ
 プションを設定するときに使用する値と一致する必要があることに注意してください。
 
-#### :four: リクエスト :
+#### 4️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -663,7 +663,7 @@ curl -X GET \
 `hLimit` パラメータは、N 値に結果を制限します。`hOffset=0` は、最初の値から開始
 します。
 
-#### :five: リクエスト :
+#### 5️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -728,7 +728,7 @@ curl -X GET \
 `hLimit` パラメータは、N 値に結果を制限します。`hOffset` は、ゼロ以外の値に設定
 すると N 番目の測定から開始します。
 
-#### :six: リクエスト :
+#### 6️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -793,7 +793,7 @@ curl -X GET \
 `lastN` パラメータが設定された場合は、その結果は、N 個の最新の測定結果のみを返し
 ます。
 
-#### :seven: リクエスト :
+#### 7️⃣  リクエスト :
 
 ```console
 curl -X GET \
@@ -864,7 +864,7 @@ curl -X GET \
 常にデータ収集の頻度に基づいて最も適切な期間を選択してください。 `Motion:001` は
 、1 分ごとに数回変化しているので、`minute` が選択されます。
 
-#### :eight: リクエスト :
+#### 8️⃣  リクエスト :
 
 ```console
 curl -X GET \
@@ -937,7 +937,7 @@ curl -X GET \
 `aggrMethod` パラメータは、時系列上に実行する集計のタイプを決定します
 。`aggrPeriod` は、`second`, `minute`, `hour` または `day` のいずれかです。
 
-#### :nine: リクエスト :
+#### 9️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -1015,7 +1015,7 @@ curl -X GET \
 なっています。**モーション・センサ**は、バイナリ値のみを提供するため、これには適
 していません。
 
-#### :one::zero: リクエスト :
+#### 1️⃣0️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -1089,7 +1089,7 @@ curl -X GET \
 `aggrMethod` パラメータは、時系列上に実行する集計のタイプを決定します
 。`aggrPeriod` は、`second`, `minute`, `hour` または `day` のいずれかです。
 
-#### :one::one: リクエスト :
+#### 1️⃣1️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -1280,7 +1280,7 @@ cygnus:
 行うことで、状態を確認できます。レスポンスがブランクの場合は、通常
 、**STH-Comet** が実行されていないか、別のポートでリッスンしているためです。
 
-#### :one::two: リクエスト :
+#### 1️⃣2️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -1305,7 +1305,7 @@ curl -X GET \
 トを行うことで、状況を確認できます。レスポンスがブランクの場合、これは通常
 、**Cygnus** が実行されていないか、別のポートでリッスンしているためです。
 
-#### :one::three: リクエスト :
+#### 1️⃣3️⃣ リクエスト :
 
 ```console
 curl -X GET \
@@ -1376,7 +1376,7 @@ The response will look similar to the following:
 -   **Cygnus** は、現在、古い NGSI v1 形式の通知のみを受け付けるため
     、`attrsFormat=legacy` が必要です
 
-#### :one::four: リクエスト :
+#### 1️⃣4️⃣ リクエスト :
 
 ```console
 curl -iX POST \
@@ -1430,7 +1430,7 @@ curl -iX POST \
     、`attrsFormat=legacy` が必要です
 -   `throttling` 値は、変更がサンプリングされる割合を定義します
 
-#### :one::five: リクエスト :
+#### 1️⃣5️⃣ リクエスト :
 
 ```console
 curl -iX POST \

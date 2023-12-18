@@ -242,7 +242,8 @@ repository:
 Where `<command>` will vary depending upon the mode we wish to activate. This command will also import seed data from
 the previous tutorials and provision the dummy IoT sensors on startup.
 
-> :information_source: **Note:** If you want to clean up and start over again you can do so with the following command:
+> [!NOTE]
+>  If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
 > ./services stop
@@ -319,7 +320,7 @@ To start the system using the _minimal_ configuration using **STH-Comet** only, 
 Once STH-Comet is running, you can check the status by making an HTTP request to the exposed `STH_PORT` port. If the
 response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
 
-#### :one: Request:
+#### 1️⃣ Request:
 
 ```console
 curl -X GET \
@@ -378,7 +379,7 @@ This is done by making a POST request to the `/v2/subscription` endpoint of the 
 -   The `attrsFormat=legacy` is required since **STH-Comet** currently only accepts notifications in the older NGSI v1
     format.
 
-#### :two: Request:
+#### 2️⃣ Request:
 
 ```console
 curl -iX POST \
@@ -425,7 +426,8 @@ the `throttling` attribute in the request body.
     format.
 -   The `throttling` value defines the rate that changes are sampled.
 
-> :information_source: **Note:** Be careful when throttling subscriptions as sequential updates will not be persisted as
+> [!NOTE]
+> Be careful when throttling subscriptions as sequential updates will not be persisted as
 > expected.
 >
 > For example if an UltraLight device sends the measurement `t|20|l|1200` it will be a single atomic commit and both
@@ -433,7 +435,7 @@ the `throttling` attribute in the request body.
 > treated as two atomic commits - a notification will be sent for the first change in `t`, but the second change in `l`
 > will be ignored as the entity has been recently updated within the sampling period.
 
-#### :three: Request:
+#### 3️⃣ Request:
 
 ```console
 curl -iX POST \
@@ -483,7 +485,7 @@ and the subscriptions have been registered. Data should be collected for at leas
 You can note that the `fiware-service` and `fiware-servicepath` headers must be set in the query and match the values
 used when setting up the subscription
 
-#### :four: Request:
+#### 4️⃣ Request:
 
 ```console
 curl -X GET \
@@ -554,7 +556,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 
 the `hLimit` parameter restricts the result to N values. `hOffset=0` will start with the first value.
 
-#### :five: Request:
+#### 5️⃣ Request:
 
 ```console
 curl -X GET \
@@ -615,7 +617,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 the `hLimit` parameter restricts the result to N values. Setting `hOffset` to a non-zero value will start from the Nth
 measurement
 
-#### :six: Request:
+#### 6️⃣ Request:
 
 ```console
 curl -X GET \
@@ -675,7 +677,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 
 If the `lastN` parameter is set, the result will return the N latest measurements only.
 
-#### :seven: Request:
+#### 7️⃣  Request:
 
 ```console
 curl -X GET \
@@ -741,7 +743,7 @@ of `second`, `minute`, `hour` or `day`.
 Always select the most appropriate time period based on the frequency of your data collection. `minute` has been
 selected because the `Motion:001` is firing a few times within each minute.
 
-#### :eight: Request:
+#### 8️⃣  Request:
 
 ```console
 curl -X GET \
@@ -813,7 +815,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 The `aggrMethod` parameter determines the type of aggregation to perform over the time series, the `aggrPeriod` is one
 of `second`, `minute`, `hour` or `day`.
 
-#### :nine: Request:
+#### 9️⃣ Request:
 
 ```console
 curl -X GET \
@@ -887,7 +889,7 @@ of `second`, `minute`, `hour` or `day`.
 The luminocity of the **Smart Lamp** is continually changing and therefore tracking the minimum value makes sense. The
 **Motion Sensor** is not suitable for this as it only offers binary values.
 
-#### :one::zero: Request:
+#### 1️⃣0️⃣ Request:
 
 ```console
 curl -X GET \
@@ -957,7 +959,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 The `aggrMethod` parameter determines the type of aggregation to perform over the time series, the `aggrPeriod` is one
 of `second`, `minute`, `hour` or `day`.
 
-#### :one::one: Request:
+#### 1️⃣1️⃣ Request:
 
 ```console
 curl -X GET \
@@ -1129,7 +1131,7 @@ To start the system using the _formal_ configuration using **Cygnus** and **STH-
 Once **STH-Comet** is running, you can check the status by making an HTTP request to the exposed `STH_PORT` port. If the
 response is blank, this is usually because **STH-Comet** is not running or is listening on another port.
 
-#### :one::two: Request:
+#### 1️⃣2️⃣ Request:
 
 ```console
 curl -X GET \
@@ -1151,7 +1153,7 @@ The response will look similar to the following:
 Once **Cygnus** is running, you can check the status by making an HTTP request to the exposed `CYGNUS_API_PORT` port. If
 the response is blank, this is usually because **Cygnus** is not running or is listening on another port.
 
-#### :one::three: Request:
+#### 1️⃣3️⃣ Request:
 
 ```console
 curl -X GET \
@@ -1208,7 +1210,7 @@ This is done by making a POST request to the `/v2/subscription` endpoint of the 
 -   The `idPattern` in the request body ensures that **Cygnus** will be informed of all **Motion Sensor** data changes.
 -   The notification `url` must match the configured `CYGNUS_API_PORT`
 
-#### :one::four: Request:
+#### 1️⃣4️⃣ Request:
 
 ```console
 curl -iX POST \
@@ -1255,7 +1257,7 @@ the `throttling` attribute in the request body.
 -   The notification `url` must match the configured `CYGNUS_API_PORT`
 -   The `throttling` value defines the rate that changes are sampled.
 
-#### :one::five: Request:
+#### 1️⃣5️⃣ Request:
 
 ```console
 curl -iX POST \
