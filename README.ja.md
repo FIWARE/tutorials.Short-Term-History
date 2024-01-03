@@ -1181,4 +1181,4 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 
 ## License
 
-[MIT](LICENSE) © 2021-2023 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2021-2024 FIWARE Foundation e.V.
