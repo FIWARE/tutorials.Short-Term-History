@@ -953,7 +953,7 @@ attribute has also been added to the model.
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "status": {
-        "value": "3",
+        "value": 3,
         "type": "Property",
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
