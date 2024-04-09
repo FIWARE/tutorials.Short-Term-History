@@ -54,7 +54,14 @@ services:
       - IOTA_CB_HOST=orion # name of the context broker to update context
       - IOTA_CB_PORT=${ORION_LD_PORT} # port the context broker listens on to update context
 
-     
+  farmer:
+    environment:
+      - CONTEXT_BROKER=http://orion:${ORION_LD_PORT}
+
+  devices:
+    environment:
+      - CONTEXT_BROKER=http://orion:${ORION_LD_PORT}
+ 
   # Tutorial acts as a series of dummy IoT Sensors over HTTP and connects to the Orion-LD Broker
   tutorial:
     environment:

@@ -104,7 +104,13 @@ services:
       start_period: 10s
 
 
-
+  farmer:
+    environment:
+      - CONTEXT_BROKER=http://stellio:${STELLIO_PORT}
+  devices:
+    environment:
+      - CONTEXT_BROKER=http://stellio:${STELLIO_PORT} 
+      
   # IoT-Agent connects to the Stellio Broker
   iot-agent:
     environment:
