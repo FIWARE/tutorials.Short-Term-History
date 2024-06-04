@@ -161,8 +161,7 @@ Therefore the overall architecture will consist of the following elements:
     -   FIWARE [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) where it will subscribe to context changes and
         persist them into a **MongoDB** database (_formal_ mode only)
 
-> [!NOTE]
->  **Cygnus** will only be used if **STH-Comet** is configured in \_formal* mode.
+> [!NOTE] **Cygnus** will only be used if **STH-Comet** is configured in \_formal\* mode.
 
 -   A [MongoDB](https://www.mongodb.com/) database:
     -   Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and
@@ -247,8 +246,7 @@ repository:
 Where `<command>` will vary depending upon the mode we wish to activate. This command will also import seed data from
 the previous tutorials and provision the dummy IoT sensors on startup.
 
-> [!NOTE]
->  If you want to clean up and start over again you can do so with the following command:
+> [!NOTE] If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
 > ./services stop
@@ -431,9 +429,7 @@ the `throttling` attribute in the request body.
     format.
 -   The `throttling` value defines the rate that changes are sampled.
 
-> [!NOTE]
-> Be careful when throttling subscriptions as sequential updates will not be persisted as
-> expected.
+> [!NOTE] Be careful when throttling subscriptions as sequential updates will not be persisted as expected.
 >
 > For example if an UltraLight device sends the measurement `t|20|l|1200` it will be a single atomic commit and both
 > attributes will be included the notification to **STH-Comet** however is a device sends `t|20#l|1200` this will be
@@ -682,7 +678,7 @@ To obtain the short term history of a context entity attribute, send a GET reque
 
 If the `lastN` parameter is set, the result will return the N latest measurements only.
 
-#### 7️⃣  Request:
+#### 7️⃣ Request:
 
 ```console
 curl -X GET \
@@ -748,7 +744,7 @@ of `second`, `minute`, `hour` or `day`.
 Always select the most appropriate time period based on the frequency of your data collection. `minute` has been
 selected because the `Motion:001` is firing a few times within each minute.
 
-#### 8️⃣  Request:
+#### 8️⃣ Request:
 
 ```console
 curl -X GET \
