@@ -26,7 +26,7 @@
 -   [アーキテクチャ](#architecture)
 -   [前提条件](#prerequisites)
     -   [Docker と Docker Compose](#docker-and-docker-compose)
-    -   [Cygwin for Windows](#cygwin-for-windows)
+    -   [WSL](#wsl)
 -   [起動](#start-up)
 -   [テンポラル・オペレーションのための Orion と Mintaka の構成](#configuring-orion-and-mintaka-for-temporal-operations)
     -   [Mintaka の構成](#mintaka---configuration)
@@ -155,11 +155,9 @@ docker version
 Docker バージョン 18.03 以降と Docker Compose 1.21 以上を使用していることを確認し、必要に応じてアップグレードして
 ください。
 
-<a name="cygwin-for-windows"></a>
+## WSL
 
-## Cygwin for Windows
-
-シンプルな bash スクリプトを使用してサービスを開始します。Windows ユーザは [cygwin](http://www.cygwin.com/) を
+シンプルな bash スクリプトを使用してサービスを開始します。Windows ユーザは [を使用して Windows に Linux をインストールする方法](https://learn.microsoft.com/ja-jp/windows/wsl/install) を
 ダウンロードして、Windows 上の Linux ディストリビューションと同様のコマンドライン機能を提供する必要があります。
 
 # 起動
