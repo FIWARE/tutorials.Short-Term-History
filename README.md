@@ -152,7 +152,7 @@ docker-compose -v
 docker version
 ```
 
-Please ensure that you are using Docker version 18.03 or higher and Docker Compose 1.21 or higher and upgrade if
+Please ensure that you are using Docker version 24.0.x or higher and Docker Compose 2.24.x or higher and upgrade if
 necessary.
 
 ## WSL
