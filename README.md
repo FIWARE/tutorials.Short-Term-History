@@ -363,7 +363,7 @@ The `lastN` parameter restricts the result to N values.
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3'
 ```
 
@@ -492,7 +492,7 @@ This example shows just the last 3 changes of `heartRate` from the entity `urn:n
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
   -d 'attrs=heartRate'
 ```
@@ -558,7 +558,7 @@ The simplified temporal representation can be requested by adding the `options` 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
   -d 'options=temporalValues'
 ```
@@ -607,7 +607,7 @@ The following query is requesting data about the bulls within the herd. Because 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
   -d 'pageSize=2' \
   -d 'lastN=3' \
@@ -746,7 +746,7 @@ The following query is requesting data about the bulls within the herd. Because 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
   -d 'pageSize=2' \
   -d 'lastN=3' \
@@ -812,7 +812,7 @@ the `pageSize=2` parameter means that only two entities are returned:
 ```console
 curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
   -d 'pageSize=2' \
   -d 'lastN=3' \
@@ -835,7 +835,7 @@ Content-Range: date-time 2021-09-16T11:00-2021-09-16T10:22:39.650/3
 Page-Size: 2
 Next-Page: urn:ngsi-ld:Animal:pig001
 NGSILD-Results-Count: 17
-Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
+Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
 Date: Thu, 16 Sep 2021 14:12:32 GMT
 Content-Type: application/ld+json
 content-length: 540
@@ -857,7 +857,7 @@ Making the same request with an additional `pageAnchor` parameter will retrieve 
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
   -d 'pageSize=2' \
   -d 'lastN=3' \
@@ -881,7 +881,7 @@ Page-Size: 2
 Next-Page: urn:ngsi-ld:Animal:pig005
 Previous-Page: urn:ngsi-ld:Animal:cow001
 NGSILD-Results-Count: 17
-Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
+Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"
 Date: Thu, 16 Sep 2021 14:27:14 GMT
 Content-Type: application/ld+json
 content-length: 540
@@ -940,7 +940,7 @@ stored in the context broker.
 ```console
 curl -L -X GET \
   'http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Device:pig003' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H 'NGSILD-Tenant: openiot'
 ```
 
@@ -952,7 +952,10 @@ attribute has also been added to the model.
 
 ```json
 {
-    "@context": "http://context/ngsi-context.jsonld",
+    "@context": [
+        "http://context/user-context.jsonld",
+        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld"
+    ],
     "id": "urn:ngsi-ld:Device:pig003",
     "type": "Device",
     "heartRate": {
@@ -1018,7 +1021,7 @@ also returns the associated animal entity that wears it.
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'q=d==%22FORAGING%22' \
   -d 'attrs=heartRate,controlledAsset' \
@@ -1089,7 +1092,7 @@ from a fixed point, and also returns the associated animal entity that wears it.
 ```console
 curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
-  -H 'Link: <http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'georel=near%3BmaxDistance==800' \
   -d 'geometry=Point' \
