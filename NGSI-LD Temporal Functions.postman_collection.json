@@ -27,12 +27,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5",
+							"raw": "http://{{temporal-broker}}/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
 								"temporal",
 								"entities",
@@ -65,12 +64,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
+							"raw": "http://{{temporal-broker}}/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
 								"temporal",
 								"entities",
@@ -107,13 +105,14 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
+							"raw": "http://{{temporal-broker}}/ngsi-ld/v1/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
+								"ngsi-ld",
+								"v1",
 								"temporal",
 								"entities",
 								""
@@ -165,12 +164,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
+							"raw": "http://{{temporal-broker}}/temporal/entities/urn:ngsi-ld:Animal:cow001?lastN=5&attrs=heartRate",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
 								"temporal",
 								"entities",
@@ -219,12 +217,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Device:pig003",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/urn:ngsi-ld:Device:pig003",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{context-broker}}"
 							],
-							"port": "1026",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -264,7 +261,7 @@
 							},
 							{
 								"key": "Link",
-								"value": "<http://context/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"value": "<http://context/user-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 								"type": "text"
 							},
 							{
@@ -274,12 +271,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z&pageSize=2",
+							"raw": "http://{{temporal-broker}}/temporal/entities/?type=Device&attrs=location,controlledAsset&options=temporalValues&georel=near%3BmaxDistance==800&geometry=Point&coordinates=[13.364,52.52]&timerel=after&timeAt=2021-04-22T08:33:51.255Z&pageSize=2",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
 								"temporal",
 								"entities",
@@ -350,12 +346,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/temporal/entities/urn:ngsi-ld:Building:farm001?timeproperty=modifiedAt",
+							"raw": "http://{{temporal-broker}}/temporal/entities/urn:ngsi-ld:Building:farm001?timeproperty=modifiedAt",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{temporal-broker}}"
 							],
-							"port": "8080",
 							"path": [
 								"temporal",
 								"entities",
@@ -471,12 +466,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{context-broker}}"
 							],
-							"port": "1026",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -612,7 +606,7 @@
 						"header": [
 							{
 								"key": "Link",
-								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"value": "<http://context/user-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 								"type": "text"
 							},
 							{
@@ -633,12 +627,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{context-broker}}"
 							],
-							"port": "1026",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -712,12 +705,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{context-broker}}"
 							],
-							"port": "1026",
 							"path": [
 								"ngsi-ld",
 								"v1",
@@ -780,6 +772,40 @@
 				"description": "Once Mintaka is running, you can check the status by making an HTTP request to the `info` endpoint on the exposed port. \nSince the configuration includes `ENDPOINTS_INFO_ENABLED=true` and `ENDPOINTS_INFO_SENSITIVE=false` the endpoint should return a response"
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "temporal-broker",
+			"value": "localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "context-broker",
+			"value": "localhost:1026",
+			"type": "string"
 		}
 	]
 }
