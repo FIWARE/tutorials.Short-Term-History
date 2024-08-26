@@ -105,14 +105,12 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{temporal-broker}}/ngsi-ld/v1/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count",
+							"raw": "http://{{temporal-broker}}/temporal/entities/?type=Animal&pageSize=2&lastN=5&q=sex==\"female\"&timeproperty=modifiedAt&options=count&timerel=after&timeAt=2024-01-01T00:00:00.000Z",
 							"protocol": "http",
 							"host": [
 								"{{temporal-broker}}"
 							],
 							"path": [
-								"ngsi-ld",
-								"v1",
 								"temporal",
 								"entities",
 								""
@@ -141,6 +139,14 @@
 								{
 									"key": "options",
 									"value": "count"
+								},
+								{
+									"key": "timerel",
+									"value": "after"
+								},
+								{
+									"key": "timeAt",
+									"value": "2024-01-01T00:00:00.000Z"
 								}
 							]
 						}

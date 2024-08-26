@@ -50,6 +50,19 @@ services:
     volumes:
       - postgres-db:/var/lib/postgresql/data
 
+  temporal:
+    labels:
+      org.fiware: 'tutorial'
+    image: quay.io/fiware/tutorials.forwarder
+    hostname: 'temporal'
+    container_name: temporal
+    ports:
+      - 8080:80
+    environment:
+      - TENANT=openiot
+      - CONTEXT_BROKER=http://scorpio:${SCORPIO_PORT}/ngsi-ld/v1/
+      - DEBUG=broker:*
+
   farmer:
     environment:
       - CONTEXT_BROKER=http://scorpio:${SCORPIO_PORT}
