@@ -80,14 +80,35 @@ services:
       - IOTA_MONGO_HOST=mongo-db # The host name of MongoDB
       - IOTA_MONGO_PORT=${MONGO_DB_PORT} # The port mongoDB is listening on
       - IOTA_MONGO_DB=iotagentul # The name of the database used in mongoDB
-      - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT} # The port used for device traffic over HTTP
       - IOTA_PROVIDER_URL=http://iot-agent:${IOTA_NORTH_PORT}
       - IOTA_CB_NGSI_VERSION=ld # use NGSI-LD when sending updates for active attributes
       - IOTA_JSON_LD_CONTEXT=http://context/user-context.jsonld
       - IOTA_FALLBACK_TENANT=openiot
       - IOTA_MULTI_CORE=true
+      - IOTA_MQTT_HOST=mosquitto # The host name of the MQTT Broker
+      - IOTA_MQTT_PORT=1883 # The port the MQTT Broker is listening on to receive topics
+      - IOTA_DEFAULT_RESOURCE= # Default is blank. I'm using MQTT so I don't need a resource
+      - IOTA_DEFAULT_TRANSPORT=MQTT
     healthcheck:
       interval: 30s
+
+  # Other services
+  mosquitto:
+    image: eclipse-mosquitto:1.6.14
+    hostname: mosquitto
+    container_name: mosquitto
+    labels:
+      org.fiware: 'tutorial'
+    expose:
+      - "1883"
+      - "9001"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ../mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - default
 
   farmer:
     labels:
@@ -146,6 +167,9 @@ services:
 
       - PIG_COUNT=${PIG_COUNT}
       - COW_COUNT=${COW_COUNT}
+      - MQTT_TOPIC_PROTOCOL=ul
+      - MQTT_BROKER_URL=mqtt://mosquitto
+      - DUMMY_DEVICES_API_KEYS=321701236,548027571,854782081,110990,98699,112903447,1067386313
 
 
 networks:

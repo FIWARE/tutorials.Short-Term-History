@@ -28,9 +28,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "321701236",
      "cbroker":     "http://orion:1026",
      "entity_type": "TemperatureSensor",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
        { "object_id": "t", "name":"temperature", "type": "Integer",
@@ -48,9 +48,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "548027571",
      "cbroker":     "http://orion:1026",
      "entity_type": "SoilSensor",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
        { "object_id": "h", "name":"humidity", "type": "Integer",
@@ -68,9 +68,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "854782081",
      "cbroker":     "http://orion:1026",
      "entity_type": "FillingLevelSensor",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
        { "object_id": "f", "name":"filling", "type": "Number",
@@ -92,9 +92,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "110990",
      "cbroker":     "http://orion:1026",
      "entity_type": "Device",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
         {"object_id": "bpm","type": "Integer","name": "heartRate",
@@ -115,9 +115,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "98699",
      "cbroker":     "http://orion:1026",
      "entity_type": "Device",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
         {"object_id": "bpm","type": "Integer","name": "heartRate",
@@ -139,9 +139,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "112903447",
      "cbroker":     "http://orion:1026",
      "entity_type": "Water",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "commands": [
         {"name": "on", "type": "Property"},
@@ -157,9 +157,9 @@ curl -s -o /dev/null -X POST \
      "apikey":      "1067386313",
      "cbroker":     "http://orion:1026",
      "entity_type": "Tractor",
-     "resource":    "/iot/d",
+     "resource":    "",
      "protocol":    "PDI-IoTA-UltraLight",
-     "transport":   "HTTP",
+     "transport":   "MQTT",
      "timezone":    "Europe/Berlin",
      "attributes": [
         {"object_id": "s", "name": "status", "type": "Integer"},
@@ -207,7 +207,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:water001",
       "entity_type": "Water",
       "apikey":      "112903447",
-      "endpoint": "http://iot-sensors:3001/iot/water001",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm001"}
       ]
@@ -217,7 +216,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:filling001",
       "entity_type": "FillingLevelSensor",
       "apikey":      "854782081",
-      "endpoint": "http://iot-sensors:3001/iot/filling001",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm001"},
         {"name": "location", "type": "GeoProperty", "value": [13.3505, 52.5144]}
@@ -228,7 +226,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:tractor001",
       "entity_type": "Tractor",
       "apikey":      "1067386313",
-      "endpoint": "http://iot-sensors:3001/iot/tractor001",
       "static_attributes": [
           {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm001"}
       ]
@@ -263,7 +260,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:water002",
       "entity_type": "Water",
       "apikey":      "112903447",
-      "endpoint": "http://iot-sensors:3001/iot/water002",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:barn002"}
       ]
@@ -273,7 +269,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:filling002",
       "entity_type": "FillingLevelSensor",
       "apikey":      "854782081",
-      "endpoint": "http://iot-sensors:3001/iot/filling002",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:barn002"},
         {"name": "location", "type": "GeoProperty", "value": [13.3698, 52.5163]}
@@ -284,7 +279,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:tractor002",
       "entity_type": "Tractor",
       "apikey":      "1067386313",
-      "endpoint": "http://iot-sensors:3001/iot/tractor002",
       "static_attributes": [
           {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:barn002"}
       ]
@@ -319,7 +313,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:water003",
       "entity_type": "Water",
       "apikey":      "112903447",
-      "endpoint": "http://iot-sensors:3001/iot/water003",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:tower003"}
       ]
@@ -329,7 +322,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:filling003",
       "entity_type": "FillingLevelSensor",
       "apikey":      "854782081",
-      "endpoint": "http://iot-sensors:3001/iot/filling003",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:tower003"},
         {"name": "location", "type": "GeoProperty", "value": [13.3598, 52.5165]}
@@ -340,7 +332,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:tractor003",
       "entity_type": "Tractor",
       "apikey":      "1067386313",
-      "endpoint": "http://iot-sensors:3001/iot/tractor003",
       "static_attributes": [
           {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:tower003"}
       ]
@@ -375,7 +366,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:water004",
       "entity_type": "Water",
       "apikey":      "112903447",
-      "endpoint": "http://iot-sensors:3001/iot/water004",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm002"}
       ]
@@ -385,7 +375,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:filling004",
       "entity_type": "FillingLevelSensor",
       "apikey":      "854782081",
-      "endpoint": "http://iot-sensors:3001/iot/filling004",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm002"},
         {"name": "location", "type": "GeoProperty", "value": [13.3127, 52.4893]}
@@ -396,7 +385,6 @@ curl -s -o /dev/null -X POST \
       "entity_name": "urn:ngsi-ld:Device:tractor004",
       "entity_type": "Tractor",
       "apikey":      "1067386313",
-      "endpoint": "http://iot-sensors:3001/iot/tractor004",
       "static_attributes": [
           {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm002"}
       ]
