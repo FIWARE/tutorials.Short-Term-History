@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   # Orion is an NGSI-v2 context broker
   orion-v2:
