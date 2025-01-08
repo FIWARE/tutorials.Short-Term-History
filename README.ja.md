@@ -969,7 +969,7 @@ curl -L -X GET \
 {
     "@context": [
         "http://context/user-context.jsonld",
-        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld"
+        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
     ],
     "id": "urn:ngsi-ld:Device:pig003",
     "type": "Device",
@@ -1182,4 +1182,4 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 
 ## License
 
-[MIT](LICENSE) © 2021-2024 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2021-2025 FIWARE Foundation e.V.
