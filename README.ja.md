@@ -1003,8 +1003,8 @@ curl -L -X GET \
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "category": {
-        "value": "sensor",
-        "type": "Property",
+        "vocab": "sensor",
+        "type": "VocabProperty",
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "controlledProperty": {
