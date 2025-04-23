@@ -9,7 +9,7 @@ set -e
 echo -e "⏳ Loading context data in \033[1mNGSI-LD\033[0m format"
 echo -e "    - all entity data models are defined referencing the" 
 echo -e "      \033[1m"${TUTORIAL_DATA_MODELS_CONTEXT}"\033[0m JSON-LD context"
-echo -e "\nCreating ${COW_COUNT:-4} cows and ${COW_COUNT:-4} pigs"
+echo -e "\nCreating ${COW_COUNT:-4} cows and ${PIG_COUNT:-4} pigs"
 
 generate_post_data()
 {
