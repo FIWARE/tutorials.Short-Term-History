@@ -1,4 +1,4 @@
-# Temporal Interfaces[<img src="https://img.shields.io/badge/NGSI-LD-d6604d.svg" width="90"  align="left" />](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf)[<img src="https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png" align="left" width="162">](https://www.fiware.org/)<br/>
+# Temporal Interfaces[<img src="https://img.shields.io/badge/NGSI-LD-d6604d.svg" width="90"  align="left" />](https://cim.etsi.org/NGSI-LD/official/0--1.html)[<img src="https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png" align="left" width="162">](https://www.fiware.org/)<br/>
 
 [![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://github.com/FIWARE/catalogue/blob/master/core/README.md)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
@@ -969,7 +969,7 @@ curl -L -X GET \
 {
     "@context": [
         "http://context/user-context.jsonld",
-        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld"
+        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
     ],
     "id": "urn:ngsi-ld:Device:pig003",
     "type": "Device",
@@ -1003,8 +1003,8 @@ curl -L -X GET \
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "category": {
-        "value": "sensor",
-        "type": "Property",
+        "vocab": "sensor",
+        "type": "VocabProperty",
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "controlledProperty": {
@@ -1182,4 +1182,4 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 
 ## License
 
-[MIT](LICENSE) © 2021-2024 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2021-2025 FIWARE Foundation e.V.

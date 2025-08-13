@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "0246cd2b-6d78-47c3-a320-94c224031884",
+		"_postman_id": "7bb87fd0-ac87-421d-9f78-b5b8ba57842a",
 		"name": "NGSI-LD Temporal Functions",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "513743",
-		"_collection_link": "https://www.postman.com/fiware/workspace/fiware-foundation-ev-s-public-workspace/collection/513743-0246cd2b-6d78-47c3-a320-94c224031884?action=share&source=collection_link&creator=513743"
+		"_exporter_id": "4106882"
 	},
 	"item": [
 		{
@@ -384,7 +383,7 @@
 							},
 							{
 								"key": "Link",
-								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"value": "<http://context/user-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 								"type": "text"
 							}
 						],
@@ -417,7 +416,7 @@
 							},
 							{
 								"key": "Link",
-								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/alternate-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
+								"value": "<http://context/user-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 								"type": "text"
 							}
 						],
@@ -532,7 +531,7 @@
 						"header": [
 							{
 								"key": "Link",
-								"value": "<https://raw.githubusercontent.com/FIWARE/tutorials.NGSI-LD/master/app/public/data-models/ngsi-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json",
+								"value": " <http://context/user-context.jsonld>; rel=\"http://www.w3.org/ns/json-ld#context\"; type=\"application/ld+json\"",
 								"type": "text"
 							},
 							{
@@ -553,12 +552,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
 							"protocol": "http",
 							"host": [
-								"localhost"
+								"{{context-broker}}"
 							],
-							"port": "1026",
 							"path": [
 								"ngsi-ld",
 								"v1",
