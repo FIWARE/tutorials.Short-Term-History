@@ -158,6 +158,8 @@ services:
       
   # IoT-Agent connects to the Stellio Broker
   iot-agent:
+    depends_on:
+      - stellio
     environment:
       - IOTA_DEFAULT_RESOURCE=/iot/d
       - IOTA_CB_HOST=api-gateway # name of the context broker to update context
