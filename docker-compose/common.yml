@@ -16,7 +16,6 @@
 # 
 # see: https://github.com/FIWARE/helm-charts/
 #
-version: "3.8"
 services:
   # @context file is served from here
   ld-context:
@@ -35,6 +34,21 @@ services:
           read_only: true
     healthcheck:
       test: (wget --server-response --spider --quiet  http://context/user-context.jsonld 2>&1 | awk 'NR==1{print $$2}'|  grep -q -e "200") || exit 1
+
+  # Cache for Sensor Data Readings
+  redis-sensors:
+    labels:
+      org.fiware: 'tutorial'
+    image: redis:8.2.0-alpine
+    container_name: redis
+    hostname: redis-for-sensors
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 10s
 
   # Databases
   mongo-db:
@@ -66,12 +80,20 @@ services:
     container_name: fiware-iot-agent
     depends_on:
       - mongo-db
-      - ld-context
+      - mosquitto
     networks:
       - default
     ports:
       - "${IOTA_NORTH_PORT}:${IOTA_NORTH_PORT}" # localhost:4041
       - "${IOTA_SOUTH_PORT}:${IOTA_SOUTH_PORT}" # localhost:7896
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
     environment:
       - IOTA_NORTH_PORT=${IOTA_NORTH_PORT}
       - IOTA_REGISTRY_TYPE=mongodb #Whether to hold IoT device info in memory or in a database
@@ -90,6 +112,7 @@ services:
       - IOTA_MQTT_PORT=1883 # The port the MQTT Broker is listening on to receive topics
       - IOTA_DEFAULT_RESOURCE= # Default is blank. I'm using MQTT so I don't need a resource
       - IOTA_DEFAULT_TRANSPORT=MQTT
+      - IOTA_AMQP_DISABLED=true
     healthcheck:
       interval: 30s
 
@@ -135,42 +158,62 @@ services:
       - TENANT=openiot
       - DEBUG=broker:*
 
-  # Tutorial acts as a series of dummy IoT Sensors over HTTP
+  # A series of dummy IoT Sensors over HTTP
+  iot-sensors:
+    labels:
+      org.fiware: 'tutorial'
+    image: quay.io/fiware/tutorials.iot-devices
+    hostname: iot-sensors
+    container_name: fiware-iot-devices
+    depends_on:
+      - mosquitto
+      - redis-sensors
+    networks:
+      - default
+    expose:
+      - "${TUTORIAL_DUMMY_DEVICE_PORT}"
+    ports:
+      - "${TUTORIAL_DUMMY_DEVICE_PORT}:${TUTORIAL_DUMMY_DEVICE_PORT}" # localhost:3001
+    environment:
+      - DEBUG=devices:*
+      - WEB_APP_HOST=tutorial
+      - WEB_APP_PORT=${TUTORIAL_APP_PORT} # Port used by the content provider proxy and web-app for viewing data
+      - IOTA_HTTP_HOST=iot-agent
+      - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT}
+      - PIG_COUNT=${PIG_COUNT}
+      - COW_COUNT=${COW_COUNT}
+      - MQTT_TOPIC_PROTOCOL=ul
+      - MQTT_BROKER_URL=mqtt://mosquitto
+      - DUMMY_DEVICES_API_KEYS=321701236,548027571,854782081,110990,98699,112903447,1067386313
+      - DUMMY_DEVICES_TRANSPORT=MQTT
+      - DUMMY_DEVICES_PAYLOAD=JSON
+      - REDIS_HOST=redis-for-sensors
+
+  # Tutorial acts as a Farm Management Information System
   tutorial:
     labels:
       org.fiware: 'tutorial'
     image: quay.io/fiware/tutorials.ngsi-ld
-    hostname: iot-sensors
+    hostname: tutorial
     container_name: fiware-tutorial
     depends_on:
       - mongo-db
     networks:
-      default:
-        aliases:
-          - tutorial
-          - context-provider
+      - default
     expose:
       - "${TUTORIAL_APP_PORT}"
-      - "${TUTORIAL_DUMMY_DEVICE_PORT}"
     ports:
       - "${TUTORIAL_APP_PORT}:${TUTORIAL_APP_PORT}" # localhost:3000
-      - "${TUTORIAL_DUMMY_DEVICE_PORT}:${TUTORIAL_DUMMY_DEVICE_PORT}" # localhost:3001
     environment:
       - DEBUG=tutorial:*
       - WEB_APP_PORT=${TUTORIAL_APP_PORT} # Port used by the content provider proxy and web-app for viewing data
       - IOTA_HTTP_HOST=iot-agent
       - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT}
-      - OPENWEATHERMAP_KEY_ID=<ADD_YOUR_KEY_ID>
-      - TWITTER_CONSUMER_KEY=<ADD_YOUR_CONSUMER_KEY>
-      - TWITTER_CONSUMER_SECRET=<ADD_YOUR_CONSUMER_SECRET>
       - MONGO_URL=mongodb://mongo-db:27017
       - IOTA_JSON_LD_CONTEXT=http://context/user-context.jsonld
-
-      - PIG_COUNT=${PIG_COUNT}
-      - COW_COUNT=${COW_COUNT}
-      - MQTT_TOPIC_PROTOCOL=json
-      - MQTT_BROKER_URL=mqtt://mosquitto
-      - DUMMY_DEVICES_API_KEYS=321701236,548027571,854782081,110990,98699,112903447,1067386313
+      - NGSI_LD_TENANT=openiot
+      - DUMMY_DEVICES_TRANSPORT=MQTT
+      - DUMMY_DEVICES_PAYLOAD=JSON
 
 
 networks:
@@ -184,6 +227,7 @@ networks:
 volumes:
   mongo-db: ~
   mongo-config: ~
+  redis-data: ~
   data-models:
     driver: local
     driver_opts:
