@@ -628,7 +628,7 @@ curl -G -X GET \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=count' \
+  -d 'count=true' \
   -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
@@ -837,7 +837,7 @@ curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
   -d 'format=temporalValues' \
-  -d 'options=count' \
+  -d 'count=true' \
   -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>'
@@ -884,7 +884,7 @@ curl -G -X GET \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
   -d 'format=temporalValues' \
-  -d 'options=count' \
+  -d 'count=true' \
   -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
