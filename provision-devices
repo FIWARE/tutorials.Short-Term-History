@@ -38,8 +38,6 @@ curl -s -o /dev/null -X POST \
        }
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Temperature Sensor"},
-        {"name": "category", "type":"Property", "value": ["sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": "temperature"},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
       ]
@@ -58,8 +56,6 @@ curl -s -o /dev/null -X POST \
        }
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Soil Humdity Sensor"},
-        {"name": "category", "type":"Property", "value": ["sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": "humidity"},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
       ]
@@ -83,8 +79,6 @@ curl -s -o /dev/null -X POST \
       ],
       "static_attributes": [
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]},
-        {"name": "description", "type":"Property", "value": "Barn filling Sensor"},
-        {"name": "category", "type":"Property", "value": ["actuator", "sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": ["filling"]}
       ]
    },
@@ -100,13 +94,10 @@ curl -s -o /dev/null -X POST \
         {"object_id": "bpm","type": "Integer","name": "heartRate",
         "metadata": {"unitCode": {"type": "Text","value": "5K"}}
         },
-        {"object_id": "d", "name": "statusDescription", "type": "Property"},
-        {"object_id": "s", "name": "status", "type": "Integer"},
+        {"object_id": "d", "name": "status", "type": "Property"},
         {"object_id": "gps", "name": "location", "type": "geo:point"}
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Animal Collar"},
-        {"name": "category", "type":"Property", "value": ["sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": ["heartRate", "location", "status"]},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
       ]
@@ -123,13 +114,10 @@ curl -s -o /dev/null -X POST \
         {"object_id": "bpm","type": "Integer","name": "heartRate",
         "metadata": {"unitCode": {"type": "Text","value": "5K"}}
         },
-        {"object_id": "s", "name": "status", "type": "Integer"},
-        {"object_id": "d", "name": "statusDescription", "type": "Property"},
+        {"object_id": "d", "name": "status", "type": "Property"},
         {"object_id": "gps", "name": "location", "type": "geo:point"}
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Animal Collar"},
-        {"name": "category", "type":"Property", "value": ["sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": ["heartRate", "location", "status"]},
         {"name": "function", "type": "Property", "value":["sensing"]},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
@@ -148,7 +136,6 @@ curl -s -o /dev/null -X POST \
         {"name": "off", "type": "Property"}
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Irrigation System"},
         {"name": "category", "type":"Property", "value": ["actuator"]},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
       ]
@@ -162,7 +149,6 @@ curl -s -o /dev/null -X POST \
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "attributes": [
-        {"object_id": "s", "name": "status", "type": "Integer"},
         {"object_id": "d", "name": "statusDescription", "type": "Property"},
         {"object_id": "gps", "name": "location", "type": "geo:point"}
       ],
@@ -171,8 +157,6 @@ curl -s -o /dev/null -X POST \
         {"name": "stop", "type": "Property"}
       ],
       "static_attributes": [
-        {"name": "description", "type":"Property", "value": "Tractor FMIS"},
-        {"name": "category", "type":"Property", "value": ["actuator", "sensor"]},
         {"name": "controlledProperty", "type": "Property", "value": ["location", "status"]},
         {"name": "supportedProtocol", "type": "Property", "value": ["ul20"]}
       ]
@@ -220,7 +204,7 @@ curl -s -o /dev/null -X POST \
       "endpoint": "http://iot-sensors:3001/iot/filling001",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm001"},
-        {"name": "location", "type": "GeoProperty", "value": [13.3505, 52.5144]}
+        {"name": "location", "type": "geo:point", "value": [13.3505, 52.5144]}
       ]
     }, 
     {
@@ -276,7 +260,7 @@ curl -s -o /dev/null -X POST \
       "endpoint": "http://iot-sensors:3001/iot/filling002",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:barn002"},
-        {"name": "location", "type": "GeoProperty", "value": [13.3698, 52.5163]}
+        {"name": "location", "type": "geo:point", "value": [13.3698, 52.5163]}
       ]
     }, 
     {
@@ -332,7 +316,7 @@ curl -s -o /dev/null -X POST \
       "endpoint": "http://iot-sensors:3001/iot/filling003",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:tower003"},
-        {"name": "location", "type": "GeoProperty", "value": [13.3598, 52.5165]}
+        {"name": "location", "type": "geo:point", "value": [13.3598, 52.5165]}
       ]
     }, 
     {
@@ -388,7 +372,7 @@ curl -s -o /dev/null -X POST \
       "endpoint": "http://iot-sensors:3001/iot/filling004",
       "static_attributes": [
         {"name": "controlledAsset", "type": "Relationship","value": "urn:ngsi-ld:Building:farm002"},
-        {"name": "location", "type": "GeoProperty", "value": [13.3127, 52.4893]}
+        {"name": "location", "type": "geo:point", "value": [13.3127, 52.4893]}
       ]
     }, 
     {
