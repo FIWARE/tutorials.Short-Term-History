@@ -368,7 +368,8 @@ curl -L -X GET \
 #### 1️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3'
@@ -498,11 +499,12 @@ Mintaka 実装によって暗示されるため、他の Context Broker と連�
 #### 2️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
-  -d 'attrs=heartRate'
+  -d 'pick=id,type,heartRate'
 ```
 
 #### レスポンス:
@@ -558,19 +560,20 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
 
 ### エンティティの簡略化されたテンポラル表現
 
-`options=keyValues` パラメータがエンティティを単純なキーと値のペアに減らすのとほぼ同じ方法で、同等の
-`options=temporalValues` は各属性を一連のタプルに減らします。エントリごとに1つの値と1つのタイムスタンプです。
+`format=simplified` パラメータがエンティティを単純なキーと値のペアに減らすのとほぼ同じ方法で、同等の
+`format=temporalValues` は各属性を一連のタプルに減らします。エントリごとに1つの値と1つのタイムスタンプです。
 
 簡略化された時間表現は、次のように `options` パラメータを追加することでリクエストできます:
 
 #### 3️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
-  -d 'options=temporalValues'
+  -d 'format=temporalValues'
 ```
 
 #### レスポンス:
@@ -616,7 +619,8 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow00
 を使用する必要があります。
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -625,7 +629,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
   -d 'options=count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
 
@@ -747,7 +751,7 @@ UTC 形式で表された日時です。秒とミリ秒はオプションです
 ]
 ```
 
-同等の簡略化された形式は、`options=temporalValues` を設定することで取得できます。
+同等の簡略化された形式は、`format=temporalValues` を設定することで取得できます。
 
 #### 5️⃣ リクエスト:
 
@@ -755,7 +759,8 @@ UTC 形式で表された日時です。秒とミリ秒はオプションです
 を使用する必要があります。
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -763,8 +768,8 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
 
@@ -831,8 +836,9 @@ curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues,count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'options=count' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>'
 ```
@@ -868,7 +874,8 @@ connection: keep-alive
 #### 7️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -876,8 +883,9 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues,count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'options=count' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageAnchor=urn:ngsi-ld:Animal:pig001' \
@@ -1034,13 +1042,14 @@ curl -L -X GET \
 #### 9️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'q=d==%22FORAGING%22' \
-  -d 'attrs=heartRate,controlledAsset' \
-  -d 'options=temporalValues' \
+  -d 'pick=id,type,heartRate,controlledAsset' \
+  -d 'format=temporalValues' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageSize=2' \
@@ -1107,15 +1116,16 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
 #### 9️⃣ リクエスト:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'georel=near%3BmaxDistance==800' \
   -d 'geometry=Point' \
   -d 'coordinates=%5B13.364,52.52%5D' \
-  -d 'attrs=heartRate,controlledAsset' \
-  -d 'options=temporalValues' \
+  -d 'pick=id,type,heartRate,controlledAsset' \
+  -d 'format=temporalValues' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageSize=2' \

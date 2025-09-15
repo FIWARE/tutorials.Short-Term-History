@@ -361,7 +361,8 @@ The `lastN` parameter restricts the result to N values.
 #### 1️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow002' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3'
@@ -490,11 +491,12 @@ This example shows just the last 3 changes of `heartRate` from the entity `urn:n
 #### 2️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
-  -d 'attrs=heartRate'
+  -d 'pick=id,type,heartRate'
 ```
 
 #### Response:
@@ -548,19 +550,20 @@ The response is a single entity with a single attribute array holding values of 
 
 ### Simplified temporal representation of an entity
 
-In much the same manner as the `options=keyValues` parameter reduces entities to simple key-value pairs, the equivalent
-`options=temporalValues` reduces each attribute to a series of tuples - one value and one timestamp for each entry.
+In much the same manner as the `format=simplified` parameter reduces entities to simple key-value pairs, the equivalent
+`format=temporalValues` reduces each attribute to a series of tuples - one value and one timestamp for each entry.
 
 The simplified temporal representation can be requested by adding the `options` parameter as shown:
 
 #### 3️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/urn:ngsi-ld:Animal:cow001' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'lastN=3' \
-  -d 'options=temporalValues'
+  -d 'format=temporalValues'
 ```
 
 #### Response:
@@ -605,7 +608,8 @@ The following query is requesting data about the bulls within the herd. Because 
 `timeproperty=modifiedAt` must be used.
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -614,7 +618,7 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
   -d 'options=count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
 
@@ -736,7 +740,7 @@ from an Array of one element down to an object because this is the format specif
 ]
 ```
 
-The equivalent simplified format can be retrieved by setting `options=temporalValues`
+The equivalent simplified format can be retrieved by setting `format=temporalValues`
 
 #### 5️⃣ Request:
 
@@ -744,7 +748,8 @@ The following query is requesting data about the bulls within the herd. Because 
 `timeproperty=modifiedAt` must be used.
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -752,8 +757,8 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
 
@@ -818,8 +823,9 @@ curl -G -I -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues,count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'options=count' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>'
 ```
@@ -855,7 +861,8 @@ Making the same request with an additional `pageAnchor` parameter will retrieve 
 #### 7️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Animal' \
@@ -863,8 +870,9 @@ curl -G -X GET 'http://localhost:8080/temporal/entities/' \
   -d 'lastN=3' \
   -d 'q=sex==%22male%22' \
   -d 'timeproperty=modifiedAt' \
-  -d 'options=temporalValues,count' \
-  -d 'attrs=sex,heartRate' \
+  -d 'format=temporalValues' \
+  -d 'options=count' \
+  -d 'pick=id,type,sex,heartRate' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageAnchor=urn:ngsi-ld:Animal:pig001' \
@@ -1019,13 +1027,14 @@ also returns the associated animal entity that wears it.
 #### 9️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'q=d==%22FORAGING%22' \
-  -d 'attrs=heartRate,controlledAsset' \
-  -d 'options=temporalValues' \
+  -d 'pick=id,type,heartRate,controlledAsset' \
+  -d 'format=temporalValues' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageSize=2' \
@@ -1090,15 +1099,16 @@ from a fixed point, and also returns the associated animal entity that wears it.
 #### 9️⃣ Request:
 
 ```console
-curl -G -X GET 'http://localhost:8080/temporal/entities/' \
+curl -G -X GET \
+  'http://localhost:8080/temporal/entities/' \
   -H 'NGSILD-Tenant: openiot' \
   -H 'Link: <http://context/user-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -d 'type=Device' \
   -d 'georel=near%3BmaxDistance==800' \
   -d 'geometry=Point' \
   -d 'coordinates=%5B13.364,52.52%5D' \
-  -d 'attrs=heartRate,controlledAsset' \
-  -d 'options=temporalValues' \
+  -d 'pick=id,type,heartRate,controlledAsset' \
+  -d 'format=temporalValues' \
   -d 'timerel=before' \
   -d 'timeAt=<current_time>' \
   -d 'pageSize=2' \
