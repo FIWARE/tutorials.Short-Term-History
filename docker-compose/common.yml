@@ -161,6 +161,9 @@ services:
       - PIG_COUNT=${PIG_COUNT}
       - COW_COUNT=${COW_COUNT}
       - REDIS_HOST=redis-for-sensors
+    #  - HISTORY_LOG=/data/append.csv
+    volumes:
+        - data:/data
 
   # Tutorial acts as a Farm Management Information System
   tutorial:
@@ -200,6 +203,12 @@ volumes:
   mongo-db: ~
   mongo-config: ~
   redis-data: ~
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data
   data-models:
     driver: local
     driver_opts:
