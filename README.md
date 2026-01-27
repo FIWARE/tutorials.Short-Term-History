@@ -1,6 +1,6 @@
 [![FIWARE Banner](https://fiware.github.io/tutorials.Short-Term-History/img/fiware.png)](https://www.fiware.org/developers)
 
-[![FIWARE Core Context Management](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://github.com/FIWARE/catalogue/blob/master/core/README.md)
+[![FIWARE Core Context Management](https://fiware.github.io/catalogue/badges/chapters/core.svg)](https://github.com/FIWARE/catalogue/blob/master/core/README.md)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Short-Term-History.svg)](https://opensource.org/licenses/MIT)
 [![Support badge](https://img.shields.io/badge/tag-fiware-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware)
 
@@ -55,4 +55,4 @@ git checkout NGSI-LD
 
 ## License
 
-[MIT](LICENSE) © 2018-2024 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2018-2026 FIWARE Foundation e.V.
