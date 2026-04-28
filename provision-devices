@@ -14,7 +14,7 @@ printf "⏳ Provisioning IoT devices "
 
 
 #
-# Create a service groups for all UltraLight IoT devices
+# Create a service groups for all JSON IoT devices
 #
 
 curl -s -o /dev/null -X POST \

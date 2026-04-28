@@ -136,7 +136,7 @@ Enabler の組み合わせを使用して、履歴コンテキスト・データ
 このチュートリアルの目的のために、一連のダミー IoT デバイスが作成され、Context
 Broker に接続されます。使用しているアーキテクチャとプロトコルの詳細は
 、[IoT Sensors チュートリアル](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2)に
-あります。各デバイスの状態は、次の UltraLight デバイス・モニタの Web ページで確
+あります。各デバイスの状態は、次の JSON デバイス・モニタの Web ページで確
 認できます : `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Short-Term-History/img/device-monitor.png)
