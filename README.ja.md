@@ -156,7 +156,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
 このアプリケーションは
 、[前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent/)で作成した
 コンポーネント と ダミー IoT デバイスをベースにしています
-。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)，[IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)，[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/)，
+。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/)，[IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/)，[STH-Comet](https://fiware-cygnus.readthedocs.io/en/latest/)，
 および [Cygnus](https://fiware-cygnus.readthedocs.io/en/latest/) の 3 つまたは 4
 つの FIWARE コンポーネントをシステムの構成に応じて使用します。
 
@@ -168,8 +168,8 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
         は、[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使
         用してリクエストを受信します
     -   FIWARE
-        [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
-        は、Ultralight 2.0 形式のダミー IoT デバイスからノース・バウンドの測定値
+        [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/)
+        は、JSON 形式のダミー IoT デバイスからノース・バウンドの測定値
         を受信し、Context Broker
         の[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) リクエ
         ストに変換してコンテキスト・エンティティの状態を変更します
@@ -203,7 +203,7 @@ Broker に接続されます。使用しているアーキテクチャとプロ�
         -   各店舗で購入できる商品を表示します
         -   ユーザが製品を購入して在庫数を減らすことを許可します
     -   HTTP 上で動作する
-        [Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+        [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         プロトコルを使用して
         、[ダミー IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2)の
         セットとして機能する Web サーバ

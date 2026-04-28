@@ -15,8 +15,8 @@
 
 This tutorial is an introduction to [FIWARE STH-Comet](https://fiware-sth-comet.readthedocs.io/) - a generic enabler
 which is used to retrieve trend data from a MongoDB database. The tutorial activates the IoT sensors connected in the
-[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Agent-JSON) and persists measurements from those sensors into a
-database and retrieves time-based aggregations of that data.
+[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Agent-JSON) and persists measurements from those sensors
+into a database and retrieves time-based aggregations of that data.
 
 The tutorial uses [cUrl](https://ec.haxx.se/) commands throughout, but is also available as
 [Postman documentation](https://fiware.github.io/tutorials.Short-Term-History/)
@@ -152,8 +152,8 @@ Therefore the overall architecture will consist of the following elements:
 -   Four **FIWARE Generic Enablers**:
     -   The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests
         using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
-    -   The FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) which will
-        receive northbound measurements from the dummy IoT devices in
+    -   The FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) which will receive
+        northbound measurements from the dummy IoT devices in
         [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         format and convert them to [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) requests for the
         context broker to alter the state of the context entities
@@ -436,9 +436,9 @@ the `throttling` attribute in the request body.
 >
 > For example if a JSON device sends the measurement `{"t":20, "l":1200}` it will be a single atomic commit and both
 > attributes will be included the notification to **STH-Comet** however if a device sends two separate measurements
-> `{"t":20}` and `{"l":1200}` sequentially this will be
-> treated as two atomic commits - a notification will be sent for the first change in `t`, but the second change in `l`
-> will be ignored as the entity has been recently updated within the sampling period.
+> `{"t":20}` and `{"l":1200}` sequentially this will be treated as two atomic commits - a notification will be sent for
+> the first change in `t`, but the second change in `l` will be ignored as the entity has been recently updated within
+> the sampling period.
 
 #### 3️⃣ Request:
 
