@@ -136,7 +136,7 @@
 									"value": "modifiedAt"
 								},
 								{
-									"key": "options",
+									"key": "format",
 									"value": "count"
 								},
 								{
@@ -301,7 +301,7 @@
 									"value": "location,controlledAsset"
 								},
 								{
-									"key": "options",
+									"key": "format",
 									"value": "temporalValues"
 								},
 								{
@@ -421,7 +421,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?options=keyValues",
+							"raw": "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Animal:cow005?format=simplified",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -435,8 +435,8 @@
 							],
 							"query": [
 								{
-									"key": "options",
-									"value": "keyValues"
+									"key": "format",
+									"value": "simplified"
 								}
 							]
 						}
@@ -471,7 +471,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&options=keyValues&limit=2",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?type=Device&attrs=heartRate,d,location&format=simplified&limit=2",
 							"protocol": "http",
 							"host": [
 								"{{context-broker}}"
@@ -507,8 +507,8 @@
 									"value": "heartRate,d,location"
 								},
 								{
-									"key": "options",
-									"value": "keyValues"
+									"key": "format",
+									"value": "simplified"
 								},
 								{
 									"key": "limit",
@@ -552,7 +552,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&format=simplified,count",
 							"protocol": "http",
 							"host": [
 								"{{context-broker}}"
@@ -595,7 +595,7 @@
 									"disabled": true
 								},
 								{
-									"key": "options",
+									"key": "format",
 									"value": "keyValues,count"
 								}
 							]
@@ -631,7 +631,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&options=keyValues,count",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.402,52.471]&type=Animal&q=sex==\"female\";species==\"dairy cattle\"&format=simplified,count",
 							"protocol": "http",
 							"host": [
 								"{{context-broker}}"
@@ -674,7 +674,7 @@
 									"disabled": true
 								},
 								{
-									"key": "options",
+									"key": "format",
 									"value": "keyValues,count"
 								}
 							]
@@ -709,7 +709,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&options=keyValues",
+							"raw": "http://{{context-broker}}/ngsi-ld/v1/entities/?georel=near;maxDistance==2000&geometry=Point&coordinates=[13.364,52.52]&q=sex== \"female\";species==\"pig\";reproductiveCondition==%22inCalf%22&type=Animal&format=simplified",
 							"protocol": "http",
 							"host": [
 								"{{context-broker}}"
@@ -742,8 +742,8 @@
 									"value": "Animal"
 								},
 								{
-									"key": "options",
-									"value": "keyValues"
+									"key": "format",
+									"value": "simplified"
 								},
 								{
 									"key": "limit",
