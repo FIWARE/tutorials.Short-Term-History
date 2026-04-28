@@ -84,7 +84,7 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 
 このチュートリアルの目的のために、一連のダミーの動物の首輪 の IoT デバイスが作成され、Context Broker に接続されます。
 使用されるアーキテクチャとプロトコルの詳細は、 IoT センサのチュートリアルに記載されています。各デバイスの状態は、
-次の場所にある UltraLight デバイス・モニタの Web ページで確認できます: `http://localhost:3000/device/monitor`
+次の場所にある JSON デバイス・モニタの Web ページで確認できます: `http://localhost:3000/device/monitor`
 
 ![FIWARE Monitor](https://fiware.github.io/tutorials.Time-Series-Data/img/farm-devices.png)
 
@@ -94,7 +94,7 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 
 このアプリケーションは、[以前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent/tree/NGSI-LD)で作成された
 コンポーネントとダミーの IoT デバイスに基づいて構築されています。これは、2つのFIWAREのコンポーネントを使用します。
-[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) と [IoT Agent for Ultralight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
+[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) と [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/)
 です。さらに、オプションのテンポラル・インターフェイスは、**Mintaka** と呼ばれるアドオンを使用してサービスされます。
 
 したがって、アーキテクチャ全体は次の要素で構成されます:
@@ -102,8 +102,8 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 -   [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は、
     [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
     を使用して、リクエストを受信します
--   FIWARE [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) は、
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+-   FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) は、
+    [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     構文を使用して、デバイスから測定値を受け取り、 
     [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
     に変換します
@@ -114,7 +114,7 @@ Broker は現在のコンテキストのみを処理します。メモリはあ�
 -   [Timescale](https://www.timescale.com/) は、履歴コンテキストを永続化する時系列データベースです
 -   **Mintaka** アドオン は、テンポラル・インターフェースを提供し、コンテキストを永続化します
 -   **チュートリアル・アプリケーション** 次のことを行います:
-    -   HTTP 上で実行される [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    -   HTTP 上で実行される [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
         プロトコルを使用して、ダミーの [農業用 IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-LD)
         のセットとして機能します
 -   HTTP **Web-Server** は、システム内のコンテキスト・エンティティを定義する静的な `@context` ファイルを提供します
@@ -1021,7 +1021,7 @@ curl -L -X GET \
         "observedAt": "2021-09-16T15:24:15.781Z"
     },
     "supportedProtocol": {
-        "value": "ul20",
+        "value": "json",
         "type": "Property",
         "observedAt": "2021-09-16T15:24:15.781Z"
     },

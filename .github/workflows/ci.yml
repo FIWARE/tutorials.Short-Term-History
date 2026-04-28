@@ -28,5 +28,9 @@ jobs:
       run: |
         ./services create || true
     - name: Run Script
-      run: |
-        ./services start && ./services stop
+      run: ./services orion
+    - name: Smoke Test (Orion)
+      run: ./.github/test/iot_device_smoke_test
+    - name: Stop
+      if: always()
+      run: ./services stop
