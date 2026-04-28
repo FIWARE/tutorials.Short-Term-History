@@ -12,7 +12,7 @@ printf "⏳ Loading context data "
 # Create four Store Entities in various locations across Berlin
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -g -d '{
   "actionType": "append",
@@ -63,7 +63,7 @@ curl -s -o /dev/null -X POST \
     ]
    },
    "provider": {
-     "http": {
+    "http": {
        "url": "http://context-provider:3000/proxy/v1/random/weatherConditions"
      },
      "legacyForwarding": true
@@ -88,7 +88,7 @@ curl -s -o /dev/null -X POST \
     ]
    },
    "provider": {
-     "http": {
+    "http": {
        "url": "http://context-provider:3000/proxy/v1/catfacts/tweets"
      },
      "legacyForwarding": true
@@ -117,7 +117,7 @@ curl -s -o /dev/null -X POST \
 #     ]
 #   },
 #   "provider": {
-#     "http": {
+#    "http": {
 #       "url": "http://context-provider:3000/proxy/weather/number/temperature:temp,relativeHumidity:humidity/berlin%2cde"
 #     },
 #      "legacyForwarding": true
@@ -141,7 +141,7 @@ curl -s -o /dev/null -X POST \
 #     ]
 #   },
 #   "provider": {
-#     "http": {
+#    "http": {
 #       "url": "http://context-provider:3000/proxy/twitter/list/tweets:text/FIWARE"
 #     },
 #      "legacyForwarding": true
@@ -153,7 +153,7 @@ curl -s -o /dev/null -X POST \
 # Each shelf is designed to hold one product.
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -g -d '{
   "actionType": "append",
@@ -236,7 +236,7 @@ curl -s -o /dev/null -X POST \
 # These are a series of alcoholc and non-alcoholic drinks which are available to sell.
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -d '{
   "actionType":"APPEND",
@@ -304,7 +304,7 @@ curl -s -o /dev/null -X POST \
 # These the drinks on order in Store:001
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -d '{
   "actionType":"APPEND",
@@ -341,7 +341,7 @@ curl -s -o /dev/null -X POST \
 # These the drinks on order in Store:002
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -d '{
   "actionType":"APPEND",
@@ -370,7 +370,7 @@ curl -s -o /dev/null -X POST \
 # Note that Shelf Unit009 is currently unused
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -d '{
   "actionType":"APPEND",
@@ -407,7 +407,7 @@ curl -s -o /dev/null -X POST \
 # These the drinks on order in Store:004
 #
 curl -s -o /dev/null -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -d '{
   "actionType":"APPEND",
@@ -428,7 +428,7 @@ curl -s -o /dev/null -X POST \
 # Ensure that actuators are minimally provisioned.
 #
 curl -X POST \
-  'http://orion:1026/v2/op/update' \
+ "http://orion:1026/v2/op/update" \
   -H 'Content-Type: application/json' \
   -H 'fiware-service: openiot' \
   -d '{

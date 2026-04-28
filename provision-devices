@@ -28,8 +28,8 @@ curl -s -o /dev/null -X POST \
      "apikey":      "1068318794",
      "cbroker":     "'"http://orion:$ORION_PORT"'",
      "entity_type": "Motion",
-     "resource":    "/iot/d",
-     "protocol":    "PDI-IoTA-UltraLight",
+     "resource":    "/iot/json",
+     "protocol":    "IoTA-JSON",
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "attributes": [
@@ -39,7 +39,7 @@ curl -s -o /dev/null -X POST \
           {"name": "category", "type":"Text", "value": ["sensor"]},
           {"name": "controlledProperty", "type": "Text", "value": "motion"},
           {"name": "function", "type": "Text", "value":["sensing"]},
-          {"name": "supportedProtocol", "type": "Text", "value": ["ul20"]},
+          {"name": "supportedProtocol", "type": "Text", "value": ["json"]},
           {"name": "supportedUnits", "type": "Text", "value": "C62"}
       ]
    },
@@ -47,8 +47,8 @@ curl -s -o /dev/null -X POST \
      "apikey":      "3020035",
      "cbroker":     "'"http://orion:$ORION_PORT"'",
      "entity_type": "Bell",
-     "resource":    "/iot/d",
-     "protocol":    "PDI-IoTA-UltraLight",
+     "resource":    "/iot/json",
+     "protocol":    "IoTA-JSON",
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "commands": [ 
@@ -61,15 +61,15 @@ curl -s -o /dev/null -X POST \
           {"name": "category", "type":"Text", "value": ["actuator"]},
           {"name": "controlledProperty", "type": "Text", "value": "noiseLevel"},
           {"name": "function", "type": "Text", "value":["onOff"]},
-          {"name": "supportedProtocol", "type": "Text", "value": ["ul20"]}
+          {"name": "supportedProtocol", "type": "Text", "value": ["json"]}
       ]
    },
    {
      "apikey":      "3314136",
      "cbroker":     "'"http://orion:$ORION_PORT"'",
      "entity_type": "Lamp",
-     "resource":    "/iot/d",
-     "protocol":    "PDI-IoTA-UltraLight",
+     "resource":    "/iot/json",
+     "protocol":    "IoTA-JSON",
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "commands": [ 
@@ -84,7 +84,7 @@ curl -s -o /dev/null -X POST \
           {"name": "category", "type":"Text", "value": ["actuator","sensor"]},
           {"name": "controlledProperty", "type": "Text", "value": "light"},
           {"name": "function", "type": "Text", "value":["onOff", "sensing"]},
-          {"name": "supportedProtocol", "type": "Text", "value": ["ul20"]},
+          {"name": "supportedProtocol", "type": "Text", "value": ["json"]},
           {"name": "supportedUnits", "type": "Text", "value": "CDL"}
      ]
    },
@@ -92,8 +92,8 @@ curl -s -o /dev/null -X POST \
      "apikey":      "3089326",
      "cbroker":     "'"http://orion:$ORION_PORT"'",
      "entity_type": "Door",
-     "resource":    "/iot/d",
-     "protocol":    "PDI-IoTA-UltraLight",
+     "resource":    "/iot/json",
+     "protocol":    "IoTA-JSON",
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "commands": [ 
@@ -109,7 +109,7 @@ curl -s -o /dev/null -X POST \
           {"name": "category", "type":"Text", "value": ["actuator", "sensor"]},
           {"name": "controlledProperty", "type": "Text", "value": "state"},
           {"name": "function", "type": "Text", "value":["openClose", "eventNotification"]},
-          {"name": "supportedProtocol", "type": "Text", "value": ["ul20"]}
+          {"name": "supportedProtocol", "type": "Text", "value": ["json"]}
       ]
    }
  ]
