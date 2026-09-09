@@ -59,6 +59,7 @@ services:
       - coraine
       - --apiPlugins
       - admin
+      - --distributed
 
   # IoT-Agent connects to the Coraine Broker
   iot-agent:
