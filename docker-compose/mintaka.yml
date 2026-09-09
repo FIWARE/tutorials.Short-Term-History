@@ -19,6 +19,8 @@
 services:
 
   mintaka:
+    labels:
+      org.fiware: 'tutorial'
     image: quay.io/fiware/mintaka:${MINTAKA_VERSION}
     hostname: mintaka
     container_name: fiware-mintaka
@@ -41,6 +43,8 @@ services:
       - default
 
   timescale-db:
+    labels:
+      org.fiware: 'tutorial'
     image: timescale/timescaledb-postgis:${TIMESCALE_VERSION}
     hostname: timescale-db
     container_name: db-timescale
