@@ -34,3 +34,6 @@ jobs:
     - name: Stop
       if: always()
       run: ./services stop
+    - name: Run Coraine
+      run: |
+        ./services coraine && ./services stop
